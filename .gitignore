@@ -1,0 +1,11 @@
+#dev
+
+private/
+include/
+src/
+
+#vs/git
+
+.vs/
+.vscode/
+.git/
