@@ -1,17 +1,24 @@
 #pragma once
 
 #include "nn/types.h"
+#include "nn/os/os_SimpleLock.h"
+#include "nn/os/os_Api.h"
 
-namespace nn{
+namespace nn { 
+namespace os {
+    
+    class CriticalSection {
+    public:
+        SimpleLock mLock;
+        u32 mThreadUniqueValue;
+        s32 mLockCount;
 
-namespace os{
-
-namespace CriticalSection{
-
-    void Enter(int);
-    void Leave(int);
-
-
-} // CriticalSection
-} // os
-}; // nn
+        void Initialize(void);
+        void Enter(void);
+        void Leave(void);
+        bool TryEnter(void);
+        ~CriticalSection() {
+        }
+    };
+}
+};

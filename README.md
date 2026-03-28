@@ -1,5 +1,5 @@
 # CTRSDK-4_2_5
-This a *rewrite* of the CTR SDK 4_2_5 version, as used in the Mario & Luigi Dream Team US 1.0 decompilation.
+This a rewrite of the CTR SDK 4_2_5 version, as used in the Mario & Luigi Dream Team US 1.0 decompilation.
 
 Everything shown here is unfinished as you can see in the git ignore. Rest assure work will be done!
 

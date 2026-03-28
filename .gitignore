@@ -7,7 +7,6 @@ include/nn/camera
 include/nn/cfg
 include/nn/config
 include/nn/fnd
-include/nn/fs
 include/nn/gx
 include/nn/ro
 include/nn/tpl

@@ -6,6 +6,6 @@
 namespace nn {
 namespace srv {
     Result Initialize();
-    Result GetServiceHandle(Handle* out, const char* service, s32, u32);
+    Result GetServiceHandle(nn::Handle* pOut, const char* pService, s32, u32);
 } // Namespace srv
 } // Namespace nn
