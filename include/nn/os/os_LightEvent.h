@@ -16,7 +16,9 @@ namespace os{
         void Wait(void);
         void Signal(void);
         bool TryWait(void);
-        ~LightEvent(){ };
+        ~LightEvent(){
+        };
+
     }; // CriticalSection
 } // os
 }; // nn

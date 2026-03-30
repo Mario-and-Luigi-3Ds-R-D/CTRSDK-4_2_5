@@ -14,7 +14,22 @@ public:
     bool IsValid() const {
         return mHandle != 0;
     }
+
+    bool operator==(int other) const {
+        return mHandle == (u32)other;
+    }
+    bool operator!=(int other) const {
+        return mHandle != (u32)other;
+    }
+    Handle& operator=(int other) {
+        mHandle = (u32)other;
+        return *this;
+    }
+    Handle& operator=(u32 other) {
+        mHandle = other;
+        return *this;
+    }    
 private:
     u32 mHandle;
 };
-};
+}

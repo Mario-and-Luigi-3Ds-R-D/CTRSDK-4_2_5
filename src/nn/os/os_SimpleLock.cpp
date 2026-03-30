@@ -4,13 +4,12 @@ namespace nn{
 namespace os{
 // nonmatch
 void SimpleLock::Initialize(void) {
-
-s32* lock = &this->mCounter.mValue.mValueType;
-volatile s32 val;
-
-do {
-        val = __ldrex(lock);
-} while (__strex(1, lock));
+    s32* lock = &this->mCounter.mValue.mValueType;
+    volatile s32 val;
+    
+    do {
+        __ldrex(lock);
+    } while (__strex(1u, this));
 }
 
 void SimpleLock::Lock(){

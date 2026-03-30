@@ -1,13 +1,2 @@
 # Dev
 private/
-
-# Indiv. Libraries
-include/nn/applet
-include/nn/camera
-include/nn/cfg
-include/nn/config
-include/nn/fnd
-include/nn/gx
-include/nn/ro
-include/nn/tpl
-include/nn/ubl

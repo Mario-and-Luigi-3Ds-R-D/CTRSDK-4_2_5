@@ -31,7 +31,18 @@ void CriticalSection::Leave() {
     }
 }
 
-bool CriticalSection::TryEnter(){
+bool CriticalSection::TryEnter(void) {
+    register u32 thread;
+    __asm {mrc p15, 0, thread, c13, c0, 3}
+    if (this->mThreadUniqueValue != thread) { // Fuckin' CMP wont budge! MEIN GOTT!
+        if (this->mLock.TryLock() == 0) {
+            return 0;
+        }
+        __asm {mrc p15, 0, thread, c13, c0, 3}
+        this->mThreadUniqueValue = thread;
+    }
+    this->mLockCount = this->mLockCount + 1;
+    return 1;
 }
 
 } // os

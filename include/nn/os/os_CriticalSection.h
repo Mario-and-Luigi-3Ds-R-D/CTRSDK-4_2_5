@@ -19,6 +19,11 @@ namespace os {
         bool TryEnter(void);
         ~CriticalSection() {
         }
+
+        struct ScopedLock{
+            nn::os::CriticalSection* mReference;
+        };
+
     };
 }
 };
