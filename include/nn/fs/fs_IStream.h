@@ -5,14 +5,14 @@
 namespace nn{
 namespace fs{
 
-class IInputStream{
+class IInputStream : public IPositionable{
 public:
     int flag1; // IPositionable
 
     virtual ~IInputStream();
 };
 
-class IOutputStream{
+class IOutputStream : public IPositionable{
 public:
     int flag1; // IPositionable
 

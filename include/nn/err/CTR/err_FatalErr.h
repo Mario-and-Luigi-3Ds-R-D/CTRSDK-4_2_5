@@ -2,7 +2,7 @@
 
 #include "nn/Result.h"
 #include "nn/types.h"
-//#include "nn/os/ARM/os_ExceptionInfo.h"
+#include "nn/os/ARM/os_Exception.h"
 
 namespace nn{
 namespace err{
@@ -10,7 +10,7 @@ namespace CTR{
 
     struct Exception{
         u8 mInfo[24];
-//        nn::os::ARM::ExceptionContext mExContext;
+        nn::os::ARM::ExceptionContext mExContext;
     };
 
     struct Failure{
@@ -36,10 +36,9 @@ namespace CTR{
 
     class FatalErr{
     public:
-        
-
         Result Throw();
     };
+    void ThrowFatalErr(Result pResult);
 namespace{
     
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "nn/types.h"
-#include "nn/os/os_Api.h"
+#include "nn/os/os_Types.h"
 
 namespace nn{ 
 namespace os{
@@ -10,7 +10,7 @@ namespace os{
         ValueType mValue;
         static nn::Handle sHandle;
 
-        void Initialize();
+        static void Initialize();
     };
 }
 }

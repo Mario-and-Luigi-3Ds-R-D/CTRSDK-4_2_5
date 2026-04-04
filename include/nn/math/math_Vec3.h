@@ -1,5 +1,8 @@
 #pragma once
 
+//#include "nn/math/math_Matrix33.h"
+#include "nn/math/math_Matrix34.h"
+
 namespace nn {
 namespace math {
     
@@ -8,16 +11,10 @@ namespace math {
         float y;
         float z;
     };
-    namespace ARMv6{
-        void VEC3AddAsm(VEC3* out, const VEC3* v1, const VEC3* v2);
-        void VEC3SubAsm(VEC3* out, const VEC3* v1, const VEC3* v2);
-        void VEC3MulAsm(VEC3* out, const VEC3* v1, const VEC3* v2);
-        void VEC3DivAsm(VEC3* out, const VEC3* v1, const VEC3* v2);
-        void VEC3AddAsm(VEC3* out, const VEC3* v1, float f);
-        void VEC3SubAsm(VEC3* out, const VEC3* v1, float f);
-        void VEC3MulAsm(VEC3* out, const VEC3* v1, float f);
-        void VEC3DivAsm(VEC3* out, const VEC3* v1, float f);
-} // Namespace ARMv6
+/*namespace ARMv6{
+    VEC3TransformAsm(nn::math::VEC3*, nn::math::MTX33 const*, nn::math::VEC3 const*);
+    VEC3TransformAsm(nn::math::VEC3*, nn::math::MTX34 const*, nn::math::VEC3 const*);
+}*/
 
-} // Namespace math
-} // Namespace nn
+}
+}

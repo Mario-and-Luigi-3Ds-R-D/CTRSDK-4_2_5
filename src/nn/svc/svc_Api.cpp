@@ -120,7 +120,7 @@ namespace svc{
     }
 
     // Break - like nn::dbg::Break but swi
-    __asm void Break(nn::dbg::BreakReason,const void*,int){
+    __asm Result Break(nn::dbg::BreakReason,const void*,int){
         swi 0x3c
         bx lr
     }

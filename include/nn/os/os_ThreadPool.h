@@ -7,7 +7,7 @@ namespace os{
 namespace detail{
 
     class ThreadPoolTaskWaitForC{
-    
+        
     };
 }; // detail
 }

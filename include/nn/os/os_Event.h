@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nn/os/os_Api.h"
+#include "nn/os/os_Types.h"
 
 namespace nn{
 namespace os{
@@ -12,11 +12,18 @@ namespace os{
 
     class Event : public nn::os::EventBase{ // most pointless heiharchy
     public:
-        Event(){
-            this->mHandle = (nn::Handle)0;
+    
+        Event::Event(){
+            this->mHandle = 0;
         }
-        ~Event(){
+
+        Event::~Event(){
+            if(this->mHandle != 0) {
+                __asm{swi 0x23}
+                this->mHandle = 0;
+            }
         }
+
     };
 }
 }

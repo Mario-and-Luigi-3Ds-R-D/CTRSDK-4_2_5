@@ -1,4 +1,4 @@
-#include "nn/os/os_CriticalSection.h"
+#include <nn/os/os_CriticalSection.h>
 
 namespace nn{
 namespace os{

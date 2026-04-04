@@ -4,7 +4,9 @@
 #include "nn/Result.h"
 #include "nn/Handle.h"
 #include "nn/dbg/dbg_Break.h"
-#include "nn/os/os_Api.h"
+#include "nn/os/os_Types.h"
+
+// These are probably meant to be all result but fuck it, gotta get this shit out
 
 namespace nn{
 namespace svc{
@@ -19,7 +21,7 @@ namespace svc{
     Result CreateEvent(nn::Handle*,nn::os::ResetType);
     s32 CreateAddressArbiter(nn::Handle*);
     void ArbirateAddress(nn::Handle,uint,nn::os::ArbitrationType,int,long long);
-    void Break(nn::dbg::BreakReason,const void*,int);
+    Result Break(nn::dbg::BreakReason,const void*,int);
     void CloseHandle(nn::Handle);
     void ConnectToPort(nn::Handle*, const char*);
     void DuplicateHandle(nn::Handle*);

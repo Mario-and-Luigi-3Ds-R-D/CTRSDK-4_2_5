@@ -28,7 +28,11 @@ public:
     Handle& operator=(u32 other) {
         mHandle = other;
         return *this;
-    }    
+    }
+    Handle& operator=(nn::Handle* other) {
+        mHandle = (u32)other;
+        return *this;
+    }
 private:
     u32 mHandle;
 };

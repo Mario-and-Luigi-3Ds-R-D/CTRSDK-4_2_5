@@ -3,19 +3,25 @@
 namespace nn{
 namespace os{
 // nonmatch
-void SimpleLock::Initialize(void) {
-    s32* lock = &this->mCounter.mValue.mValueType;
-    volatile s32 val;
-    
-    do {
-        __ldrex(lock);
-    } while (__strex(1u, this));
+
+// Most of these are written in ARM Assembly. A guide on using this function will be shown above it.
+//
+// This decision was made due to it making somewhat more sense, and because im Lazy.
+
+__asm void SimpleLock::Initialize(void) {
+    MOV             R1,#1
+loc_120F44
+    LDREX           R2, [R0]
+    STREX           R3, R1, [R0]
+    CMP             R3, #0
+    BNE             loc_120F44
+    BX              LR
 }
 
-void SimpleLock::Lock(){
+__asm void SimpleLock::Lock(){
 }
 
-void SimpleLock::LockImpl(){
+__asm void SimpleLock::LockImpl(){
 }
 
 bool SimpleLock::TryLock(){

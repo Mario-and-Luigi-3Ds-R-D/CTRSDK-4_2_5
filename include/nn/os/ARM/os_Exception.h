@@ -6,7 +6,8 @@ namespace nn{
 namespace os{
 
 class ARM{
-    void SpinWaiyCpuCycles();
+public:
+    void SpinWaitCpuCycles();
     void SetUserExceptionHandler(); // userexceptionhandler pHandler, uptr pStackBottom
 
     struct ExceptionBuffer{

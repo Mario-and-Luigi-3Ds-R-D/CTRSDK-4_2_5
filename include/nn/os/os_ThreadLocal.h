@@ -6,7 +6,7 @@ namespace nn{
 namespace os{
 namespace CTR{
 
-    class ThreadLocalRegion{
+    struct ThreadLocalRegion{
         uptr mTls[16];
         uptr mHandlerAddress;
         uptr mHandlerStackBottomAddress;
@@ -23,7 +23,7 @@ namespace CTR{
     public:
         int mIndex;
 
-        void ClearAllSlots(void);
+        static void ClearAllSlots(void);
         ~ThreadLocalStorage();
     };
 

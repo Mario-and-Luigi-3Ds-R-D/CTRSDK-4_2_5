@@ -1,7 +1,7 @@
 #pragma once
 
 #include "nn/types.h"
-#include "nn/fnd/fnd_IntrusiveQueue.h"
+#include "nn/fnd/fnd_Intrusive.h"
 
 namespace nn{
 namespace os{
