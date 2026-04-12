@@ -110,7 +110,7 @@ namespace svc{
     }
 
     // ArbitrateAddress - Arb New Addr
-    __asm void ArbirateAddress(nn::Handle,uint,nn::os::ArbitrationType,int,long long){
+    __asm void ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,int,long long){
         push {r4,r5}
         ldr r4,[sp,#0]
         ldr r5,[sp,#4]
@@ -188,7 +188,7 @@ namespace svc{
     }
 
     // WaitSynchronizationN - Waits for Sync.
-    __asm void WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long){
+    __asm Result WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long){
         push {r0,r4}
         ldr r0,[sp,#0]
         ldr r4,[sp,#4]

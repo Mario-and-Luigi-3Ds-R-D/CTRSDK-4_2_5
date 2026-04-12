@@ -9,6 +9,7 @@ enum nndbgBreakReason{
     NN_DBG_BREAK_REASON_MAX_BIT = 1073741824,
 };
 
+extern "C"{
 Result nndbgBreak(int pReason);
 void nndbgPanic();
 // Are these in DT? Down Below?
@@ -16,6 +17,7 @@ void nndbgBreakWithMessage_(nndbgBreakReason pReason, const char* pFileName, int
 void nndbgBreakWithTMessage_(nndbgBreakReason pReason, const char* pFileName, int pLineNo, const char* pFmt);
 void nndbgBreakWithResultMessage_(nndbgBreakReason pReason, Result pResult,  const char* pFileName, int pLineNo, const char* pFmt);
 void nndbgBreakWithResultTMessage_(nndbgBreakReason pReason, Result pResult,  const char* pFileName, int pLineNo, const char* pFmt);
+}
 
 namespace nn{
 namespace dbg{

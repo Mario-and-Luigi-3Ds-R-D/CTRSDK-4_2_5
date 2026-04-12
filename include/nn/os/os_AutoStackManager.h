@@ -3,6 +3,7 @@
 namespace nn{
 namespace os{
 
+    /* Stack Manager */
     class AutoStackManager{
     public:
         virtual ~AutoStackManager() {}

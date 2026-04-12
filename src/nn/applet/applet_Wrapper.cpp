@@ -1,5 +1,6 @@
-#include <nn/applet/applet_Api.h>
 #include <nn/applet/applet_Wrapper.h>
+#include <nn/applet/applet_Info.h>
+#include <nn/applet/applet_Api.h>
 
 namespace nn{
 namespace applet{
@@ -10,6 +11,19 @@ void ClearHomeButtonState(void) {
     nn::applet::CTR::detail::UnlockTransition(1);
     nn::applet::CTR::detail::SleepIfShellClosed();
 }
+
+void SetSleepQueryCallback(nn::applet::CTR::AppletSleepQueryCallback callback,uptr arg){
+    // TODO
+}
+
+void SetAwakeCallback(AppletAwakeCallback callback,uptr arg){
+    // TODO
+}
+
+void DisableSleep(bool isReplyReject){
+    // TODO
+}
+
 
 }
 }

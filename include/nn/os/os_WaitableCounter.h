@@ -8,7 +8,7 @@ namespace os{
     class WaitableCounter{
     public:
         ValueType mValue;
-        static nn::Handle sHandle;
+        static s32 sHandle;
 
         static void Initialize();
     };

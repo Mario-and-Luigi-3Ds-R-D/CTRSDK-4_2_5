@@ -13,10 +13,14 @@ typedef void (*ThreadFunc)(uptr);
     class Thread : public nn::os::WaitObject{
     public:
         /* Paramaters */
+        typedef nn::os::AutoStackManager AutoStackManager;
 
         bool mCanFinalize;
         bool mUsingAutoStack;
         short pad1;
+
+        static Thread               sMainThread;
+        static AutoStackManager*    spAutoStackManager;
         
         /* nn::os::Thread::TypeInfo */
 
@@ -38,14 +42,13 @@ typedef void (*ThreadFunc)(uptr);
 
         void CallDestructorAndExit();
         void FinalizeImpl();
-        void NoParamaterFunc();
-        void SetAutoStackManager(nn::os::AutoStackManager* pManager);
+        void NoParamaterFunc(void (*f)());
+        void SetAutoStackManager(nn::os::AutoStackManager*);
         void SleepImpl(); // nn::fnd::TimeSpan* span
         void ThreadStart(uptr p);
         void TryInitializeAndStartImpl(nn::os::Thread::TypeInfo *typeInfo,nn::os::ThreadFunc f,void *p,uptr stackBottom,s32 priority, s32 coreNo,bool isAutoStack);
         void TryInitializeAndStartImplUsingAutoStack(nn::os::Thread::TypeInfo *typeInfo,nn::os::ThreadFunc f,void *p,size_t stackSize,s32 priority,s32 coreNo);
-    protected:
-    nn::os::AutoStackManager* spAutoStackManager;
+    private:
     };
 }
 }

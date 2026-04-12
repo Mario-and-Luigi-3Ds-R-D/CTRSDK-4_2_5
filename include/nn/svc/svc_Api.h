@@ -20,7 +20,7 @@ namespace svc{
     Result CreateMutex(nn::Handle*,bool);
     Result CreateEvent(nn::Handle*,nn::os::ResetType);
     s32 CreateAddressArbiter(nn::Handle*);
-    void ArbirateAddress(nn::Handle,uint,nn::os::ArbitrationType,int,long long);
+    void ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,int,long long);
     Result Break(nn::dbg::BreakReason,const void*,int);
     void CloseHandle(nn::Handle);
     void ConnectToPort(nn::Handle*, const char*);
@@ -29,6 +29,8 @@ namespace svc{
     void GetResourceLimit(nn::Handle*);
     void GetSystemTick();
     void GetThreadId(uint*,nn::Handle);
-    void WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long);
+    Result WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long);
 };
 }
+
+__svc(0x23) void svcCloseHandle(int);

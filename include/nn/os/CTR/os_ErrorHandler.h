@@ -12,10 +12,8 @@ namespace detail{
     void SetInternalErrorHandlingMode(bool preferFatal);
     void HandleInternalError(Result result);
 
+    static s8 sPreferFatal;
 
-namespace{
-    u8 sPreferFatal;
-} // _annoymous_
 } // detail
 } // CTR
 } // os

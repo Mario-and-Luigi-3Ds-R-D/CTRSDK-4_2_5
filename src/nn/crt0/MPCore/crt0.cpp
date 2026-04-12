@@ -1,32 +1,29 @@
 #include <nn/svc/svc_Api.h>
-#include <nn/Module.h>
 #include <rt_locale.h>
 #include <rt_sys.h>
 
-/*namespace {
-NN_MAKE_MODULE_SDK (s_SdkVersion, "CTR_SDK-4_2_5_200_none");
-NN_MAKE_MODULE_SDK (s_FirmwareVersion, "Firmware-02_30_20");
-}*/
+extern "C" void __cpp_initialize__aeabi_();
 
 extern "C"{
     void nninitRegion(); // native
     void nninitLocale(); // native
     void nninitSystem(); // init_Startup.cpp
     void nninitStartUp(); // init_Startup.cpp
-
-    void __cpp_initialize_aeabi_(){} // {} here
-    //u32* __rt_locale(void);
+    u32* __rt_locale(void);
 
     void nnMain();
     void nninitCallStaticInitializers(); // init_Startup.cpp
     void nninitSetup(); // init_Startup.cpp
+
+    extern u8 Image$$ZI$$ZI$$Limit[]; // ARMCC thingies
+    extern u8 Image$$ZI$$ZI$$Base[]; // ARMCC thingies
 
 __asm void __ctr_start(){
     bl __cpp(nninitRegion)
     bl __cpp(nninitLocale)
     bl __cpp(nninitSystem)
     bl __cpp(nninitStartUp)
-    blx __cpp(__cpp_initialize_aeabi_) // BLX, Moddimation makes it BL'n yet ghidra saids otherwise.Plus raw bytes do to.
+    blx __cpp(__cpp_initialize__aeabi_) // BLX, Moddimation makes it BL'n yet ghidra saids otherwise.Plus raw bytes do to.
     bl __cpp(nninitCallStaticInitializers)
     bl __cpp(nninitSetup)
     bl __cpp(nnMain)
@@ -34,8 +31,8 @@ __asm void __ctr_start(){
 }
 
 __asm void nninitRegion(){
-    ldr     r0,=__cpp(0x006E14A8) ; BADGE::PARAM
-    ldr     r1,=__cpp(0x0071211C) ; 
+    ldr     r0,=__cpp(Image$$ZI$$ZI$$Base) ; BADGE::PARAM
+    ldr     r1,=__cpp(Image$$ZI$$ZI$$Limit) ; 
     mov     r2,#0x0
 region_loop
     cmp     r0,r1
@@ -45,7 +42,26 @@ region_loop
 };
 
 __asm void nninitLocale(){
-    bx lr
+
+    LDR             R1, =0x4000000
+    MOV             R0, #0
+    PUSH            {R4,LR}
+    NOP
+    LDR             R1, =0x4000026
+    MOV             R0, #0
+    NOP
+    BL              __cpp(__rt_locale)
+    MOV             R4, R0
+    MOV             R1, #0
+    MOV             R0, R1
+    BL              __cpp(_get_lc_ctype)
+    ADD             R0, R0, #1
+    MOV             R1, #0
+    STR             R0, [R4,#4]
+    MOV             R0, R1
+    BL              __cpp(_get_lc_numeric)
+    STR             R0, [R4,#0xC]
+    POP             {R4,PC}
 }
 
 } // extern "C"

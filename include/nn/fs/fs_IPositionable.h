@@ -4,9 +4,11 @@
 
 namespace nn{
 namespace fs{
-    class IPositionable{
-    public:
-        virtual ~IPositionable();
-    };
+
+class IPositionable{
+public:
+    virtual ~IPositionable(){}
+};
+
 } // fs
 } // nn

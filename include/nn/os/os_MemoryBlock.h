@@ -22,7 +22,7 @@ namespace os{
         ~MemoryBlock();
     };
 
-
+void InitializeMemoryBlock();
 
 namespace{
 

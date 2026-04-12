@@ -3,7 +3,7 @@
 namespace nn{
 namespace os{
 
-    void SetDefaultAutoStackManager();
+    void SetDefaultAutoStackManager(){}
     
 }
 }

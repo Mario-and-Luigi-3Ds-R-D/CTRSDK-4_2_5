@@ -14,6 +14,7 @@ namespace detail{
     };
 
     class FileBase : public FileBaseImpl{
+    protected:
         struct S64{
             s32 lo;
             s32 hi;
@@ -30,9 +31,10 @@ namespace detail{
         Result TrySetSize(s64);
         Result TryFlush();
         int Read(void*, size_t);
-        void SetPosition(s64);
-        void Seek(s64 pSeekOut, nn::fs::PositionBase pPosBase);
         int Write(const void*, size_t, bool); // guess
+        void Seek(s64 pSeekOut, nn::fs::PositionBase pPosBase);
+        void SetPosition(s64);
+        s64 GetPosition();
         s64 GetSize();
     };
 } // detail

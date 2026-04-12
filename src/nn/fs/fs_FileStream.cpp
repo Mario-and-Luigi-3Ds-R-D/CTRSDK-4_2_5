@@ -1,86 +1,131 @@
 #include <nn/fs/fs_FileStream.h>
 
+// TODO:: ALL
+
 namespace nn{
 namespace fs{
         // FileStream
-        FileStream::FileStream(){}
+FileStream::FileStream(){
 
-        FileStream::~FileStream(){}
+}
 
-        Result FileStream::TrySeek(s64 pSeekOut, nn::fs::PositionBase pPosBase){
-            return detail::FileBase::TrySeek(pSeekOut, pPosBase);
-        }
-        void FileStream::Seek(s64 pSeekOut, nn::fs::PositionBase pPosBase){
-            detail::FileBase::Seek(pSeekOut, pPosBase);
-        }
-        int FileStream::FUN_005e0480(){}
+FileStream::~FileStream(){
 
-        FileStream* FileStream::FUN_005e0478(){}
+}
 
-        s64 FileStream::FUN_00128140(){}
+int FileStream::Read(void* pBuffer, size_t size){
+    detail::FileBase::Read(pBuffer, size);
+}
 
-        void FileStream::SetPosition(s64 pPosOut){
-            detail::FileBase::SetPosition(pPosOut);
-        }
-        Result FileStream::TryGetSize(s64* pSizeOut){
-            return detail::FileBase::TryGetSize(pSizeOut);
-        }
-        s64 FileStream::GetSize(){
-            return detail::FileBase::GetSize();
-        }
-        Result FileStream::TryRead(int* pReadOut, void* pBuffer, size_t pSize){
-            return detail::FileBase::TryRead(pReadOut, pBuffer, pSize);
-        }
-        int FileStream::Read(void* pBuffer, size_t pSize){
-            return detail::FileBase::Read(pBuffer, pSize);
-        }
-        int FileStream::Write(const void* pBuffer, size_t pSize, bool pFlush){
-            return detail::FileBase::Write(pBuffer, pSize, pFlush);
-        }
-        Result FileStream::TryWrite(int* pOut, const void* pBuffer, size_t pSize, bool pFlush){
-            return  detail::FileBase::TryWrite(pOut, pBuffer, pSize, pFlush);
-        }
-        void FileStream::FUN_0045c5dc(){}
+Result FileStream::TryRead(s32* pOut, void* buffer, size_t size){
 
-        void FileStream::FUN_0045e9e8(){}
+}
 
-        void FileStream::FUN_0045c57c(){}
+s32 FileStream::Write(const void* buffer, size_t size, bool flush){
 
-        void FileStream::FUN_0045ea3c(){}
+}
+Result FileStream::TryWrite(s32* pOut, const void* buffer, size_t size, bool flush){
+    this->mPosition.lo;
+}
 
-        // FileInputStream
+void FileStream::Seek(s64 position, PositionBase base){
+    this->detail::FileBase::Seek(position, base);
+}
 
-        FileInputStream::~FileInputStream(){
-        }
-        Result FileInputStream::TrySeek(s64 pSeekOut, nn::fs::PositionBase pPosBase){
-            return detail::FileBase::TrySeek(pSeekOut, pPosBase);
-        }
-        void FileInputStream::Seek(s64 pSeekOut, nn::fs::PositionBase pPosBase){
-            detail::FileBase::Seek(pSeekOut, pPosBase);
-        }
-        int FileInputStream::FUN_005f5784(){}
+Result FileStream::TrySeek(s64 position, PositionBase base){
 
-        s64 FileInputStream::FUN_005f57b8(){} // (param_1 + -0x1c) + 8 thiscall
+}
 
-        Result FileInputStream::TrySetPosition(s64 pPosPos){
-            return detail::FileBase::TrySetPosition(pPosPos);
-        }
-        void FileInputStream::SetPosition(s64 pPosPos){
-            detail::FileBase::SetPosition(pPosPos);
-        }
-        Result FileInputStream::TryGetSize(s64* pSizeOut){
-            return detail::FileBase::TryGetSize(pSizeOut);
-        }
-        s64 FileInputStream::GetSize(){
-            return detail::FileBase::GetSize();
-        }
-        Result FileInputStream::TryRead(int* pReadOut, void* pBuffer, size_t pSize){
-            return detail::FileBase::TryRead(pReadOut, pBuffer, pSize);
-        }
-        int FileInputStream::Read(void* pBuffer, size_t pSize){
-            return detail::FileBase::Read(pBuffer, pSize);
-        }
+s64 FileStream::GetPosition(){
+    this->detail::FileBase::GetPosition();
+}
 
-        // FileOutputStream
+Result FileStream::TryGetPosition(s64* pOut){
+
+}
+
+void FileStream::SetPosition(s64 position){
+
+}
+
+Result FileStream::TrySetPosition(s64 position){
+
+}
+
+s64 FileStream::GetSize(){
+
+}
+
+Result FileStream::TryGetSize(s64* pOut){
+
+}
+
+void FileStream::SetSize(s64 size){
+
+}
+
+Result FileStream::TrySetSize(s64 size){
+
+}
+
+void FileStream::Flush(){
+
+}
+
+Result FileStream::TryFlush(){
+
+}
+
+// FileInputStream
+
+FileInputStream::FileInputStream(){
+
+}
+
+FileInputStream::~FileInputStream(){
+
+}
+
+s32 FileInputStream::Read(void* buffer, size_t size){
+
+}
+
+Result FileInputStream::TryRead(s32* pOut, void* buffer, size_t size){
+
+}
+
+void FileInputStream::Seek(s64 position, PositionBase base){
+
+}
+
+Result FileInputStream::TrySeek(s64 position, PositionBase base){
+
+}
+
+s64 FileInputStream::GetPosition(){
+
+}
+
+Result FileInputStream::TryGetPosition(s64* pOut){
+
+}
+
+void FileInputStream::SetPosition(s64 position){
+
+}
+
+Result FileInputStream::TrySetPosition(s64 position){
+
+}
+
+s64 FileInputStream::GetSize(){
+
+}
+
+Result FileInputStream::TryGetSize(s64* pOut){
+
+}
+
+
 }
 }

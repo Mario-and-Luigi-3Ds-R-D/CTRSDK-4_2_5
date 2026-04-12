@@ -18,9 +18,9 @@ namespace os{
 
 namespace{
 
-    static int sDeviceMemoryAddress; // 0x0
-    static int sDeviceMemorySize; // 0x4
-    static int sDeviceHeapSize; // 0x8
+    int sDeviceMemoryAddress; // 0x0
+    int sDeviceMemorySize; // 0x4
+    int sDeviceHeapSize; // 0x8
     
 }
 }

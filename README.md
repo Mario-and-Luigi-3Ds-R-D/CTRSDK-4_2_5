@@ -1,8 +1,14 @@
 # CTRSDK-4_2_5
-This a rewrite of the CTR SDK 4_2_5 version, as used in the Mario & Luigi Dream Team US 1.0 decompilation.
 
-Everything shown here is unfinished as you can see in the git ignore. Rest assure work will be done!
+A rewrite of the CTR SDK used in the Mario & Luigi: Dream Team US 1.0 decompilation.
 
-[Check out our decomp!](https://github.com/Mario-and-Luigi-3Ds-R-D/MILLI4C)
 
-And also [Join the Discord!](https://discord.gg/dQ4xEerM9m)
+# Rewrite rules:
+
+1) Any game function that calls into an SDK function will have that SDK function rewritten alongside it. If a function makes no SDK calls, inline ASM is a valid alternative. (nn::math is exempt from this rule.)
+
+2) Any ASM function will explain what it does.
+
+# Join the Discord here:
+
+Decompilation project → · Join the Discord →

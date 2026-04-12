@@ -4,6 +4,15 @@
 #include "nn/types.h"
 #include "nn/os/ARM/os_Exception.h"
 
+enum nnerrFatalErrType{
+    NN_ERR_FATAL_TYPE_SYSTEM_COMMON = 0,
+    NN_ERR_FATAL_TYPE_NAND_CORRUPTION = 1,
+    NN_ERR_FATAL_TYPE_CARD_EJECTION = 2,
+    NN_ERR_FATAL_TYPE_EXCEPTION = 3,
+    NN_ERR_FATAL_TYPE_RESULT_FAILURE = 4,
+    NN_ERR_FATAL_TYPE_LOG_ONLY = 5,
+};
+
 namespace nn{
 namespace err{
 namespace CTR{
@@ -38,7 +47,9 @@ namespace CTR{
     public:
         Result Throw();
     };
-    void ThrowFatalErr(Result pResult);
+
+
+    void ThrowFatalErr(Result pResult, uptr pc){}
 namespace{
     
 

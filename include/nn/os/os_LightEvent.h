@@ -12,6 +12,7 @@ namespace os{
         nn::os::SimpleLock mLock;
 
         void Initialize(bool);
+        void Finalize();
         void ClearSignal(void);
         void Wait(void);
         void Signal(void);

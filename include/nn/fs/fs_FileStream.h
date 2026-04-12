@@ -12,46 +12,44 @@
 
 namespace nn{
 namespace fs{
+
     class FileStream : public IStream, public detail::FileBase{ // public FileBase as well
     public:
         FileStream();
         virtual ~FileStream();
-        virtual Result TrySeek(s64, nn::fs::PositionBase);
-        virtual void Seek(s64, nn::fs::PositionBase);
-        virtual int FUN_005e0480();
-        virtual FileStream* FUN_005e0478();
-        virtual s64 FUN_00128140();
-        virtual void SetPosition(s64);
-        virtual Result TryGetSize(s64*);
-        virtual s64 GetSize();
-        virtual Result TryRead(int*, void*, size_t);
         virtual int Read(void*, size_t);
-        virtual int Write(const void*, size_t, bool);
-        virtual Result TryWrite(int*, const void*, size_t, bool);
-        virtual void FUN_0045c5dc();
-        virtual void FUN_0045e9e8();
-        virtual void FUN_0045c57c();
-        virtual void FUN_0045ea3c();
+        virtual Result TryRead(s32* pOut, void* buffer, size_t size);
+        virtual s32 Write(const void* buffer, size_t size, bool flush);
+        virtual Result TryWrite(s32* pOut, const void* buffer, size_t size, bool flush);
+        virtual void Seek(s64 position, PositionBase base);
+        virtual Result TrySeek(s64 position, PositionBase base);
+        virtual s64 GetPosition();
+        virtual Result TryGetPosition(s64* pOut);
+        virtual void SetPosition(s64 position);
+        virtual Result TrySetPosition(s64 position);
+        virtual s64 GetSize();
+        virtual Result TryGetSize(s64* pOut);
+        virtual void SetSize(s64 size);
+        virtual Result TrySetSize(s64 size);
+        virtual void Flush();
+        virtual Result TryFlush();
     };
 
     class FileInputStream : public IInputStream, detail::FileBase{
     public:
+        FileInputStream();
         virtual ~FileInputStream();
-        virtual Result TrySeek(s64, nn::fs::PositionBase);
-        virtual void Seek(s64, nn::fs::PositionBase);
-        virtual int FUN_005f5784();
-        virtual s64 FUN_005f57b8();
-        virtual Result TrySetPosition(s64);
-        virtual void SetPosition(s64);
-        virtual Result TryGetSize(s64*);
-        virtual long long GetSize();
-        virtual Result TryRead(int*, void*, size_t);
-        virtual s32 Read(void*, size_t);
+        virtual s32 Read(void* buffer, size_t size);
+        virtual Result TryRead(s32* pOut, void* buffer, size_t size);
+        virtual void Seek(s64 position, PositionBase base);
+        virtual Result TrySeek(s64 position, PositionBase base);
+        virtual s64 GetPosition();
+        virtual Result TryGetPosition(s64* pOut);
+        virtual void SetPosition(s64 position);
+        virtual Result TrySetPosition(s64 position);
+        virtual s64 GetSize();
+        virtual Result TryGetSize(s64* pOut);
     };
-    
-    class FileOutputStream : public IOutputStream, detail::FileBase{
-    public:
-    
-    };
+
 } // fs
 } // nn

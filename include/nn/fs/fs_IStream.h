@@ -1,5 +1,6 @@
 #pragma once
 
+#include "nn/Result.h"
 #include "nn/fs/fs_IPositionable.h"
 
 namespace nn{
@@ -9,21 +10,19 @@ class IInputStream : public IPositionable{
 public:
     int flag1; // IPositionable
 
-    virtual ~IInputStream();
+    virtual ~IInputStream(){}
 };
 
 class IOutputStream : public IPositionable{
 public:
     int flag1; // IPositionable
 
-    virtual ~IOutputStream();
+    virtual ~IOutputStream(){}
 };
 
-class IStream{
-    IInputStream mInputStream;
-    IOutputStream mOutputStream;
+class IStream : public IInputStream, public IOutputStream{
 public:
-    virtual ~IStream();
+    virtual ~IStream(){}
 };
 
 } // fs

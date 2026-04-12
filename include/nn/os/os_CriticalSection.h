@@ -13,11 +13,11 @@ namespace os {
         u32 mThreadUniqueValue;
         s32 mLockCount;
 
-        void Initialize(void);
-        void Enter(void);
-        void Leave(void);
-        bool TryEnter(void);
-        ~CriticalSection() {
+        void Initialize(void); // Initialize Thread Crit. Sect.
+        void Enter(void); // Enter Thread Crit. Sect.
+        void Leave(void); // Leave Thread Crit. Sect.
+        bool TryEnter(void); // Try to enter Thread Crit. Sect.
+        ~CriticalSection() { // deconst
         }
 
         struct ScopedLock{

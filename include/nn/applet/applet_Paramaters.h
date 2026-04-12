@@ -1,6 +1,8 @@
 #pragma once
 
 #include "nn/types.h"
+#include "nn/Handle.h"
+#include "nn/fnd/fnd_TimeSpan.h"
 
 namespace nn{
 namespace applet{
@@ -95,11 +97,103 @@ namespace CTR{
         HOME_BUTTON_DOUBLE_PRESSED = 2,
     };
 
+    enum PowerButtonState {
+        POWER_BUTTON_STATE_NONE=0,
+        POWER_BUTTON_STATE_CLICK=1
+    };
+
+    enum OrderToCloseState {
+        ORDER_TO_CLOSE_STATE_NONE=0,
+        ORDER_TO_CLOSE_STATE_RECEIVED=1
+    };
+
+    enum WakeupState {
+        WAKEUP_BY_TIMEOUT=-1,
+        WAKEUP_SKIP=0,
+        WAKEUP_TO_START=1,
+        WAKEUP_BY_EXIT=2,
+        WAKEUP_BY_PAUSE=3,
+        WAKEUP_BY_CANCEL=4,
+        WAKEUP_BY_CANCELALL=5,
+        WAKEUP_BY_POWER_BUTTON_CLICK=6,
+        WAKEUP_TO_JUMP_HOME=7,
+        WAKEUP_TO_JUMP_APPLICATION=8,
+        WAKEUP_TO_LAUNCH_APPLICATION=9,
+        WAKEUP_STATE_MAX=63
+    };
+
+    enum QueryReply {
+        REPLY_REJECT=0,
+        REPLY_ACCEPT=1,
+        REPLY_LATER=2
+    };
+
+    enum SleepNotificationState {
+        NOTIFY_NONE=0,
+        NOTIFY_SLEEP_QUERY=1,
+        NOTIFY_SLEEP_ACCEPT=2,
+        NOTIFY_SLEEP_REJECT=3,
+        NOTIFY_SLEEP_ACCEPTED=4,
+        NOTIFY_AWAKE=5
+    };
+
+    enum SleepSysState {
+        SLEEP_SYS_STATE_NONE=0,
+        SLEEP_SYS_STATE_QUERY=1,
+        SLEEP_SYS_STATE_ACCEPTED=2,
+        SLEEP_SYS_STATE_AWAKE=3,
+        SLEEP_SYS_STATE_CANCELED=4
+    };
+
+    enum ShutdownState {
+        SHUTDOWN_STATE_NONE=0,
+        SHUTDOWN_STATE_RECEIVED=1
+    };
+
+    enum TransitionType {
+        TRANSITION_NONE = 0,
+        TRANSITION_START_APP = 1,
+        TRANSITION_PRELOAD_APPLIB = 2,
+        TRANSITION_CANCEL_APPLIB = 3,
+        TRANSITION_START_APPLIB = 4,
+        TRANSITION_START_SYS = 5,
+        TRANSITION_START_SYSLIB = 6,
+        TRANSITION_PRELOAD_RES = 7,
+        TRANSITION_START_RES = 8,
+        TRANSITION_CLOSE_APP = 9,
+        TRANSITION_ORDER_CLOSE_APP = 10,
+        TRANSITION_CLOSE_APPLIB = 11,
+        TRANSITION_CLOSE_SYSLIB = 12,
+        TRANSITION_PAUSE_APPLIB = 13,
+        TRANSITION_JUMP_HOME = 14,
+        TRANSITION_LEAVE_HOME = 15,
+        TRANSITION_LEAVE_RES = 16,
+        TRANSITION_ORDER_CLOSE_SYS = 17,
+        TRANSITION_JUMP_APP = 18,
+        TRANSITION_ENABLE_APPLET = 98,
+        TRANSITION_SKIP = 99
+    };
+
     struct AppletDisplayInfo{
         uptr mAddr;
         uptr mAddrB;
 
     };
+/* Externs To make things work*/
+
+    typedef enum WakeupState AppletWakeupState;
+    typedef void (*AppletAwakeCallback)(uptr);
+    typedef QueryReply (*AppletSleepQueryCallbackFunc)(uptr);
+    typedef void (*AppletAwakeCallback)(uptr);
+    typedef int (*AppletSleepQueryCallback)(uptr);
+    typedef void (*AppletSysSleepAcceptedCallback)(uptr);
+    typedef bit32 AppletAttr;
+    typedef bit32 AppletId;
+
+    extern const nn::Handle HANDLE_NONE;
+
+    const nn::fnd::TimeSpan WAIT_INFINITE = nn::fnd::TimeSpan::FromNanoSeconds((s64)-1);
+    const nn::fnd::TimeSpan NO_WAIT = nn::fnd::TimeSpan::FromNanoSeconds(0);
 }
 }
 }

@@ -4,9 +4,8 @@
 
 struct Result {
 private:
-    u32 mResult;
 public:
-
+    u32 mResult;
     enum Level{
             LEVEL_INFO      = 1,
             LEVEL_SUCCESS   = 0,
