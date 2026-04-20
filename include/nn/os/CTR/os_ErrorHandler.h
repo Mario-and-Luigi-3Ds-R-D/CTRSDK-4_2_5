@@ -18,3 +18,13 @@ namespace detail{
 } // CTR
 } // os
 } // nn
+
+#define NN_OS_ERROR_IF_FAILED(result)           \
+    do                                          \
+    {                                           \
+        ::Result nn_os_result = (result);   \
+        if ( nn_os_result.Failed() )         \
+        {                                       \
+            ::nn::os::CTR::detail::HandleInternalError(nn_os_result); \
+        }                                       \
+    } while(0)

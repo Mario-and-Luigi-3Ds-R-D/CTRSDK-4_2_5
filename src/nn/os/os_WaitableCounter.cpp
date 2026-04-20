@@ -4,17 +4,25 @@
 namespace nn{
 namespace os{
 
-s32 WaitableCounter::sHandle; // I FUCKING HATE ARMCC
+s32 WaitableCounter::sHandle;
+// Initializes the WaitableCounter.
+__asm void WaitableCounter::Initialize(void) {
+    PUSH            {R3-R5,LR}
+    LDR             R4, =__cpp(&sHandle)
+    LDR             R0, [R4]
+    CMP             R0, #0
+    BNE             locret_1073F0
+    MOV             R0, #0
+    STR             R0, [SP,#0x0]
+    MOV             R0, SP
+    BL              __cpp(nn::svc::CreateAddressArbiter)
+    AND             R0, R0, #0x80000000
+    CMP             R0, #0
+    LDRGE           R0, [SP,#0x0]
+    STRGE           R0, [R4]
 
-void WaitableCounter::Initialize(void) {
-    nn::Handle* pHandle;
-
-    if (nn::os::WaitableCounter::sHandle == 0) {
-        pHandle = 0;
-        if ((s32)(nn::svc::CreateAddressArbiter((nn::Handle*)&pHandle) & 0x80000000) >= 0) { // If Result is 1 or higher then we gucci
-            (nn::Handle*)nn::os::WaitableCounter::sHandle = pHandle;
-        }
-    }
+locret_1073F0
+    POP             {R3-R5,PC}
 }
 
 } // os

@@ -5,6 +5,14 @@
 #include "nn/types.h"
 #include "nn/Result.h"
 #include "nn/Handle.h"
+#include "nn/util/util_NonCopyable.h"
+
+// Svc Declartion to calm ARMCC
+namespace nn {
+namespace svc {
+    Result CloseHandle(nn::Handle);
+}
+}
 
 namespace nn{
 namespace os{
@@ -95,6 +103,16 @@ namespace os{
         PROCESS_INFO_TYPE_MAX_BIT = 2147483648,
     };
 
+    enum MemoryPermission{
+        MEMORY_PERMISSION_NONE          = 0,
+        MEMORY_PERMISSION_READ          = (1u <<  0),
+        MEMORY_PERMISSION_WRITE         = (1u <<  1),
+        MEMORY_PERMISSION_READ_WRITE    = (MEMORY_PERMISSION_READ | MEMORY_PERMISSION_WRITE),
+
+        MEMORY_PERMISSION_DONT_CARE     = (1u << 28),
+        MEMORY_PERMISSION_MAX_BITS      = (1u << 31)
+    };
+
     struct MemoryInfo{
         uptr mBaseAddress;
         size_t mSize;
@@ -120,10 +138,40 @@ namespace os{
         s64 mDiffMilliSeconds;
     };
 
-    class HandleObj{
+    class HandleObj : util::ADLFireWall::NonCopyable<HandleObj>{
     public:
-        nn::Handle mHandle;
-    };
+        Handle mHandle;
+
+    protected:
+        Handle GetHandle() const{
+            return mHandle;
+        }
+        bool IsValid() const{
+            return mHandle.IsValid();
+        }
+
+    public:
+        HandleObj(){}
+
+        ~HandleObj(){
+            Close();
+        }
+
+        void Close(){
+            if (IsValid()) {
+                nn::svc::CloseHandle(mHandle);
+                mHandle = Handle();
+            }
+        }
+
+        void Finalize(){
+                Close();
+        }
+
+        void ClearHandle(){
+            mHandle = Handle();
+        }
+        };
 
     class WaitObject : public HandleObj{
     };

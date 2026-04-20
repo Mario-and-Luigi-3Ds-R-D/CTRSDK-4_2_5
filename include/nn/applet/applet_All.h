@@ -1,0 +1,11 @@
+#include "nn/types.h"
+#include "nn/Result.h"
+#include "nn/Handle.h"
+
+#include "nn/applet/CTR/applet_Api.h"
+#include "nn/applet/CTR/applet_Connect.h"
+#include "nn/applet/CTR/applet_Info.h"
+#include "nn/applet/CTR/applet_InitialParamaters.h"
+#include "nn/applet/CTR/applet_Paramaters.h"
+#include "nn/applet/CTR/applet_Wrapper.h"
+#include "nn/applet/CTR/detail/applet_Ipc.h"

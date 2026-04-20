@@ -11,26 +11,27 @@
 namespace nn{
 namespace svc{
     Result ControlMemory(uint*,uint,uint,uint,uint,uint);
-    void ExitProcess();
-    void QueryMemory(nn::os::MemoryInfo*,nn::os::PageInfo*,uint);
-    void CreateThread(nn::Handle*, void*, uint, uint,uint,int,int);
-    void ExitThread();
-    void SleepThread(long long);
+    Result ExitProcess();
+    Result QueryMemory(nn::os::MemoryInfo*,nn::os::PageInfo*,uint);
+    Result CreateThread(nn::Handle*, void*, uint, uint,uint,int,int);
+    Result ExitThread();
+    Result SleepThread(long long);
     Result GetThreadPriority();
     Result CreateMutex(nn::Handle*,bool);
     Result CreateEvent(nn::Handle*,nn::os::ResetType);
-    s32 CreateAddressArbiter(nn::Handle*);
-    void ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,int,long long);
+    Result CreateAddressArbiter(nn::Handle*);
+    Result CreateMemoryBlock(nn::Handle* pOut, uptr pMemory, size_t size, bit32 myPermission, bit32 otherPermission);
+    Result ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,s32);
     Result Break(nn::dbg::BreakReason,const void*,int);
-    void CloseHandle(nn::Handle);
-    void ConnectToPort(nn::Handle*, const char*);
-    void DuplicateHandle(nn::Handle*);
-    void GetProcessId(uint*, nn::Handle);
-    void GetResourceLimit(nn::Handle*);
-    void GetSystemTick();
-    void GetThreadId(uint*,nn::Handle);
+    Result CloseHandle(nn::Handle);
+    Result ConnectToPort(nn::Handle*, const char*);
+    Result DuplicateHandle(nn::Handle*);
+    Result GetProcessId(uint*, nn::Handle);
+    Result GetResourceLimit(nn::Handle*);
+    Result GetSystemTick();
+    Result GetThreadId(uint*,nn::Handle);
     Result WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long);
+    Result MapMemoryBlock(nn::Handle,uptr,bit32,uint);
+    Result UnmapMemoryBlock(nn::Handle,uptr);
 };
 }
-
-__svc(0x23) void svcCloseHandle(int);

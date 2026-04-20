@@ -9,7 +9,11 @@ extern "C"{
     void nninitLocale(); // native
     void nninitSystem(); // init_Startup.cpp
     void nninitStartUp(); // init_Startup.cpp
+
     u32* __rt_locale(void);
+    void _fp_init(void);
+    //void __rt_lib_shutdown_cpp_1(void);
+    void __aeabi_atexit() { } // Stub for static initializers.
 
     void nnMain();
     void nninitCallStaticInitializers(); // init_Startup.cpp
@@ -17,6 +21,8 @@ extern "C"{
 
     extern u8 Image$$ZI$$ZI$$Limit[]; // ARMCC thingies
     extern u8 Image$$ZI$$ZI$$Base[]; // ARMCC thingies
+
+#pragma arm
 
 __asm void __ctr_start(){
     bl __cpp(nninitRegion)

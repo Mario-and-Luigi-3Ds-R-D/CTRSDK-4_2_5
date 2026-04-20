@@ -1,25 +1,13 @@
 /* Simple Lock */
 
-/*
-FileName: nn/os/os_SimpleLock.cpp
-
-You will not need to use this, the SDK will branch to these for you. Such as CriticalSection and LightEvent*/
-
 #include <nn/os/os_SimpleLock.h>
 #include <nn/svc/svc_Api.h>
 
 namespace nn{
 namespace os{
 
-__asm void SimpleLock::Initialize(void) {
-    MOV             R1,#1
-
-loc_120F44
-    LDREX           R2, [R0]
-    STREX           R3, R1, [R0]
-    CMP             R3, #0 // if R3 != 0 then loop.
-    BNE             loc_120F44
-    BX              LR
+void SimpleLock::Initialize(void) {
+    *this->mCounter = 1; // ultimate ASM this creates lmao
 }
 
 __asm void SimpleLock::Lock(){
@@ -40,10 +28,12 @@ LAB_0012825c
     B               __cpp(nn::os::SimpleLock::LockImpl) // Branch off to LockImpl, continue there.
 }
 
+// Does the lock.
+
 __asm void SimpleLock::LockImpl(){
 
     PUSH            {R4, R5, R6, LR}
-    SUB             SP,SP,#8 // Initialize onto the Stack
+    SUB             SP,SP,#8
     MOV             R4,R0
 loc_128274
     LDREX           R2, [R4]
@@ -53,7 +43,7 @@ loc_128274
     STREX           R2, R1, [R4]
     CMP             R2, #0
     BNE             loc_128274
-    LDR             R5, =__cpp(0x006d4b2c)
+    LDR             R5, =__cpp(&os::WaitableCounter::sHandle)
     B               loc_1282C8
 
 loc_128298
@@ -101,6 +91,10 @@ loc_12830C
     B               loc_1282C8
 }
 
+// Trys to lock.
+//
+// Returns a bool TRUE/FALSE
+
 __asm bool SimpleLock::TryLock(){
     LDREX           R1,[R0]
     CMP             R1,#0
@@ -118,6 +112,8 @@ LAB_00125410
 }
 
 // Unlocks the Simplelock, go figure.
+//
+// Returns to see if it CAN unlock.
 
 __asm void SimpleLock::Unlock(){
     PUSH            {R4,LR}
@@ -132,7 +128,7 @@ loc_120FC4
     CMP             R2, #1
     BLE             loc_121004
     MOV             R1, R0
-    LDR             R0, =__cpp(0x006d4b2c)
+    LDR             R0, =__cpp(&os::WaitableCounter::sHandle)
     MOV             R2, #0
     MOV             R4, R2
     MOV             R12, R2

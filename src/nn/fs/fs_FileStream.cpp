@@ -1,4 +1,5 @@
 #include <nn/fs/fs_FileStream.h>
+#include <nn/err/CTR/err_Api.h>
 
 // TODO:: ALL
 
@@ -6,126 +7,92 @@ namespace nn{
 namespace fs{
         // FileStream
 FileStream::FileStream(){
-
 }
 
 FileStream::~FileStream(){
-
 }
 
-int FileStream::Read(void* pBuffer, size_t size){
-    detail::FileBase::Read(pBuffer, size);
+#ifdef NONMATCHING
+#endif
+
+s32 FileStream::Read(void *buffer,size_t size){
+    s32 ret;
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TryRead(&ret, buffer, size));
+    return ret;
 }
 
 Result FileStream::TryRead(s32* pOut, void* buffer, size_t size){
-
+    this->detail::FileBase::TryRead(pOut, buffer, size);
 }
 
 s32 FileStream::Write(const void* buffer, size_t size, bool flush){
-
+    s32 ret;
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TryWrite(&ret, buffer, size, flush));
+    return ret;
 }
-Result FileStream::TryWrite(s32* pOut, const void* buffer, size_t size, bool flush){
-    this->mPosition.lo;
+
+Result FileStream::TryWrite(s32* pOut, const void* buffer, size_t size, bool flush) {
+    Result result;
+    u32 isError;
+
+    result = this->nn::fs::detail::FileBase::TryWrite(pOut, buffer, size, flush);
+    result.mResult;
 }
 
 void FileStream::Seek(s64 position, PositionBase base){
-    this->detail::FileBase::Seek(position, base);
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TrySeek(position, base));
 }
 
-Result FileStream::TrySeek(s64 position, PositionBase base){
+Result FileStream::TrySeek(s64 param_1, nn::fs::PositionBase pos) {
+    Result result;
 
+    result = this->nn::fs::detail::FileBase::TrySeek(param_1,pos);
+    result.mResult;
 }
 
 s64 FileStream::GetPosition(){
-    this->detail::FileBase::GetPosition();
+    s64 ret;
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TryGetPosition(&ret));
+    return ret;
 }
 
 Result FileStream::TryGetPosition(s64* pOut){
-
+    return this->detail::FileBase::TryGetPosition(pOut);
 }
 
 void FileStream::SetPosition(s64 position){
-
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TrySetPosition(position));
 }
 
 Result FileStream::TrySetPosition(s64 position){
-
+    return this->detail::FileBase::TrySetPosition(position);
 }
 
 s64 FileStream::GetSize(){
-
+    return this->detail::FileBase::GetSize();
 }
 
 Result FileStream::TryGetSize(s64* pOut){
-
+    Result ret;
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TryGetSize((s64*)&ret));
+    return ret;
 }
 
 void FileStream::SetSize(s64 size){
-
+    this->detail::FileBase::SetSize(size);
 }
 
 Result FileStream::TrySetSize(s64 size){
-
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TrySetSize(size));
 }
 
 void FileStream::Flush(){
-
+    this->detail::FileBase::Flush();
 }
 
 Result FileStream::TryFlush(){
-
+    NN_ERR_THROW_FATAL_ALL(this->detail::FileBase::TryFlush());
 }
-
-// FileInputStream
-
-FileInputStream::FileInputStream(){
-
-}
-
-FileInputStream::~FileInputStream(){
-
-}
-
-s32 FileInputStream::Read(void* buffer, size_t size){
-
-}
-
-Result FileInputStream::TryRead(s32* pOut, void* buffer, size_t size){
-
-}
-
-void FileInputStream::Seek(s64 position, PositionBase base){
-
-}
-
-Result FileInputStream::TrySeek(s64 position, PositionBase base){
-
-}
-
-s64 FileInputStream::GetPosition(){
-
-}
-
-Result FileInputStream::TryGetPosition(s64* pOut){
-
-}
-
-void FileInputStream::SetPosition(s64 position){
-
-}
-
-Result FileInputStream::TrySetPosition(s64 position){
-
-}
-
-s64 FileInputStream::GetSize(){
-
-}
-
-Result FileInputStream::TryGetSize(s64* pOut){
-
-}
-
 
 }
 }

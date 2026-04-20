@@ -7,7 +7,7 @@ namespace fs{
 
 class IPositionable{
 public:
-    virtual ~IPositionable(){}
+    virtual ~IPositionable() {};
 };
 
 } // fs

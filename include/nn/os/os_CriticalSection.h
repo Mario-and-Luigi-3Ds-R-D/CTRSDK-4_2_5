@@ -6,7 +6,6 @@
 
 namespace nn { 
 namespace os {
-    
     class CriticalSection {
     public:
         SimpleLock mLock;
@@ -19,11 +18,13 @@ namespace os {
         bool TryEnter(void); // Try to enter Thread Crit. Sect.
         ~CriticalSection() { // deconst
         }
+            struct ScopedLock {
+                nn::os::CriticalSection* mReference;
+                ScopedLock(nn::os::CriticalSection& cs) : mReference(&cs) {mReference->Enter();}
 
-        struct ScopedLock{
-            nn::os::CriticalSection* mReference;
+                ~ScopedLock(){mReference->Leave();}
+    
+            };
         };
-
-    };
-}
+    }
 };

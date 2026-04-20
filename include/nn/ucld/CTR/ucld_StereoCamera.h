@@ -2,8 +2,8 @@
 
 #include "nn/types.h"
 #include "nn/math/math_Vec3.h"
-/*#include "nn/math/math_Matrix44.h"
-#include "nn/math/math_Matrix34.h"*/
+#include "nn/math/math_Matrix44.h"
+#include "nn/math/math_Matrix34.h"
 
 namespace nn{
 namespace ulcd{
@@ -31,18 +31,21 @@ namespace CTR{
     f32 mDistanceToFarClip;
     f32 mCameraInterval;
 
-/*    f32 CalculateMaxtrices(Matrix44 *projL,Matrix34 *viewL,Matrix44 *projR,Matrix34 *viewR, Matrix44 *projOriginal,Matrix34 *viewOriginal,f32 depthLevel,f32 factor,bool realSwitch)
+    // Theres more to this.
+    f32 CalculateMaxtrices(nn::math::MTX44 *projL,nn::math::MTX34 *viewL,nn::math::MTX44 *projR,nn::math::MTX34 *viewR, nn::math::MTX44 *projOriginal,nn::math::MTX34 *viewOriginal,f32 depthLevel,f32 factor,bool realSwitch);
     f32 GetParallex();
     void Initialize();
     StereoCamera();
-*/
+
 }; // StereoCamera
 
 namespace{
+bool IsInitialized;
 
-//void GetLookPose(Matrix34 *view,Vector3 *pos,Direction *dir)
 
-}// _annoymous_
-}// ctr
-}// ulcd
+//void GetLookPose(nn::math::MTX34 *view,nn::math::VEC3 *pos,Direction *dir);
+
+}
+}
+}
 }

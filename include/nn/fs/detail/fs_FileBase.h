@@ -22,6 +22,8 @@ namespace detail{
         S64 mPosition;
         S64 mSize;
     public:
+        FileBase();
+        virtual ~FileBase();
         Result TryRead(int*, void*, size_t);
         Result TryWrite(int*, const void*, size_t, bool);
         Result TrySeek(s64, nn::fs::PositionBase);
@@ -34,6 +36,8 @@ namespace detail{
         int Write(const void*, size_t, bool); // guess
         void Seek(s64 pSeekOut, nn::fs::PositionBase pPosBase);
         void SetPosition(s64);
+        void Flush();
+        void SetSize(s64);
         s64 GetPosition();
         s64 GetSize();
     };

@@ -6,7 +6,6 @@
 
 namespace nn{
 namespace os{
-
     class TransferMemoryBlock : public nn::os::MemoryBlockBase, public nn::os::HandleObj{
     public:
         bool mSpaceAllocated;
@@ -14,6 +13,7 @@ namespace os{
         int reseversed2;
 
         void Finalize();
+        Result Initialize();
         ~TransferMemoryBlock();
     };
 

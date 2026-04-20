@@ -1,6 +1,7 @@
 #pragma once
 
 #include "nn/types.h"
+#include "nn/util/util_NonCopyable.h"
 
 namespace nn{
 namespace fnd{
@@ -18,12 +19,14 @@ public:
 class IntrusiveLinkedList{
 public:
 
-    struct Item{
-        nn::fnd::IntrusiveLinkedList::Item* mPrevLink;
-        nn::fnd::IntrusiveLinkedList::Item* mNextLink;
-    };
+struct Item : nn::util::ADLFireWall::NonCopyable<Item> {
+    Item* mPrevLink;
+    Item* mNextLink;
+};
 
-    nn::fnd::IntrusiveLinkedList::Item mHead;
+nn::fnd::IntrusiveLinkedList::Item mHead;
+
+
 }; // IntrusiveLinkedList
 
 }

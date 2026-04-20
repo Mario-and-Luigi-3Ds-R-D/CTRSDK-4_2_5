@@ -8,6 +8,14 @@ namespace nn{
 namespace fs{
 namespace detail{
 
+FileBase::FileBase(){
+    
+}
+
+FileBase::~FileBase(){
+    
+}
+
 Result FileBase::TryRead(int* pReadOut, void* pBuffer, size_t pSize){
 }
 
@@ -45,6 +53,14 @@ s64 FileBase::GetSize(){
 }
 
 s32 FileBase::Write(const void * pBuffer, size_t pSize, bool pFlush){
+}
+
+void FileBase::SetSize(s64 size){
+
+}
+
+void FileBase::Flush(){
+
 }
 
 } // detail

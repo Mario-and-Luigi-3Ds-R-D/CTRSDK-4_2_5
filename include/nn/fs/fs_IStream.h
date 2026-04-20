@@ -6,23 +6,19 @@
 namespace nn{
 namespace fs{
 
-class IInputStream : public IPositionable{
+class IInputStream : public virtual nn::fs::IPositionable{
 public:
-    int flag1; // IPositionable
-
-    virtual ~IInputStream(){}
+    virtual ~IInputStream() {}
 };
 
-class IOutputStream : public IPositionable{
+class IOutputStream : public virtual nn::fs::IPositionable{
 public:
-    int flag1; // IPositionable
-
-    virtual ~IOutputStream(){}
+    virtual ~IOutputStream() {}
 };
 
-class IStream : public IInputStream, public IOutputStream{
+class IStream : public nn::fs::IInputStream, public nn::fs::IOutputStream{
 public:
-    virtual ~IStream(){}
+    virtual ~IStream() {}
 };
 
 } // fs

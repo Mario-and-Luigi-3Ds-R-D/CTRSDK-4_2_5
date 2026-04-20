@@ -155,5 +155,28 @@ int GetCodeRegionSize(){
     return 0x53cb98;
 }
 
+__asm size_t GetUsingMemorySize(){
+    PUSH            {LR}
+    SUB             SP, SP, #0x14
+    MOV             R0, #0
+    STR             R0, [SP,#0x8]
+    LDR             R0, =__cpp(0x0069A448)
+    LDR             R1, [R0,#8]
+    STR             R1, [SP,#0xC]
+    LDR             R1, [R0]
+    ADD             R0, SP, #0x8
+    BL              __cpp(nn::svc::GetResourceLimit)
+    LDR             R1, [SP,#0x8]
+    MOV             R3, #1
+    ADD             R2, SP, #0xC
+    MOV             R0, SP
+    SVC             0x3A ; ':'
+    LDR             R0, [SP,#0x8]
+    SVC             0x23 ; '#'
+    LDR             R0, [SP,#0x0]
+    ADD             SP, SP, #0x14
+    POP             {PC}
+}
+
 }
 }

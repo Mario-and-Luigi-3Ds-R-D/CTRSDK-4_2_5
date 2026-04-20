@@ -3,12 +3,8 @@
 #include "nn/fs/fs_IStream.h"
 #include "nn/fs/fs_Paramaters.h"
 #include "nn/fs/detail/fs_FileBase.h"
+#include "nn/util/util_NonCopyable.h"
 #include "nn/Result.h"
-
-// FUN_ is based of Mario & Luigi Dream Team US 1.0. and NEEDS research
-//
-// Research Based on publically av AXF found in Bowling3DS & SpiderMan Edge of Time
-// All most of these do is return filebase shit lmao
 
 namespace nn{
 namespace fs{
@@ -35,7 +31,7 @@ namespace fs{
         virtual Result TryFlush();
     };
 
-    class FileInputStream : public IInputStream, detail::FileBase{
+    class FileInputStream : public nn::fs::IInputStream, public nn::fs::detail::FileBase, nn::util::ADLFireWall::NonCopyable<FileInputStream>{
     public:
         FileInputStream();
         virtual ~FileInputStream();

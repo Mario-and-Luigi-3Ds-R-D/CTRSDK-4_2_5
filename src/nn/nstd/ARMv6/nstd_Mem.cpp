@@ -1,5 +1,9 @@
 #include <nn/nstd/ARMv6/nstd_Mem.h>
 
+
+// MemMove, ori writes it in asm, so we do too!
+//
+// Moves memory.
 __asm void nnnstdMemMove (void* pOut, void* pIn, size_t size){
         SUBS    R3, R0, R1;
         CMPCS   R2, R3;
@@ -255,6 +259,7 @@ loc_2E899C //nf
         BX      LR;
 }
 
+// Copys Memory.
 __asm void nnnstdMemCpy (void* pOut, void* pIn, size_t size)
 {
         CMP    R2, #8;

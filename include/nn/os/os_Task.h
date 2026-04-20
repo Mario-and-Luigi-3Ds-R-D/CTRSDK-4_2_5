@@ -5,7 +5,6 @@
 
 namespace nn{
 namespace os{
-
     class ITask{
     public:
     };

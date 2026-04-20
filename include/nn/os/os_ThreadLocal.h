@@ -1,11 +1,11 @@
 #pragma once
 
 #include "nn/types.h"
+#include "nn/Result.h"
 
 namespace nn{
 namespace os{
 namespace CTR{
-
     struct ThreadLocalRegion{
         uptr mTls[16];
         uptr mHandlerAddress;
@@ -23,9 +23,13 @@ namespace CTR{
     public:
         int mIndex;
 
-        static void ClearAllSlots(void);
+        Result ClearAllSlots();
         ~ThreadLocalStorage();
+        void Thread();
     };
 
+namespace{
+    short sTLSMap;
+}
 }
 }

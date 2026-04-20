@@ -24,7 +24,7 @@ namespace svc{
     }
 
     // QueryMemory
-    __asm void QueryMemory(nn::os::MemoryInfo*,nn::os::PageInfo*,uint){
+    __asm Result QueryMemory(nn::os::MemoryInfo*,nn::os::PageInfo*,uint){
         push    {r0, r6}
         swi     0x2
         ldr     r6,[sp,#0x0]
@@ -39,13 +39,13 @@ namespace svc{
     }
 
     // ExitProcess
-    __asm void ExitProcess(){
+    __asm Result ExitProcess(){
         swi     0x3
         bx      lr
     }
 
     // CreateThread
-    __asm void CreateThread(nn::Handle*, void*, uint, uint,uint,int,int){
+    __asm Result CreateThread(nn::Handle*, void*, uint, uint,uint,int,int){
         push {r0, r4}
         ldr r0, [sp, #8]
         ldr r4, [sp, #0xc]
@@ -58,13 +58,13 @@ namespace svc{
     }
 
     // ExitThread
-    __asm void ExitThread(){
+    __asm Result ExitThread(){
         swi 0x9
         bx  lr
     }
 
     // SleepThread
-    __asm void SleepThread(long long){
+    __asm Result SleepThread(long long){
         swi 0xa
         bx lr
     }
@@ -100,7 +100,7 @@ namespace svc{
     }
 
     // CreateAddressArb. Create New Arb Address for Memory
-    __asm s32 CreateAddressArbiter(nn::Handle*){
+    __asm Result CreateAddressArbiter(nn::Handle*){
         str r0,[sp,#4]!
         swi 0x21
         ldr r2,[sp,#0]
@@ -110,7 +110,7 @@ namespace svc{
     }
 
     // ArbitrateAddress - Arb New Addr
-    __asm void ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,int,long long){
+    __asm Result ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,s32){
         push {r4,r5}
         ldr r4,[sp,#0]
         ldr r5,[sp,#4]
@@ -126,13 +126,13 @@ namespace svc{
     }
 
     // CloseHandle
-    __asm void CloseHandle(nn::Handle){
+    __asm Result CloseHandle(nn::Handle){
         swi 0x23
         bx lr
     }
 
     // ConnectToPort
-    __asm void ConnectToPort(nn::Handle*, const char*){
+    __asm Result ConnectToPort(nn::Handle*, const char*){
         str r0,[sp,#4]
         swi 0x2d
         ldr r2,[sp,#0]
@@ -142,7 +142,7 @@ namespace svc{
     }
 
     // DuplicateHandle - dupes handle.
-    __asm void DuplicateHandle(nn::Handle*){
+    __asm Result DuplicateHandle(nn::Handle*){
         str r0,[sp,#4]
         swi 0x27
         ldr r2,[sp,#0]
@@ -152,7 +152,7 @@ namespace svc{
     }
 
     // GetProcessId
-    __asm void GetProcessId(uint*, nn::Handle){
+    __asm Result GetProcessId(uint*, nn::Handle){
         str r0,[sp,#4]
         swi 0x35
         ldr r2,[sp,#0]
@@ -162,7 +162,7 @@ namespace svc{
     }
 
     // GetResourceLimit - Fetches limit
-    __asm void GetResourceLimit(nn::Handle*){
+    __asm Result GetResourceLimit(nn::Handle*){
         str r0,[sp,#4]
         swi 0x38
         ldr r2,[sp,#0]
@@ -172,13 +172,13 @@ namespace svc{
     }
 
     // GetSystemTick - Gets current Tisk
-    __asm void GetSystemTick(){
+    __asm Result GetSystemTick(){
         swi 0x28
         bx lr
     }
 
     // GetThreadId
-    __asm void GetThreadId(uint*,nn::Handle){
+    __asm Result GetThreadId(uint*,nn::Handle){
         str r0,[sp,#4]
         swi 0x37
         ldr r2,[sp,#0]
@@ -197,6 +197,28 @@ namespace svc{
         str r1,[r2,#0]
         add sp,sp,#4
         ldr r4,[sp],#4
+        bx lr
+    }
+
+    inline Result MapMemoryBlock(nn::Handle,uptr,bit32,uint){
+    __asm{
+        swi 0x1f
+    }
+    }
+
+    inline Result UnmapMemoryBlock(nn::Handle,uptr){
+    __asm{
+        swi 0x20
+    }
+    }
+
+    __asm Result CreateMemoryBlock(nn::Handle* pOut, uptr pMemory, size_t size, bit32 myPermission, bit32 otherPermission){
+        push {r0}
+        ldr r0,[sp,#4]
+        swi 0x1e
+        ldr r2,[sp,#0]
+        str r1,[r2]
+        add sp,sp,#4
         bx lr
     }
 } // svc

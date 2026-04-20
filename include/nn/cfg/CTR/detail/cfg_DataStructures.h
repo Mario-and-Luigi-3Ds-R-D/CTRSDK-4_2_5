@@ -13,8 +13,7 @@ struct BackLightCfgData{
         u8   luminanceLevel;
 };
 
-struct BacklightPwmTableCfgData
-{
+struct BacklightPwmTableCfgData{
         f32  coef[3][3];
         u8   numLevels;
         bit8 control;

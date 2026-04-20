@@ -9,18 +9,12 @@ enum nndbgBreakReason{
     NN_DBG_BREAK_REASON_MAX_BIT = 1073741824,
 };
 
-extern "C"{
-Result nndbgBreak(int pReason);
-void nndbgPanic();
-// Are these in DT? Down Below?
-void nndbgBreakWithMessage_(nndbgBreakReason pReason, const char* pFileName, int pLineNo, const char* pFmt);
-void nndbgBreakWithTMessage_(nndbgBreakReason pReason, const char* pFileName, int pLineNo, const char* pFmt);
-void nndbgBreakWithResultMessage_(nndbgBreakReason pReason, Result pResult,  const char* pFileName, int pLineNo, const char* pFmt);
-void nndbgBreakWithResultTMessage_(nndbgBreakReason pReason, Result pResult,  const char* pFileName, int pLineNo, const char* pFmt);
-}
-
 namespace nn{
 namespace dbg{
+namespace detail{
+Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size);
+
+}
     enum BreakReason{
         BREAK_REASON_PANIC = 0,
         BREAK_REASON_ASSERT = 1,
@@ -32,5 +26,13 @@ namespace dbg{
 
     Result Break(nn::dbg::BreakReason pReason);
     void Panic();
+
+    typedef void (*BreakHandler)(BreakReason reason, Result* pResult, const char* filename, int lineno, const char* fmt, std::va_list args);
+
 }
+}
+
+extern "C"{
+    Result nndbgBreak(nn::dbg::BreakReason pReason);
+    void nndbgPanic();
 }

@@ -1,0 +1,11 @@
+#include "nn/types.h"
+#include "nn/Result.h"
+#include "nn/Handle.h"
+
+#include "nn/hid/CTR/hid_Accelerometer.h"
+#include "nn/hid/CTR/hid_AnalogStick.h"
+#include "nn/hid/CTR/hid_DebugPad.h"
+#include "nn/hid/CTR/hid_ExtraPad.h"
+#include "nn/hid/CTR/hid_HidBase.h"
+#include "nn/hid/CTR/hid_TouchPanel.h"
+#include "nn/hid/CTR/detail/Ipc/hid_Ipc.h"

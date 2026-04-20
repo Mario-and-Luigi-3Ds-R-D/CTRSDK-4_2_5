@@ -6,18 +6,8 @@
 namespace nn{
 namespace srv{
 namespace detail{
-
-    class Manager{
-        nn::Handle sSession;
-    };
-
-    class HandlerManager{
-    public:
-        nn::fnd::IntrusiveLinkedList mHandler;
-        
-        ~HandlerManager();
-    };
-
+namespace Manager{
+}
 }
 }
 }

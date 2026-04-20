@@ -1,0 +1,38 @@
+#include <nn/os/os_MemoryBlock.h>
+
+namespace nn{
+namespace os{
+    nnosAddressSpaceManager sSpaceManager;
+
+namespace detail{
+
+bool IsMemoryBlockEnabled(){
+    return sIsMemoryBlockEnabled;
+}
+
+uptr AllocateFromMemoryBlockSpace(MemoryBlockBase* p, size_t size){
+    AddressSpaceManager* pManager;
+    pManager->Allocate(p,size,0);
+}
+
+void FreeToMemorySpace(MemoryBlockBase* p){
+    AddressSpaceManager* pManager;
+    pManager->Free(p);
+}
+
+}
+
+void InitializeMemoryBlock(uptr begin, size_t size){
+    if(sIsMemoryBlockEnabled == 0){
+        sIsMemoryBlockEnabled = 1;
+        nnosAddressSpaceManagerInitialize(&os::sSpaceManager,begin,size);
+        return;
+    }
+    return;
+}
+
+void Switch(nnosMemoryBlockBase* pTo, nnosMemoryBlockBase* pFrom){
+    nnosAddressSpaceManagerSwitch(&os::sSpaceManager,pTo,pFrom);
+}
+}
+}

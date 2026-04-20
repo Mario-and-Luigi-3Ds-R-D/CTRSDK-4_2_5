@@ -7,7 +7,6 @@
 
 namespace nn{
 namespace os{
-
     class SharedMemoryBlock : public nn::os::MemoryBlockBase, public nn::os::HandleObj{
     public:
         bool mSpaceAllocated;
@@ -17,11 +16,13 @@ namespace os{
         Result AttachAndMap(nn::Handle handle, size_t size, bool readOnly);
         Result Map(size_t size, bool readOnly);
         void Finalize();
-        ~SharedMemoryBlock();
     };
 
 namespace detail{
-    void InitializeMemory();
+    uptr AllocateFromSharedMemorySpace(os::MemoryBlockBase* p, size_t s);
+    void InitializeSharedMemory();
+    void FreeToSharedMemorySpace(os::MemoryBlockBase* p);
+    
 }
 
 }

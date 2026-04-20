@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
+#include <new>
+#include <limits>
 
 #ifndef NULL
 #define NULL (void*)0
@@ -44,6 +46,9 @@ typedef unsigned char           bit8;
 typedef unsigned short          bit16;
 typedef unsigned int            bit32;
 typedef unsigned long long int  bit64; 
+
+typedef s32 sptr;
+typedef u32 uptr;
 
 #ifndef nullptr
 #define nullptr NULL

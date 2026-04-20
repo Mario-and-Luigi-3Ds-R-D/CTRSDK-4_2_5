@@ -1,15 +1,24 @@
 #pragma once
 
 #include "nn/types.h"
+#include "nn/Result.h"
+
+typedef struct nnHandle{
+    bit32 value;
+} nnHandle;
 
 namespace nn{
 struct Handle {
 public:
-    Handle() : mHandle(0) {
-    }
-
-    explicit Handle(u32 handle) : mHandle(handle) {
-    }
+    Handle ()
+        : mHandle (0)
+    {}
+    Handle (nnHandle handle)
+        : mHandle (handle.value)
+    {}
+    Handle (bit32 value)
+        : mHandle (value)
+    {}
 
     bool IsValid() const {
         return mHandle != 0;
@@ -33,7 +42,14 @@ public:
         mHandle = (u32)other;
         return *this;
     }
-private:
+
+    bool operator== (const Handle& rhs) const { return this->mHandle == rhs.mHandle; }
+    bool operator!= (const Handle& rhs) const { return this->mHandle != rhs.mHandle; }
+    operator nnHandle () const{
+        nnHandle result = {mHandle};
+        return result;
+    }
+    
     u32 mHandle;
 };
 }

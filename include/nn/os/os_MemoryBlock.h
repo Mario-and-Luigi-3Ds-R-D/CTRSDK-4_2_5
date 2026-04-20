@@ -2,19 +2,14 @@
 
 #include "nn/types.h"
 #include "nn/Handle.h"
+#include "nn/os/os_AddressSpaceManager.h"
 #include "nn/os/os_Types.h"
-#include "nn/fnd/fnd_Intrusive.h"
+
+#define NN_OS_MEMORY_PAGE_SIZE 0x1000
 
 namespace nn{
 namespace os{
-
-    class MemoryBlockBase : public nn::fnd::IntrusiveLinkedList{
-    public:
-        uptr mAddr;
-        size_t mSize;
-        bool mReadOnly;
-        s8 rev[3];
-    };
+extern nnosAddressSpaceManager sSpaceManager;
 
     class MemoryBlock : public MemoryBlockBase{
         void Initialize(size_t pSize);
@@ -22,13 +17,24 @@ namespace os{
         ~MemoryBlock();
     };
 
-void InitializeMemoryBlock();
+static size_t GetPageAlignedSize(size_t size) {
+    return (size + NN_OS_MEMORY_PAGE_SIZE - 1) & ~(NN_OS_MEMORY_PAGE_SIZE - 1); 
+}
+
+void InitializeMemoryBlock(uptr begin, size_t size);
+
+namespace detail{
+bool IsMemoryBlockEnabled();
+uptr AllocateFromMemoryBlockSpace(MemoryBlockBase* p, size_t size);
+void FreeToMemorySpace(MemoryBlockBase* p);
+void Switch(nnosMemoryBlockBase* pTo, nnosMemoryBlockBase* pFrom);
+
+} // detail
 
 namespace{
-
 bool sIsMemoryBlockEnabled;
 
-}
+} // namespace
 }
 }
 

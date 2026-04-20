@@ -44,11 +44,26 @@ file(GLOB_RECURSE csourcefiles "src/*.cpp")
 
 add_library(CTRSDK ${csourcefiles})
 
+
+target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:CXX>:
+    --apcs=//interwork --cpu=MPCore --fpmode=fast --cpp --arm
+    --signed_chars --multibyte-chars
+    -O3 -Otime --data-reorder --split_sections
+    >)
+
 target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:C>:
     --apcs=//interwork --cpu=MPCore --fpmode=fast --c99 --arm
     --signed_chars --multibyte-chars --locale=japanese
     -Otime --data-reorder --split_sections
     >)
+    
+# Custom flags
+set_source_files_properties(
+    src/nn/ndm/ndm_Setup.cpp
+    src/nn/ptm/ptm_Api.cpp
+    PROPERTIES COMPILE_FLAGS
+    "-O2 -Otime"
+)
 
 target_compile_definitions(CTRSDK PUBLIC NON_MATCHING=)
 

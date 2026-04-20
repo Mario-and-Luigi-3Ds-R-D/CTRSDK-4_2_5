@@ -1,0 +1,7 @@
+#include "nn/hidlow/hidlow_Api.h"
+#include "nn/hidlow/hidlow_LifoRing.h"
+#include "nn/hidlow/CTR/hidlow_AccelerometerLifoRing.h"
+#include "nn/hidlow/CTR/hidlow_AnalogStick.h"
+#include "nn/hidlow/CTR/hidlow_GyroscopeLowLifoRing.h"
+#include "nn/hidlow/CTR/hidlow_IExtraPadStatus.h"
+#include "nn/hidlow/CTR/hidlow_PadLifoRing.h"

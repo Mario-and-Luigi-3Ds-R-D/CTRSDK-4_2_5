@@ -1,5 +1,4 @@
-#include <nn/applet/applet_Info.h>
-#include <nn/applet/applet_Wrapper.h>
+#include <nn/applet/applet_All.h>
 
 namespace nn{
 namespace applet{

@@ -2,7 +2,7 @@
 
 #include "nn/Result.h"
 #include "nn/types.h"
-#include "nn/os/ARM/os_Exception.h"
+#include "nn/os/ARM/os_ExceptionHandler.h"
 
 enum nnerrFatalErrType{
     NN_ERR_FATAL_TYPE_SYSTEM_COMMON = 0,
@@ -49,7 +49,9 @@ namespace CTR{
     };
 
 
-    void ThrowFatalErr(Result pResult, uptr pc){}
+    //void ThrowFatalErr(Result result, nnerrFatalErrType type, uptr pc);
+    void ThrowFatalErr(Result pResult, uptr pc);
+    void ThrowFatalErrAll(Result, uptr pc);
 namespace{
     
 

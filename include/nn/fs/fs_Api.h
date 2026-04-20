@@ -6,18 +6,22 @@
 
 namespace nn{
 namespace fs{
-    /* FileServer Things Here*/
-    void Initialize();
-    bool IsInitialized(void);
-    Result SetPriority(int pPritority);
-    Result GetPriotity(int pOut);
-
+namespace detail{
+        const char FILE_SERVER_NAME[] = "fs:USER";
+        const char FILE_LOADER_NAME[] = "fs:LDR";
+} // detail
 namespace{
     nn::Handle sFileServerSession; // 0x0
 }
+    /* FileServer Things Here*/
+    void Initialize();
+    Result GetPriotity(int pOut);
 
-namespace detail{
-        const char FILE_SERVER_NAME[] = "fs:USER";
-}
-};
+    /* FileSevrer Inlines*/
+
+    inline Result IsInitialized(){
+        return sFileServerSession != 0;
+    }
+
+    }
 }
