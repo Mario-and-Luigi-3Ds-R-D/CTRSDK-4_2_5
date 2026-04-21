@@ -69,7 +69,7 @@ Result FileStream::TrySetPosition(s64 position){
 }
 
 s64 FileStream::GetSize(){
-    return this->detail::FileBase::GetSize();
+    //return this->detail::FileBase::TryGetSize();
 }
 
 Result FileStream::TryGetSize(s64* pOut){
@@ -79,7 +79,7 @@ Result FileStream::TryGetSize(s64* pOut){
 }
 
 void FileStream::SetSize(s64 size){
-    this->detail::FileBase::SetSize(size);
+    this->detail::FileBase::TrySetSize(size);
 }
 
 Result FileStream::TrySetSize(s64 size){
@@ -87,7 +87,7 @@ Result FileStream::TrySetSize(s64 size){
 }
 
 void FileStream::Flush(){
-    this->detail::FileBase::Flush();
+    this->detail::FileBase::TryFlush();
 }
 
 Result FileStream::TryFlush(){

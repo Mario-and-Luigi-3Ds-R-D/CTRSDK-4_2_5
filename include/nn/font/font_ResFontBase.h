@@ -6,7 +6,7 @@
 
 namespace nn{
 namespace font{
-/*class ResFontBase : public Font{
+class ResFontBase : public Font{
 protected:
 
 typedef ushort GlyphIndex;
@@ -43,8 +43,9 @@ public:
     virtual void EnableLinearFilter(bool atSmall,bool atLarge);
     virtual bool IsLinearFilterEnableAtSmall() const;
     virtual bool IsLinearFilterEnableAtLarge() const;
-    virtual u32  GetTextureWrapFilterValue() const;
-};*/
+    virtual u32 GetTextureWrapFilterValue() const;
+    uint FindGlyphIndex(uint code);
+};
 
 }
 }

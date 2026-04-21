@@ -12,8 +12,6 @@ extern "C"{
 
     u32* __rt_locale(void);
     void _fp_init(void);
-    //void __rt_lib_shutdown_cpp_1(void);
-    void __aeabi_atexit() { } // Stub for static initializers.
 
     void nnMain();
     void nninitCallStaticInitializers(); // init_Startup.cpp
@@ -48,7 +46,6 @@ region_loop
 };
 
 __asm void nninitLocale(){
-
     LDR             R1, =0x4000000
     MOV             R0, #0
     PUSH            {R4,LR}

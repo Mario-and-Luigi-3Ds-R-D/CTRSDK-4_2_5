@@ -6,12 +6,11 @@
 namespace nn{
 namespace ndm{
 namespace {
-    const char PORT_NAME_USER[]         = "ndm:u";
+    const char PORT_NAME_USER[] = "ndm:u";
 }
-
-Result Initialize();
-void SetupDaemonsDefault(void);
-Result SuspendDaemons(bit32 mask);
+    Result Initialize();
+    void SetupDaemonsDefault(void);
+    Result SuspendDaemons(bit32 mask);
 
 }
 }

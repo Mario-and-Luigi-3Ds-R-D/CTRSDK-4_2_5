@@ -11,7 +11,7 @@ Result Finalize(){
 }
 
 Result Initialize(){
-    sDevices.Initialize(CTR::HID_PORT_USER);
+    sDevices.Initialize(CTR::PORT_NAME_USER);
 }
 
 Pad* GetPad(){

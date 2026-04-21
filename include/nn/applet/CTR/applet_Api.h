@@ -19,6 +19,8 @@ namespace{
     bool sIsGpuRightGiven;
     bool sIsDspSleeping;
 }
+    const char PORT_NAME_SYSTEM[] = "APT:S";
+    const char PORT_NAME_USER[] = "APT:U";
     // Main Applet
     void Enable(bool isSleepEnabled);
     void CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize, u8* outParam, size_t outParamSize, s32* readSize);
@@ -39,7 +41,7 @@ namespace{
     void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pRequestedId,AppletId *pHomeMenuId,AppletId *pCurrentId);
     void UnlockTransition(u32 action);
     void LockTransition(u32 action,bool isForced);
-    void SleepIfShellClosed(); // 100%
+    void SleepIfShellClosed(); // ASM
     void ReplySleepQueryToManager(QueryReply);
 }
 }

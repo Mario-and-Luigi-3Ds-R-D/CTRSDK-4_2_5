@@ -7,10 +7,10 @@
 namespace nn{
 namespace ndm{
 
-// nasty ass butt hack used -O2 (smiley face)
 void SetupDaemonsDefault(){
     if(nn::applet::CTR::IsInitialized() && !nn::applet::CTR::GetAppletType()){
-        if(nn::ndm::Initialize().IsFailure()){
+        Result canInit = nn::ndm::Initialize().IsFailure();
+        if(canInit != 0){
             nndbgPanic();
         }
         nn::ndm::CTR::detail::Interface::OverrideDefaultDaemons(0xfu);

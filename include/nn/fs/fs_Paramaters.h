@@ -1,7 +1,6 @@
 #pragma once
 
 #include "nn/types.h"
-#include "nn/fs/CTR/MPCore/fs_DirectoryBase.h"
 
 namespace nn{
 namespace fs{

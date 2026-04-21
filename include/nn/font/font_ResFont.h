@@ -5,11 +5,15 @@
 
 namespace nn{
 namespace font{
-/*class ResFont : public ResFontBase{
+class ResFont : public ResFontBase{
 public:
     ResFont();
     virtual ~ResFont();
-};*/
+
+    void RemoveResource();
+    void* SetDrawBuffer(void*); // void-> TextureObject*
+    void* SetResource();
+};
 
 }
 }

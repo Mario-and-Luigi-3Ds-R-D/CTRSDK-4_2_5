@@ -6,7 +6,6 @@
 namespace nn{
 namespace ssl{
 namespace detail{
-
 class LibManager{
 protected:
     int flag_0x4;
@@ -18,7 +17,6 @@ public:
     virtual ~LibManager();
 };
 
-extern LibManager gLibManager;
 }
 }
 }

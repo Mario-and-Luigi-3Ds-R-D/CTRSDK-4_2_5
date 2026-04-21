@@ -12,7 +12,7 @@ AnalogStickClamper::AnalogStickClamper(){
     this->mMinOfStickClampMinimum = 0x28;
     this->mMaxOfStickClampCircle = 0x91;
     this->mMaxOfStickClampCross = 0x91;
-    this->mMaxOfStickClampMinimum = 0x91;
+    this->mMaxOfStickClampMinimum = 0x91;   
     this->mStickClampMode = 0;
     this->mThreshold = 0x8d;
     this->mStrokeVelocity = 0.0;

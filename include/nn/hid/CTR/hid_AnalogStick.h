@@ -29,10 +29,20 @@ protected:
     f32 mLastDiff;
 public:
 
+enum ClampMode{
+    STICK_CLAMP_MODE_CIRCLE = 0,
+    STICK_CLAMP_MODE_CROSS,
+    STICK_CLAMP_MODE_MINIMUM
+};
+
 AnalogStickClamper();
 void ClampCore(short* pOutX, short* pOutY,  s32 x, s32 y);
 void ClampValueOfClamp();
 f32 NormalizeStick(short x, short y);
+
+inline void SetStickClampMode(ClampMode mode){
+    this->mStickClampMode = mode;
+}
 
 };
 }

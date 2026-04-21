@@ -44,7 +44,7 @@ Result StartNotification(){
 
 }
 
-//static NotificationHandler* srv::sHandlerManager = nullptr;
+static nn::fnd::IntrusiveLinkedList::Item* sHandlerManager = 0;
 
 Result RegisterNotificationHandler(NotificationHandler* pHandler, u32 message){
 

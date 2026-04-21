@@ -49,10 +49,6 @@ void Enable(bool isSleepEnable){
     }
 }*/
 
-void ReplySleepQueryToManager(QueryReply){
-    
-}
-
 __asm void CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize, u8* pOutParam, size_t outParamSize, s32* pReadSize){
     PUSH            {R4-R10,LR}
     SUB             SP, SP, #0x18
@@ -117,91 +113,124 @@ loc_123348
     B               loc_1232E0
 }
 
+bool WaitForRegister(AppletId appletId,nn::fnd::TimeSpan span){
+
+}
+
 Result CloseApplication(u8 *pParam,size_t paramSize,nn::Handle handle){
     // TODO
 }
 
 /*__asm void AssignGpuRight(bool flag){
-    LDR             R1, =__cpp(&nn::applet::CTR::detail::sIsApplet)
-    CMP             R0, #0
-    PUSH            {R4,LR}
-    BEQ             loc_11AB78
-    MOV             R0, #1
-    STRB            R0, [R1,#3]
-    BL              __cpp(nn::gxlow::CTR::AcquireGpuRight)
-    MOV             R1, PC
-    MOVS            R2, R0,LSR#31
-    BNE             loc_11ABB0
+        LDR             R1, =__cpp(&nn::applet::CTR::detail::sIsApplet)
+        CMP             R0, #0
+        PUSH            {R4,LR}
+        BEQ             loc_11AB78
+        MOV             R0, #1
+        STRB            R0, [R1,#3]
+        BL              __cpp(nn::gxlow::CTR::AcquireGpuRight)
+        MOV             R1, PC
+        MOVS            R2, R0,LSR#31
+        BNE             loc_11ABB0
 
 locret_11AB74
-    POP             {R4,PC}
+        POP             {R4,PC}
 
 loc_11AB78
-    LDRB            R0, [R1,#3]
-    CMP             R0, #0
-    BEQ             locret_11AB74
-    MOV             R0, #0
-    STRB            R0, [R1,#3]
-    BL              __cpp(nn::gxlow::CTR::ReleaseGpuRight)
-    LDR             R1, =0xD8A02A05
-    CMP             R0, R1
-    LDRNE           R1, =0xD9001BF7
-    CMPNE           R0, R1
-    BEQ             locret_11AB74
-    MOV             R1, PC
-    MOVS            R2, R0,LSR#31
-    BEQ             locret_11AB74
+        LDRB            R0, [R1,#3]
+        CMP             R0, #0
+        BEQ             locret_11AB74
+        MOV             R0, #0
+        STRB            R0, [R1,#3]
+        BL              __cpp(nn::gxlow::CTR::ReleaseGpuRight)
+        LDR             R1, =0xD8A02A05
+        CMP             R0, R1
+        LDRNE           R1, =0xD9001BF7
+        CMPNE           R0, R1
+        BEQ             locret_11AB74
+        MOV             R1, PC
+        MOVS            R2, R0,LSR#31
+        BEQ             locret_11AB74
 
 loc_11ABB0
-    POP             {R4,LR}
-    B               __cpp(nn::err::CTR::ThrowFatalErr)
+        POP             {R4,LR}
+        B               __cpp(nn::err::CTR::ThrowFatalErr)
 }*/
 
-/*__asm void AssignDspRight(bool flag){
-PUSH            {R4,LR}
-LDR             R4, =__cpp(&sIsApplet)
-CMP             R0, #0
-BEQ             loc_123380
-LDRB            R0, [R4,#4]
-CMP             R0, #0
-BEQ             locret_1233A0
-BL              __cpp(nn::dsp::CTR::WakeUp)
-MOV             R0, #0
-B               loc_12339C
-
-loc_123380
-NOP
-BL              __cpp(nn::dsp::CTR::IsComponentLoaded)
-CMP             R0, #0
-NOP
-BEQ             locret_1233A0
-BL              __cpp(nn::dsp::CTR::Sleep)
-MOV             R0, #1
-
-loc_12339C
-STRB            R0, [R4,#4]
-
-locret_1233A0
-POP             {R4,PC}
-}*/
+void AssignDspRight(bool flag){
+    // TODO
+}
 
 Result CancelLibraryAppletIfRegistered(bool isApplicationEnd, nn::applet::CTR::AppletWakeupState *pWakeupState){
-    
+    // TODO
 }
-#ifdef NONMATCHING
-#endif
-bool CancelParamater(bool isSenderCheck, nn::applet::CTR::AppletId senderId, bool isReceiverCheck, nn::applet::CTR::AppletId receiverId){
-    Result result;
-    bool isCanceled;
 
-    nn::applet::CTR::detail::LockAndConnect();
-    result = nn::applet::CTR::detail::APPLET::CancelParamater(isSenderCheck,senderId,isReceiverCheck,receiverId,&isCanceled);
-    if(result.IsFailure()){
-        uptr pc = __current_pc();
-        nn::err::CTR::ThrowFatalErr(result,pc);
-    }
-    nn::applet::CTR::detail::DisconnectAndUnlock();
-    return isCanceled;
+__asm bool CancelParamater(bool isSenderCheck, nn::applet::CTR::AppletId senderId, bool isReceiverCheck, nn::applet::CTR::AppletId receiverId){
+    PUSH            {R4-R7,LR}
+    SUB             SP, SP, #0xC
+    MOV             R4, R0
+    MOV             R5, R1
+    MOV             R6, R2
+    MOV             R7, R3
+    BL              __cpp(nn::applet::CTR::detail::LockAndConnect)
+    ADD             R12, SP, #0x04
+    MOV             R3, R7
+    MOV             R2, R6
+    MOV             R1, R5
+    MOV             R0, R4
+    STR             R12, [SP,#0x0]
+    BL              __cpp(nn::applet::CTR::detail::APPLET::CancelParamater)
+    MOV             R1, PC
+    MOVS            R2, R0,LSR#31
+    BLNE            __cpp(nn::err::CTR::ThrowFatalErr)
+    BL              __cpp(nn::applet::CTR::detail::DisconnectAndUnlock)
+    LDRSB           R0, [SP,#0x04]
+    ADD             SP, SP, #0xC
+    POP             {R4-R7,PC}
+}
+
+__asm Result JumpToHomeMenu(u8 *pParam,size_t paramSize,Handle handle){
+    PUSH            {R4-R8,LR}
+    SUB             SP, SP, #0x18
+    MOV             R8, R0
+    LDR             R7, [SP,#0x30]
+    MOV             R4, R1
+    MOV             R5, R2
+    MOV             R6, R3
+    BL              __cpp(nn::applet::CTR::detail::LockAndConnect)
+    ADD             R1, SP, #0x10
+    STR             R1, [SP,#0x0]
+    ADD             R3, SP, #0xC
+    ADD             R2, SP, #0x8
+    ADD             R1, SP, #0x4
+    MOV             R0, R8
+    BL              __cpp(nn::applet::CTR::detail::APPLET::GetAppletManInfo)
+    MOV             R1, PC
+    MOVS            R2, R0,LSR#31
+    BLNE            __cpp(nn::err::CTR::ThrowFatalErr)
+    BL              __cpp(nn::applet::CTR::detail::DisconnectAndUnlock)
+    CMP             R4, #0
+    LDRBNE          R0, [SP,#0x4]
+    STRBNE          R0, [R4]
+    CMP             R5, #0
+    LDRNE           R0, [SP,#0x8]
+    STRNE           R0, [R5]
+    CMP             R6, #0
+    LDRNE           R0, [SP,#0xC]
+    STRNE           R0, [R6]
+    CMP             R7, #0
+    LDRNE           R0, [SP,#0x10]
+    STRNE           R0, [R7]
+    ADD             SP, SP, #0x18
+    POP             {R4-R8,PC}
+}
+
+void PrepareToJumpToHomeMenu(){
+
+}
+
+void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pRequestedId,AppletId *pHomeMenuId,AppletId *pCurrentId){
+
 }
 
 __asm void UnlockTransition(u32 action){
@@ -246,6 +275,10 @@ __asm void SleepIfShellClosed(){
     BL              __cpp(nn::applet::CTR::detail::CallUtility)
     ADD             SP, SP, #0xC
     POP             {PC}
+}
+
+void ReplySleepQueryToManager(QueryReply){
+    // TODO
 }
 
 } // detail

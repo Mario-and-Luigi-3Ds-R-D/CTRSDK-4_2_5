@@ -52,7 +52,7 @@ Result FileInputStream::TrySetPosition(s64 position){
 }
 
 s64 FileInputStream::GetSize(){
-    return this->detail::FileBase::GetSize();
+    //return this->detail::FileBase::GetSize();
 }
 
 Result FileInputStream::TryGetSize(s64* pOut){

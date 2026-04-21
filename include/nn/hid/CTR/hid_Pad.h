@@ -1,6 +1,7 @@
 #pragma once
 
 #include "nn/hid/CTR/hid_HidBase.h"
+#include "nn/hid/hid_Api.h"
 #include "nn/hid/CTR/hid_AnalogStick.h"
 
 namespace nn{
@@ -25,9 +26,23 @@ protected:
     s32 rev2;
     s64 mTickOfRead;
 public:
-    f32 NormalizeStick(short x, short y);
-    PadReader(Pad* pad);
-    bool ReadLatest(PadStatus* status);
+typedef enum{
+    STICK_CLAMP_MODE_CIRCLE = AnalogStickClamper::STICK_CLAMP_MODE_CIRCLE,
+    STICK_CLAMP_MODE_CROSS = AnalogStickClamper::STICK_CLAMP_MODE_CROSS,
+    STICK_CLAMP_MODE_MINIMUM = AnalogStickClamper::STICK_CLAMP_MODE_MINIMUM
+} StickClampMode;
+
+f32 NormalizeStick(short x, short y);
+PadReader(Pad* pad = CTR::GetPad());
+bool ReadLatest(PadStatus* status);
+
+inline void SetStickClampMode(StickClampMode mode){
+    this->mStickClamper.SetStickClampMode(ClamperClampMode(mode));
+}
+
+private:
+    static AnalogStickClamper::ClampMode  ClamperClampMode(const StickClampMode mode);
+    static StickClampMode ReaderClampMode(const AnalogStickClamper::ClampMode mode);
 };
 
 namespace{

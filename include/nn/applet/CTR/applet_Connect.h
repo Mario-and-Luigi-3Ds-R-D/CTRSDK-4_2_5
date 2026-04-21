@@ -9,7 +9,7 @@ namespace CTR{
 namespace detail{
 namespace{
     extern os::Mutex* sMutex;
-}
+} 
     void LockAndConnect();
     void InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority);
     void DisconnectAndUnlock();

@@ -10,6 +10,14 @@ void Initialize(){
     // TODO
 }
 
+u8 GetFsLatencyEmulationParam(){
+    // TODO
+}
+
+bool IsDebugMode(){
+    // TODO
+}
+
 } // namespace CTR
 } // namespace cfg
 } // namespace nn

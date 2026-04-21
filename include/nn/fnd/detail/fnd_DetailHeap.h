@@ -21,7 +21,7 @@ namespace detail{
     void NNSi_FndInitHeapHead(NNSiFndHeapHead *pHeapHd,u32 signature,void *heapStart,void *heapEnd,ushort optFlag); // 68%
 
     static bool sRootListInitialized = false;
-    static NNSFndList  sRootList;
+    static NNSFndList sRootList;
 }
 }
 }

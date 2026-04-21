@@ -40,29 +40,6 @@ Result FileBase::TrySetSize(s64 pSize){
 Result FileBase::TryFlush(){
 }
 
-s32 FileBase::Read(void* pBuffer, size_t pSize){
-}
-
-void FileBase::Seek(s64 pSeekOut, nn::fs::PositionBase pPosBase){
-}
-
-s64 FileBase::GetPosition(){
-}
-
-s64 FileBase::GetSize(){
-}
-
-s32 FileBase::Write(const void * pBuffer, size_t pSize, bool pFlush){
-}
-
-void FileBase::SetSize(s64 size){
-
-}
-
-void FileBase::Flush(){
-
-}
-
 } // detail
 } // fs
 } // nn

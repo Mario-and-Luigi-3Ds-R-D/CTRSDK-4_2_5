@@ -7,8 +7,8 @@
 namespace nn{
 namespace fs{
 namespace detail{
-        const char FILE_SERVER_NAME[] = "fs:USER";
-        const char FILE_LOADER_NAME[] = "fs:LDR";
+        const char PORT_NAME_USER[] = "fs:USER";
+        const char PORT_NAME_LOADER[] = "fs:LDR";
 } // detail
 namespace{
     nn::Handle sFileServerSession; // 0x0

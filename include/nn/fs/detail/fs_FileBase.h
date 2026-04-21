@@ -32,14 +32,6 @@ namespace detail{
         Result TryGetSize(s64*) const;
         Result TrySetSize(s64);
         Result TryFlush();
-        int Read(void*, size_t);
-        int Write(const void*, size_t, bool); // guess
-        void Seek(s64 pSeekOut, nn::fs::PositionBase pPosBase);
-        void SetPosition(s64);
-        void Flush();
-        void SetSize(s64);
-        s64 GetPosition();
-        s64 GetSize();
     };
 } // detail
 } // fs

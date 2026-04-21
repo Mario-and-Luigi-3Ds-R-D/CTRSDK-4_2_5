@@ -3,6 +3,7 @@
 #include <nn/srv/srv_Api.h>
 #include <string.h>
 
+// nasty ass butt hack used -O2 (smiley face)
 namespace nn{
 namespace ptm{
 namespace CTR{
@@ -24,8 +25,10 @@ done:
     isDone.mResult = 0;
     return isDone;
 }
+
 #ifdef NONMATCHING
 #endif
+
 Result Finalize(){
     Result pResult;
     if(detail::PtmIpc::sSession != 0){

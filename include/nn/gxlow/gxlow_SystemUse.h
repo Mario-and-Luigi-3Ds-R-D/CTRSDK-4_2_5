@@ -5,7 +5,6 @@
 namespace nn{
 namespace gxlow{
 namespace CTR{
-
     Result AcquireGpuRight(){}
     Result ReleaseGpuRight(){}
 

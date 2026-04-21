@@ -53,7 +53,6 @@ namespace CTR{
     void ThrowFatalErr(Result pResult, uptr pc);
     void ThrowFatalErrAll(Result, uptr pc);
 namespace{
-    
 
     void Throw(nn::err::CTR::FatalErrInfo* pInfo);
 } // __annoymous__

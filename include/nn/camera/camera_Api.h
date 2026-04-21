@@ -11,11 +11,9 @@ namespace detail{
     Result ArriveApplication();
     Result LeaveApplication();
 
-    extern const nn::Handle sSession;
-
 namespace{
-    bool isInitialized;
-    bool leaveApplication;
+    extern bool isInitialized;
+    extern bool leaveApplication;
 
 }
 }

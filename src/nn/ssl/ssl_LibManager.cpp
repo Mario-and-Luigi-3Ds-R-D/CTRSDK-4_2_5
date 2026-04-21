@@ -2,6 +2,7 @@
 namespace nn{
 namespace ssl{
 namespace detail{
+
 LibManager::~LibManager(){
     this->mHandleObj.Close();
 }

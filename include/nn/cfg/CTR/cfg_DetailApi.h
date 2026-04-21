@@ -7,8 +7,7 @@ namespace nn {
 namespace cfg {
 namespace CTR {
 namespace detail {
-        typedef enum _IPCPortType
-        {
+        typedef enum _IPCPortType{
                 PORT_CFG_USER   = 0,
                 PORT_CFG_SYS    = 1,
                 PORT_CFG_INIT   = 2,

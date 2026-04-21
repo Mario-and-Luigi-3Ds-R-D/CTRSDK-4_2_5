@@ -17,7 +17,8 @@ Gyroscope* GetGyroscope();
 extern HidDevices sDevices;
 
 namespace{
-    const char* const HID_PORT_USER = "hid:USER";
+    const char const PORT_NAME_USER[] = "hid:USER";
+    const char const PORT_NAME_SERVER[] = "hid:SPVR";
 }
 
 }
