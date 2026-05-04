@@ -6,17 +6,19 @@
 namespace nn{
 namespace ssl{
 namespace detail{
-class LibManager{
-protected:
-    int flag_0x4;
-    os::CriticalSection* mCriticalSection;
-    int flag_0xc;
-    int flag_0x10;
-    os::HandleObj mHandleObj;
-public:
-    virtual ~LibManager();
-};
-
+    class LibManager{
+    protected:
+        int flag_0x4;
+        os::CriticalSection* mCriticalSection;
+        int flag_0xc;
+        int flag_0x10;
+        os::HandleObj mHandleObj;
+    public:
+        virtual ~LibManager(){
+            this->mHandleObj.Close();
+        }
+    };
+    static const LibManager* gLibManager = (LibManager*)0;
 }
 }
 }

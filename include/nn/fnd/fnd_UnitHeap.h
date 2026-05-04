@@ -125,6 +125,8 @@ public:
     virtual bool HasAddress(const void* addr) const {
         return Base::HasAddress(addr); 
     }
+
+    typedef UnitHeapTemplate<nn::os::LockPolicy::NoLock> UnitHeap;
 };
 
 }

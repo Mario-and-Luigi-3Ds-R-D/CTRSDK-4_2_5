@@ -1,4 +1,4 @@
-#include "nn/os/os_LightEvent.h"
+#include <nn/os/os_LightEvent.h>
 #include <nn/svc/svc_Api.h>
 // Should be 100%
 namespace nn{

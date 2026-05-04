@@ -30,7 +30,6 @@ bool UseMarginOfAlignmentForHeap(Heap heap, bool reuse){
 // This function allocates a new memory from free blocks.
 
 __asm void* AllocUsedBlockFromFreeBlock(NNSiFndExpHeapHead* pEHHead, NNSiFndExpHeapMBlockHead* pMBHeadFree,void* mblock,u32 size,u16 direction){
-
     PUSH            {R4-R11}
     ADD             R5, R1, #0x10
     SUB             R6, R2, #0x10
@@ -170,7 +169,6 @@ loc_13E0E4
 // Paramaters: nn::fnd::Heap heap, size_t size(heap size), s32 alignment(heap alignment)
 
 __asm void* AllocFromHeap(Heap heap, size_t size, s32 alignment){
-
     PUSH            {R3-R11,LR}
     CMP             R1, #0
     MOVEQ           R1, #1

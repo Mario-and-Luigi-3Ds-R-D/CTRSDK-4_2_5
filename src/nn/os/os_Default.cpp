@@ -74,7 +74,7 @@ void DefaultAutoStackManager::FreeStack(void* pStackBottom){
     nnosStackMemoryBlockFree((nnosStackMemoryBlock*)pStackBottom);
 }
 
-static __asm void InvokeOnOtherStack(uptr stackBottom,void (*f)(void*),void* param ,uptr returnAddr){
+__asm void InvokeOnOtherStack(uptr stackBottom,void (*f)(void*),void* param ,uptr returnAddr){
     mov         sp, r0
     mov         r0, r2
     mov         lr, r3

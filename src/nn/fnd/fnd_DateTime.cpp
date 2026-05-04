@@ -6,11 +6,18 @@
 namespace nn{
 namespace fnd{
 
+const DateTime DateTime::MIN_DATETIME = *(nn::fnd::DateTime*)0;
+
+DateTime& DateTime::operator+=(const TimeSpan& rhs){
+    this->mMilliSeconds += rhs.GetMilliSeconds(); 
+    return *this; 
+}
+
 // Converts Dates -> Days using math, and things yeah.
 //
 // Very cool, ikr.
 
-__asm s32 DateToDays(s32 year, s32 month, s32 day){
+__asm s32 DateTime::DateToDays(s32 year, s32 month, s32 day){
 
     CMP             R1, #2
     SUB             R12, R2, #1

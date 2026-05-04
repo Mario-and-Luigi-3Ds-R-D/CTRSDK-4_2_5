@@ -44,7 +44,7 @@ Result StartNotification(){
 
 }
 
-static nn::fnd::IntrusiveLinkedList::Item* sHandlerManager = 0;
+static nn::fnd::IntrusiveLinkedList<HandlerManager>::Item* sHandlerManager = 0;
 
 Result RegisterNotificationHandler(NotificationHandler* pHandler, u32 message){
 

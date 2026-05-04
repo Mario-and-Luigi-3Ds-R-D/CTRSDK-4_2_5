@@ -16,6 +16,7 @@ namespace{
     /* FileServer Things Here*/
     void Initialize();
     Result GetPriotity(int pOut);
+    void InitializeLatencyEmulation();
 
     /* FileSevrer Inlines*/
 

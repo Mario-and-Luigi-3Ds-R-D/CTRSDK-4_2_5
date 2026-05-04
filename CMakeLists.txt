@@ -56,14 +56,6 @@ target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:C>:
     --signed_chars --multibyte-chars --locale=japanese
     -Otime --data-reorder --split_sections
     >)
-    
-# Custom flags
-set_source_files_properties(
-    src/nn/ndm/ndm_Setup.cpp
-    src/nn/ptm/ptm_Api.cpp
-    PROPERTIES COMPILE_FLAGS
-    "-O2 -Otime"
-)
 
 target_compile_definitions(CTRSDK PUBLIC NON_MATCHING=)
 

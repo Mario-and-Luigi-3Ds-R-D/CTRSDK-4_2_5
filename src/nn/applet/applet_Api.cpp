@@ -277,7 +277,7 @@ __asm void SleepIfShellClosed(){
     POP             {PC}
 }
 
-void ReplySleepQueryToManager(QueryReply){
+void ReplySleepQueryToManager(QueryReply reply){
     // TODO
 }
 

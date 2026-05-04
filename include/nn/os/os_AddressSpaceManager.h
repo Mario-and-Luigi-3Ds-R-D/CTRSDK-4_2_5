@@ -2,14 +2,14 @@
 
 #include "nn/os/os_CriticalSection.h"
 #include "nn/os/os_MemoryBlockBase.h"
+#include "nn/fnd/fnd_Intrusive.h"
 
 namespace nn{
 namespace os{
     class AddressSpaceManager{
     public:
-        struct BlockList{
-            nn::fnd::IntrusiveLinkedList::Item* mHead;
-        };
+        typedef fnd::IntrusiveLinkedList<MemoryBlockBase> BlockList;
+        typedef os::CriticalSection Lock;
 
         uptr mSpaceBegin;
         uptr mSpaceEnd;
@@ -19,6 +19,8 @@ namespace os{
         uptr Allocate(MemoryBlockBase *pBlock,size_t size,size_t skipSize);
         void Free(MemoryBlockBase *p);
         void Switch(MemoryBlockBase *pTo,MemoryBlockBase *pFrom);
+
+        MemoryBlockBase* FindSpace(size_t size, size_t skipSize);
     };
 
 }

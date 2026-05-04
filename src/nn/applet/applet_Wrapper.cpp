@@ -8,7 +8,35 @@ namespace applet{
 namespace CTR{
 
 void InitializeWrapper(){
-    // TODO
+//  detail::SetReceiveCallback(ReceiveCallbackForCommands,0);
+    homeButtonCallback = 0;
+    homeButtonCallbackArg = 0;
+    requestMemoryCallback = 0;
+    requestMemoryCallbackArg = 0;
+    receiveMessageCallback = 0;
+    receiveMessageCallbackArg = 0;
+    dspSleepCallback = 0;
+    dspSleepCallbackArg = 0;
+    dspWakeUpCallback = 0;
+    dspWakeUpCallbackArg = 0;
+    sleepQueryCallback = 0;
+    sleepQueryCallbackArg = 0;
+    sleepCanceledCallback = 0;
+    sleepCanceledCallbackArg = 0;
+    sleepAcceptedCallback = 0;
+    sleepAcceptedCallbackArg = 0;
+    awakeCallback = 0;
+    awakeCallbackArg = 0;
+    shutdownCallback = 0;
+    shutdownCallbackArg = 0;
+    powerButtonCallback = 0;
+    powerButtonCallbackArg = 0;
+    transitionCallback = 0;
+    transitionCallbackArg = 0;
+    closeCallback = 0;
+    closeCallbackArg = 0;
+    commandCallback = 0;
+    commandCallbackArg = 0;
 }
 
 void ClearHomeButtonState(void) {

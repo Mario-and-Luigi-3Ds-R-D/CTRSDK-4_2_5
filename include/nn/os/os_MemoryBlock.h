@@ -43,4 +43,7 @@ typedef union nnosMemoryBlock{
     uint alignment_holder;
 } nnosMemoryBlock;
 
-void nnosMemoryBlockAllocate(nnosMemoryBlock* p, size_t size);
+extern "C"{
+    void nnosMemoryBlockAllocate(nnosMemoryBlock* p, size_t size);
+    uptr nnosMemoryBlockGetAddress(nnosMemoryBlock* p);
+}

@@ -2,7 +2,7 @@
 #include <rt_locale.h>
 #include <rt_sys.h>
 
-extern "C" void __cpp_initialize__aeabi_();
+extern "C" __weak void __cpp_initialize__aeabi_();
 
 extern "C"{
     void nninitRegion(); // native

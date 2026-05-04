@@ -1,5 +1,9 @@
 #include <nn/os/os_ThreadLocal.h>
 #include <nn/os/os_Thread.h>
+#include <nn/os/CTR/os_CppException.h>
+#include <rt_fp.h>
+
+extern "C" void _fp_init();
 
 namespace nn{
 namespace os{
@@ -55,5 +59,13 @@ ThreadLocalStorage::~ThreadLocalStorage(){
     }
 }
 
+namespace detail{
+    void InitializeThreadEnvrionment(){
+        Result clear = nn::os::ThreadLocalStorage::ClearAllSlots();
+        os::CTR::SetupThreadCppExceptionEnvironment();
+        _fp_init();
 }
+}
+}
+
 }

@@ -1,5 +1,5 @@
 #include <nn/os/CTR/os_ErrorHandler.h>
-#include <nn/err/CTR/err_FatalErr.h>
+#include <nn/err/CTR/err_Api.h>
 #include <nn/dbg/dbg_Break.h>
 
 

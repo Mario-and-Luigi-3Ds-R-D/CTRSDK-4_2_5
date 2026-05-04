@@ -5,11 +5,9 @@
 namespace nn{
 namespace os{
 namespace CTR{
-namespace{
-    void DefaultTerminateHandler();
-    void DefaultUnexpectedHandler();
-}
 
+void DefaultTerminateHandler();
+void DefaultUnexpectedHandler();
 void SetupThreadCppExceptionEnvironment();
 
 }

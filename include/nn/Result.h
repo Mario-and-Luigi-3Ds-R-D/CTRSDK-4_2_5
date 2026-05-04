@@ -255,6 +255,12 @@ public:
         {
                 return (mResult & mask) >> shift;
         }
+
+template <Result::Level TLevel, Result::Summary TSummary, Result::Module TModule, int TDescription> struct Const;
+template <Result::Level TLevel, Result::Summary TSummary, Result::Module TModule, int TDescription, int TDescriptionMin, int TDescriptionMax> struct ConstRange;
+template <Result::Level TLevel, Result::Summary TSummary, Result::Module TModule> struct Const_LSM;
+template <Result::Level TLevel, Result::Module TModule> struct Const_LM;
+template <Result::Level TLevel> struct Const_L;
 };
 
 template <Result::Level TLevel, Result::Summary TSummary, Result::Module TModule, int TDescription>
@@ -279,18 +285,38 @@ struct ConstRange : public Result
         friend bool operator>=(ConstRange, Result rhs) { return ConstRange::Includes(rhs); }
 };
 template <Result::Level TLevel, Result::Summary TSummary, Result::Module TModule>
-struct Const_LSM
+struct Result::Const_LSM : public Result
 {
-        template <int TDescription>
-        struct Const : Result::Const<TLevel, TSummary, TModule, TDescription>
-        {};
+    static const Result::Level Level = TLevel;
+    static const Result::Summary Summary = TSummary;
+    static const Result::Module Module = TModule;
+
+    template <int TDescription>
+    struct Const : public Result::Const<TLevel, TSummary, TModule, TDescription> {};
+
+    Const_LSM(int description) : Result(TLevel, TSummary, TModule, description) {}
 };
+
 template <Result::Level TLevel, Result::Module TModule>
-struct Const_LM
+struct Result::Const_LM : public Result
 {
-        template <Result::Summary TSummary, int TDescription>
-        struct Const : Result::Const<TLevel, TSummary, TModule, TDescription>
-        {};
+    static const Result::Level Level = TLevel;
+    static const Result::Module Module = TModule;
+
+    template <Result::Summary TSummary, int TDescription>
+    struct Const : public Result::Const<TLevel, TSummary, TModule, TDescription> {};
+
+    Const_LM(Result::Summary summary, int description) : Result(TLevel, summary, TModule, description) {}
+};
+
+template <Result::Level TLevel>
+struct Result::Const_L : public Result{
+    static const Result::Level Level = TLevel;
+
+    template <Result::Summary TSummary, Result::Module TModule, int TDescription>
+    struct Const : public Result::Const<TLevel, TSummary, TModule, TDescription> {};
+
+    Const_L(Result::Summary summary, Result::Module module, int description) : Result(TLevel, summary, module, description) {}
 };
 
 // Result creators
@@ -299,15 +325,19 @@ struct Const_LM
 #define NN_RESULT_DEF_CONST_RANGE(result, level, summary, module, description, a, b) \
         typedef Result::Const<(level), (summary), (module), (description), (a), (b)> result
 
-#define NN_RESULT_DEF_CONST_LSM(result, sub, description) \
-        typedef sub::Const<(description)> result
-#define NN_RESULT_MAKE_CONST_LSM(sub, level, summary, module) \
-        typedef ::Result::Const_LSM<(level), (summary), (module)> sub
+#define NN_DEFINE_RESULT_FUNC_LSM(name, level, summary, module) \
+    typedef ::Result::Const_LSM<(level), (summary), (module)> name
+#define NN_DEFINE_RESULT_CONST_LSM(name, f, description) \
+    typedef f::Const<(description)> name
 
-#define NN_RESULT_DEF_CONST_LM(result, sub, summary, description) \
-        typedef sub::Const<(summary), (description)> result
-#define NN_RESULT_MAKE_CONST_LM(sub, level, module) \
-        typedef ::Result::Const_LM<(level), (module)> sub
+#define NN_DEFINE_RESULT_FUNC_LM(name, level, module) \
+    typedef ::Result::Const_LM<(level), (module)> name
+
+#define NN_DEFINE_RESULT_CONST_LM(name, f, summary, description) \
+    typedef f::Const<(summary), (description)> name
+
+#define NN_DEFINE_RESULT_CONST(name, level, summary, module, description) \
+    typedef ::Result::Const<(level), (summary), (module), (description)> name
 // 565
 NN_RESULT_DEF_CONST(ResultSuccess, Result::LEVEL_SUCCESS, Result::SUMMARY_SUCCESS, Result::MODULE_COMMON, Result::DESCRIPTION_SUCCESS);
 

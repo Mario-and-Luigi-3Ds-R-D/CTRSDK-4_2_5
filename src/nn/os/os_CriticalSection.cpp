@@ -13,12 +13,9 @@ void CriticalSection::Initialize() {
 // Enters Thread CriticalSection
 
 void CriticalSection::Enter(void) {
-    int thread;
-    __asm {mrc p15, 0, thread, c13, c0, 3}
-    if (thread != this->mThreadUniqueValue){ // Cant get cmp r0,r1 mfs always be like cmp r1,r0
+    if(!this->LockedByCurrentThread()){
         this->mLock.Lock();
-        __asm {mrc p15, 0, thread, c13, c0, 3}
-        this->mThreadUniqueValue = thread;
+        this->OnLocked();
     }
     this->mLockCount += 1;
 }
@@ -39,17 +36,14 @@ void CriticalSection::Leave() {
 // Trys to enter Thread CriticalSection, if cant TryLock. If so, add to the count and proceed.
 
 bool CriticalSection::TryEnter(void) {
-    register u32 thread;
-    __asm {mrc p15, 0, thread, c13, c0, 3}
-    if (this->mThreadUniqueValue != thread) { // Fuckin' CMP wont budge! MEIN GOTT!
-        if (this->mLock.TryLock() == 0) {
-            return 0;
+    if(!this->LockedByCurrentThread() ){
+        if(!this->mLock.TryLock() ){
+            return false;
         }
-        __asm {mrc p15, 0, thread, c13, c0, 3}
-        this->mThreadUniqueValue = thread;
+        OnLocked();
     }
     this->mLockCount = this->mLockCount + 1;
-    return 1;
+    return true;
 }
 
 } // os

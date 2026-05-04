@@ -6,11 +6,9 @@ namespace hid{
 namespace CTR{
 #ifdef NONMATCHING
 #endif
-PadReader::PadReader(Pad* pad){
-    this->mPad = pad;
+PadReader::PadReader(Pad& pad) : mPad(pad) {
     this->mIndexOfRead = -1;
-    //AnalogStickClamper::AnalogStickClamper();
-    this->mIsReadLatestFirst = true;
+    // TODO
 }
 
 bool PadReader::ReadLatest(PadStatus* status){
@@ -18,7 +16,7 @@ bool PadReader::ReadLatest(PadStatus* status){
 }
 
 f32 PadReader::NormalizeStick(short x, short y){
-    this->mStickClamper.NormalizeStick(x,y);
+    return this->mStickClamper.NormalizeStick(x,y);
 }
 
 }

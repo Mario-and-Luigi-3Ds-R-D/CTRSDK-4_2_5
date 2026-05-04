@@ -4,8 +4,6 @@
 #include <nn/os/CTR/os_ErrorHandler.h>
 #include <nn/os/ARM/os_SpinWait.h>
 #include <nn/svc/svc_Api.h>
-//#include <rt_fp.h
-extern void _fp_init();
 
 /*extern "C" char** __ARM_get_argv(void){
     return NULL;
@@ -16,22 +14,8 @@ extern "C" nn::os::AutoStackManager* spAutoStackManager;
 namespace nn{
 namespace os{
 // STI is wrong.
-//Thread Thread::sMainThread = Thread::InitializeAsCurrentTag();
+Thread Thread::sMainThread = Thread::InitializeAsCurrentTag();
 Thread::AutoStackManager*    Thread::spAutoStackManager = NULL;
-
-// The Offical SDK ASMs this one too.
-//
-// But it handles deconstructors, and exits it from the thread when done.
-__asm void Thread::CallDestructorAndExit(){    
-    MOV             R2, #0 
-    MOV             R1, R0 
-    LDR             R0, =__cpp(&spAutoStackManager) // load AutoStackManager
-    LDR             R0, [R0]
-    LDR             R3, [R0]
-    LDR             R3, [R3,#0xC] // load AutoStackManager's 0xC vtable slot
-    LDR             LR, =__cpp(nn::svc::ExitThread) // goto -> nn::svc::ExitThread and prroceed
-    BX              R3 // Branch eXchange R3's vtable, in this case AutoStackManager
-}
 
 // done by user QqquickqQ
 void Thread::FinalizeImpl(){
@@ -75,16 +59,26 @@ void Thread::TryInitializeAndStartImpl(nn::os::Thread::TypeInfo *typeInfo,nn::os
     // Todo
 }
 
+// The Offical SDK ASMs this one too.
+//
+// But it handles deconstructors, and exits it from the thread when done.
+__asm void Thread::CallDestructorAndExit(){    
+    MOV             R2, #0 
+    MOV             R1, R0 
+    LDR             R0, =__cpp(&spAutoStackManager) // load AutoStackManager
+    LDR             R0, [R0]
+    LDR             R3, [R0]
+    LDR             R3, [R3,#0xC] // load AutoStackManager's 0xC vtable slot
+    LDR             LR, =__cpp(nn::svc::ExitThread) // goto -> nn::svc::ExitThread and prroceed
+    BX              R3 // Branch eXchange R3's vtable, in this case AutoStackManager
+}
+
+
 os::CTR::ThreadLocalRegion* spTlr = NULL;
 
 
 namespace detail{
 
-/*void InitializeThreadEnvrionment(){
-    //Result clear = os::ThreadLocalStorage::ClearAllSlots();
-    os::CTR::SetupThreadCppExceptionEnvironment();
-    _fp_init();
-}*/
 
 __asm void SaveThreadLocalRegionAddress(){
     MRC             p15, 0, R0,c13,c0, 3
@@ -92,6 +86,7 @@ __asm void SaveThreadLocalRegionAddress(){
     STR             R0, [R1,#4]
     BX              LR
 }
+
 
 }
 }

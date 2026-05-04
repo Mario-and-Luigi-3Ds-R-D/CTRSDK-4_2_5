@@ -9,10 +9,10 @@ namespace CTR{
 Result Initialize();
 Result Finalize();
 
-Pad* GetPad();
-TouchPanel* GetTouchPanel();
-Accelerometer* GetAccelerometer();
-Gyroscope* GetGyroscope();
+Pad& GetPad();
+TouchPanel& GetTouchPanel();
+Accelerometer& GetAccelerometer();
+Gyroscope& GetGyroscope();
 
 extern HidDevices sDevices;
 

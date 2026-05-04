@@ -36,3 +36,11 @@ void Switch(nnosMemoryBlockBase* pTo, nnosMemoryBlockBase* pFrom){
 }
 }
 }
+
+void nnosMemoryBlockAllocate(nnosMemoryBlock* p, size_t size){
+    
+}
+
+uptr nnosMemoryBlockGetAddress(nnosMemoryBlock* p){
+    return *(uptr*)(p->buf + 8);
+}

@@ -37,7 +37,7 @@ struct GyroscopeStatus{
     GyroscopeStatus(){}
 };
 
-class GyroscopeReader{ //: private nn::util::NonCopyable<GyroscopeReader>{
+class GyroscopeReader : private nn::util::NonCopyable<GyroscopeReader>{
 protected:
     static const s32 GYROSCOPE_LOCAL_BUFFER_SIZE = 32;
 
@@ -78,12 +78,12 @@ protected:
     f32 mDpsYawMagnification;
     f32 mDpsRollMagnification;
     s32 rev2;
-    Gyroscope* mGyroscope;
+    Gyroscope& mGyroscope;
     s32 mIndexOfRead;
     s64 mTickOfRead;
     nn::math::MTX34 mRotateMtx;
 public:
-    GyroscopeReader(AccelerometerReader* pAccelerometerReader, Gyroscope* gyroscope);
+    GyroscopeReader(AccelerometerReader* pAccelerometerReader = NULL, Gyroscope& gyroscope = CTR::GetGyroscope());
     ~GyroscopeReader();
     void Read(GyroscopeStatus* pBufs, s32* pReadLen, s32 bufLen);
     bool ReadLatest(GyroscopeStatus* pBuf);
@@ -107,7 +107,7 @@ public:
     f32 ReviseDirection_Acceleration(Direction& rev_dir, const nn::math::VEC3& acc);
 
     // Zero Modes
-    void SetZeroPlayParam(f32 radius);
+    void SetZeroPlayParam(f32& radius);
     void SetZeroDriftMode(const ZeroDriftMode& mode);
 };
 

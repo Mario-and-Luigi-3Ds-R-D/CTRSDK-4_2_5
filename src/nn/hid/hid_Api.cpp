@@ -14,20 +14,20 @@ Result Initialize(){
     sDevices.Initialize(CTR::PORT_NAME_USER);
 }
 
-Pad* GetPad(){
-    return &sDevices.pad;
+Pad& GetPad(){
+    return sDevices.pad;
 }
 
-TouchPanel* GetTouchPanel(){
-    return &sDevices.touchPanel;
+TouchPanel& GetTouchPanel(){
+    return sDevices.touchPanel;
 }
 
-Accelerometer* GetAccelerometer(){
-    return &sDevices.accelerometer;
+Accelerometer& GetAccelerometer(){
+    return sDevices.accelerometer;
 }
 
-Gyroscope* GetGyroscope(){
-    return &sDevices.gyroscope;
+Gyroscope& GetGyroscope(){
+    return sDevices.gyroscope;
 }
 
 }

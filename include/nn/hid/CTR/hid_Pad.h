@@ -15,9 +15,9 @@ struct PadStatus{
     AnalogStickStatus stick;
 };
 
-class PadReader{
+class PadReader : private nn::util::NonCopyable<PadReader>{
 protected:
-    Pad* mPad;
+    Pad& mPad;
     s32 mIndexOfRead;
     bit32 mLatestHold;
     AnalogStickClamper mStickClamper;
@@ -26,6 +26,8 @@ protected:
     s32 rev2;
     s64 mTickOfRead;
 public:
+static const s8 MAX_READ_NUM = 7;
+
 typedef enum{
     STICK_CLAMP_MODE_CIRCLE = AnalogStickClamper::STICK_CLAMP_MODE_CIRCLE,
     STICK_CLAMP_MODE_CROSS = AnalogStickClamper::STICK_CLAMP_MODE_CROSS,
@@ -33,7 +35,7 @@ typedef enum{
 } StickClampMode;
 
 f32 NormalizeStick(short x, short y);
-PadReader(Pad* pad = CTR::GetPad());
+PadReader(Pad& pad = CTR::GetPad());
 bool ReadLatest(PadStatus* status);
 
 inline void SetStickClampMode(StickClampMode mode){

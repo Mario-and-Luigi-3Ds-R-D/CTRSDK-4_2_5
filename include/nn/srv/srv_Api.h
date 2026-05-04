@@ -12,12 +12,12 @@ Result Connect(const char*);
 }
 class HandlerManager{
 public:
-    nn::fnd::IntrusiveLinkedList mHandler;
+    nn::fnd::IntrusiveLinkedList<HandlerManager> mHandler;
         
     ~HandlerManager();
 };
 
-struct NotificationHandler : public fnd::IntrusiveLinkedList::Item{
+struct NotificationHandler : public fnd::IntrusiveLinkedList<NotificationHandler>::Item{
     bit32 mAttachedMessage;
 
     NotificationHandler() { }

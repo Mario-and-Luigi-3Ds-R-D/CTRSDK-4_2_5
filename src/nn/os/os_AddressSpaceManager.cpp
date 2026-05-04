@@ -1,12 +1,10 @@
 #include <nn/os/os_AddressSpaceManager.h>
+#include <nn/os/os_CriticalSection.h>
 #include <nn/fnd/fnd_Intrusive.h>
 
 namespace nn{
 namespace os{
 
-// I raged trying to grt ts to wortk
-// 
-// Allocates to the AddressSpaceManager using sizes and block base.
 __asm uptr AddressSpaceManager::Allocate(MemoryBlockBase* pBlock, size_t size, size_t skipSize){
     PUSH            {R4-R10,LR}
     MOV             R5, R1
@@ -140,10 +138,7 @@ loc_132978
     POP             {R4-R10,PC}
 }
 
-// TODO: Recreate this, please.
-// 
-// Free the space manager.
-__asm void AddressSpaceManager::Free(MemoryBlockBase *p){
+__asm void AddressSpaceManager::Free(MemoryBlockBase *pBlock){
     PUSH            {R4-R6,LR}
     MOV             R6, R0
     ADD             R0, R0, #0xC
@@ -253,10 +248,10 @@ loc_45F020
     B               __cpp(nn::os::CriticalSection::Leave)
 
 loc_45F034
-    STR             R4, [R4,#4]
-    STR             R4, [R4]
-    STR             R4, [R7,#8]
-    B               loc_45EFE4
+        STR             R4, [R4,#4]
+        STR             R4, [R4]
+        STR             R4, [R7,#8]
+        B               loc_45EFE4
 }
 
 }

@@ -64,7 +64,7 @@ locret_613030
     BX              LR
 }
 
-__asm void nnosStackMemoryBlockGetStacBottom(nnosStackMemoryBlock* p){
+__asm void nnosStackMemoryBlockGetStackBottom(nnosStackMemoryBlock* p){
     LDR             R1, [R0,#8]
     LDR             R0, [R0,#0xC]
     ADD             R0, R0, R1

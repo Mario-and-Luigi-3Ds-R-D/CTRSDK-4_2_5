@@ -6,6 +6,12 @@ namespace nn{
 namespace hid{
 namespace CTR{
 
+const f32 DEFAULT_SCALE_OF_NORMALIZE_STICK = 1.5f;
+const s16 DEFAULT_THRESHOLD_OF_NORMALIZE_STICK = 141;
+const s16 MIN_OF_STICK_CLAMP_MODE_CIRCLE = 40;
+const s16 MIN_OF_STICK_CLAMP_MODE_CROSS = 36;
+const s16 LIMIT_OF_STICK_CLAMP_MAX = 145;
+
 struct AnalogStickStatus{
     short x;
     short y;

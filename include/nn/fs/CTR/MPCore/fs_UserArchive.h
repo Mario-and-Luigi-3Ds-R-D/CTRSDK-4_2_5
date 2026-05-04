@@ -9,6 +9,7 @@ namespace nn {
 namespace fs {
 namespace CTR {
 namespace MPCore {
+namespace detail{
 
 typedef nn::fslow::LowPath<const char*, const wchar_t*> Path;
 
@@ -49,6 +50,7 @@ public:
 };
 
 
+} // namespace detail
 } // namespace MPCore
 } // namespace CTR
 } // namespace fs

@@ -71,7 +71,7 @@ namespace{
     int closeCallbackArg;
     int releaseMemoryCallbackArg;
     int closeAppletCallbackArg;
-    int commandCallbackargArg;
+    int commandCallbackArg;
 
 }
 

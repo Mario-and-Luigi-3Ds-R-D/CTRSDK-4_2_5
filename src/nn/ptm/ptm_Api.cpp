@@ -8,6 +8,8 @@ namespace nn{
 namespace ptm{
 namespace CTR{
 
+#pragma O2
+
 Result Initialize(){
     const char* portName = PORT_NAMES[1];
     if(detail::PtmIpc::sSession != 0){
@@ -25,6 +27,8 @@ done:
     isDone.mResult = 0;
     return isDone;
 }
+
+#pragma O3
 
 #ifdef NONMATCHING
 #endif

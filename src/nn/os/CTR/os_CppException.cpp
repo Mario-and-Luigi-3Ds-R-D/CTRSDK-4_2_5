@@ -10,14 +10,12 @@ extern "C" void* __ARM_exceptions_buffer_init(void);
 namespace nn{
 namespace os{
 namespace CTR{
-namespace{
 void DefaultTerminateHandler(){
     std::abort();
 }
 
 void DefaultUnexpectedHandler(){
     std::terminate();
-}
 }
 __asm void nn::os::CTR::SetupThreadCppExceptionEnvironment(){
     PUSH            {R4,LR}

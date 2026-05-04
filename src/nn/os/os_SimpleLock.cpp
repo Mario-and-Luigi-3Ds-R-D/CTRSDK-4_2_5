@@ -6,35 +6,81 @@
 namespace nn{
 namespace os{
 
+namespace{
+        struct ReverseIfPositiveUpdater{
+            bool operator()(s32& x){
+                if(x > 0){
+                    x = -x;
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        };
+
+        struct ReverseUpdater{
+            s32 afterUpdate;
+            bool operator()(s32& x){
+                x = -x;
+                afterUpdate = x;
+                return true;
+            }
+        };
+
+        struct DecrementIfNegativeUpdater{
+            bool operator()(s32& x){
+            if( x < 0 ){
+                --x;
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    };
+
+        struct ReverseAndIncrementIfPositiveUpdater{
+            bool operator()(s32& x){
+            if( x > 0 ){
+                x = -x + 1;
+                return true;
+                }
+            else{
+                return false;
+            }
+        }
+    };
+}
+
 void SimpleLock::Initialize(void) {
     *this->mCounter = 1; // ultimate ASM this creates lmao
 }
 
 __asm void SimpleLock::Lock(){
-    MOV             R2,R0
+    MOV             R2, R0
 
-LAB_0012823c
-    LDREX           R1,[R0]
-    CMP             R1,#0 // If R1 < 0 skip to LAB_0012825c
-    BLE             LAB_0012825c
-    RSB             R1,R1,#0
-    STREX           R3,R1,[R0]
-    CMP             R3,#0 // If R3 != then loop.
-    BNE             LAB_0012823c
+loc_12823C
+    LDREX           R1, [R0]
+    CMP             R1, #0
+    BLE             loc_12825C
+    RSB             R1, R1, #0
+    STREX           R3, R1, [R0]
+    CMP             R3, #0
+    BNE             loc_12823C
     BX              LR
-LAB_0012825c
+
+loc_12825C
     CLREX
-    MOV             R0,R2
-    B               __cpp(nn::os::SimpleLock::LockImpl) // Branch off to LockImpl, continue there.
+    MOV             R0, R2
+    B               __cpp(nn::os::SimpleLock::Lock)
 }
 
-// Does the lock.
-
 __asm void SimpleLock::LockImpl(){
+    PUSH            {R4-R6,LR}
+    SUB             SP, SP, #8
+    MOV             R4, R0
 
-    PUSH            {R4, R5, R6, LR}
-    SUB             SP,SP,#8
-    MOV             R4,R0
 loc_128274
     LDREX           R2, [R4]
     CMP             R2, #0
@@ -43,7 +89,7 @@ loc_128274
     STREX           R2, R1, [R4]
     CMP             R2, #0
     BNE             loc_128274
-    LDR             R5, =__cpp(&os::WaitableCounter::sHandle)
+    LDR             R5, =__cpp(&nn::os::WaitableCounter::sHandle)
     B               loc_1282C8
 
 loc_128298
@@ -65,7 +111,6 @@ loc_1282C0
     B               loc_128274
 
 loc_1282C8
-
     MOV             R3, #0
     LDR             R0, [R5]
     MOV             R6, R3
@@ -91,29 +136,22 @@ loc_12830C
     B               loc_1282C8
 }
 
-// Trys to lock.
-//
-// Returns a bool TRUE/FALSE
-
 __asm bool SimpleLock::TryLock(){
-    LDREX           R1,[R0]
-    CMP             R1,#0
-    BLE             LAB_00125410
-    RSB             R1,R1,#0
-    STREX           R2,R1,[R0]
-    CMP             R2,#0
+    LDREX           R1, [R0]
+    CMP             R1, #0
+    BLE             loc_10DCD0
+    RSB             R1, R1, #0
+    STREX           R2, R1, [R0]
+    CMP             R2, #0
     BNE             __cpp(nn::os::SimpleLock::TryLock)
-    MOV             R0,#1
+    MOV             R0, #1
     BX              LR
-LAB_00125410
+
+loc_10DCD0
     CLREX
-    MOV             R0,#0
+    MOV             R0, #0
     BX              LR
 }
-
-// Unlocks the Simplelock, go figure.
-//
-// Returns to see if it CAN unlock.
 
 __asm void SimpleLock::Unlock(){
     PUSH            {R4,LR}
@@ -128,7 +166,7 @@ loc_120FC4
     CMP             R2, #1
     BLE             loc_121004
     MOV             R1, R0
-    LDR             R0, =__cpp(&os::WaitableCounter::sHandle)
+    LDR             R0, =__cpp(&nn::os::WaitableCounter::sHandle)
     MOV             R2, #0
     MOV             R4, R2
     MOV             R12, R2

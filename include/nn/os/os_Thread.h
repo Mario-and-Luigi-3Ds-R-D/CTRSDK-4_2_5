@@ -59,6 +59,14 @@ typedef void (*ThreadFunc)(uptr);
             static void Invoke2(ThreadFunc f, const void* p){
                 (*reinterpret_cast<void (*)(const T*)>(f))(reinterpret_cast<const T*>(p));
             }
+
+            template <typename T>
+            void SetData(){
+                this->size = sizeof(T);
+                this->copy = &(Copy<T>);
+                this->destroy = &(Destroy<T>);
+                this->invoke = &(Invoke2<T>);
+            }
         };
 
         class ProtectedAccessor{
@@ -82,7 +90,6 @@ typedef void (*ThreadFunc)(uptr);
 
 namespace detail{
 
-void InitializeThreadEnvrionment();
 void SaveThreadLocalRegionAddress();
 
 }

@@ -32,14 +32,14 @@ enum HeapAdjustMode {
     HEAP_ADJUST_HEAD = -1
 };
 
-class HeapBase : public IntrusiveLinkedList::Item {
+class HeapBase : public IntrusiveLinkedList<HeapBase>::Item {
 public:
     HeapBase() {}
     static const s32 DEFAULT_ALIGNMENT = 4;
     static const bit32 OPTION_ERROR_PRINT = NN_FND_HEAP_OPTION_ERROR_PRINT;
     static void  SetFillValue(HeapFillType type, bit32 val);
     static bit32 GetFillValue(HeapFillType type);
-    virtual ~HeapBase(){}
+    virtual ~HeapBase() = 0;
     virtual void FreeV(void*) = 0;
     virtual void* GetStartAddress() const = 0;
     virtual size_t GetTotalSize() const = 0;
@@ -55,36 +55,9 @@ protected:
 
     void SetParent(HeapBase* parent);
 
-/*    static uptr RoundDown(uptr addr, s32 alignment) {
-        return (addr / alignment) * alignment;
-    }
-
-    static uptr RoundUp(uptr addr, s32 alignment) {
-        return RoundDown(addr + alignment - 1, alignment);
-    }
-
-
-    void FillMemoryZero(uptr addr, size_t size) {
-        if (mOption & NN_FND_HEAP_OPTION_ZERO_CLEAR) {
-            FillMemory32(addr, addr + size, 0);
-        }
-    }
-*/
-#ifdef BUILD_VERBOSE
-    void DebugFillMemory(uptr addr, size_t size, HeapFillType type) {
-        if (mOption & NN_FND_HEAP_OPTION_DEBUG_FILL) {
-            FillMemory32(addr, addr + size, GetFillValue(type));
-        }
-    }
-#else
-    inline void DebugFillMemory(uptr, size_t, HeapFillType) {
-    }
-
-#endif
-
 private:
     HeapBase* mParent;
-    IntrusiveLinkedList mChildren;
+    IntrusiveLinkedList<HeapBase> mChildren;
 
     static void FillMemory(uptr addr, uptr end, bit8 value);
     static void FillMemory32(uptr addr, uptr end, bit32 value);

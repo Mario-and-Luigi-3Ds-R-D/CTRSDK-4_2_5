@@ -18,12 +18,15 @@ namespace CTR{
         bit32 mReceiveBuffer[32];
     };
 }; // CTR
+namespace detail{
+    void InitializeThreadEnvrionment();
+}
 
     class ThreadLocalStorage{
     public:
         int mIndex;
 
-        Result ClearAllSlots();
+        static Result ClearAllSlots();
         ~ThreadLocalStorage();
         void Thread();
     };

@@ -13,7 +13,7 @@ Gyroscope::~Gyroscope(){
 
 // GyroscopeReader
 
-GyroscopeReader::GyroscopeReader(AccelerometerReader* pAccelerometerReader,Gyroscope* gyroscope): mDefaultAccelerometerReader(*pAccelerometerReader){
+GyroscopeReader::GyroscopeReader(AccelerometerReader* pAccelerometerReader,Gyroscope& gyroscope) : mGyroscope(gyroscope){
     // TODO 
 }
 
@@ -54,7 +54,10 @@ void GyroscopeReader::InitializeCalibrationData(){
 }
 
 void GyroscopeReader::ResetZeroDriftMode(){
-    // TODO
+    this->mZeroDriftMode = GYROSCOPE_ZERODRIFT_STANDARD;
+    this->mZeroDriftRadius = 0.005;
+    this->mZeroDriftCount = 100;
+    this->mZeroDriftPower = 0.0199;
 }
 
 void GyroscopeReader::ResetAxisRotationMatrix(){
@@ -65,7 +68,7 @@ f32 GyroscopeReader::ReviseDirection_Acceleration(Direction& rev_dir, const nn::
     // TODO
 }
 
-void GyroscopeReader::SetZeroPlayParam(f32 radius){
+void GyroscopeReader::SetZeroPlayParam(f32& radius){
     this->mZeroPlayRadius = 0.005;
 }
 

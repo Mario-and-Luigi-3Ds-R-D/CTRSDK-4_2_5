@@ -1,16 +1,69 @@
 #ifndef NN_ERR_CTR_ERR_API_H_
 #define NN_ERR_CTR_ERR_API_H_
 
-#include <nn/types.h>
-#include <nn/Result.h>
-#include <nn/util/util_Result.h>
-#include <nn/err/CTR/err_FatalErr.h>
+#include "nn/types.h"
+#include "nn/Result.h"
+#include "nn/util/util_Result.h"
+#include "nn/os/ARM/os_ExceptionHandler.h"
 
 #ifdef __cplusplus
 // err Macros
+
+enum nnerrFatalErrType{
+    NN_ERR_FATAL_TYPE_SYSTEM_COMMON = 0,
+    NN_ERR_FATAL_TYPE_NAND_CORRUPTION = 1,
+    NN_ERR_FATAL_TYPE_CARD_EJECTION = 2,
+    NN_ERR_FATAL_TYPE_EXCEPTION = 3,
+    NN_ERR_FATAL_TYPE_RESULT_FAILURE = 4,
+    NN_ERR_FATAL_TYPE_LOG_ONLY = 5,
+};
+
 namespace nn{
 namespace err{
 namespace CTR{
+namespace{
+    const char PORT_NAME_ERR_F[] = "err:f";
+}
+    struct Exception{
+        u8 mInfo[24];
+        nn::os::ARM::ExceptionContext mExContext;
+    };
+
+    struct Failure{
+        char mMessage[96];
+    };
+
+    union Data{
+        nn::err::CTR::Exception mException;
+        nn::err::CTR::Failure mFailure;
+    };
+
+    struct FatalErrInfo{
+        bit8 mType;
+        u8 mRevisionHi;
+        ushort mRevisionLo;
+        Result mResult;
+        uptr mPc;
+        bit32 mProcessId;
+        bit64 mTitleId;
+        bit64 mAppTitleId;
+        nn::err::CTR::Data mData;
+    };
+
+    class FatalErr{
+    public:
+        Result Throw();
+    };
+
+    void ThrowFatalErr(Result result, uptr pc);
+//    void ThrowFatalErr(Result result, nnerrFatalErrType type, uptr pc);
+    void ThrowFatalErrAll(Result, uptr pc);
+namespace{
+    void Throw(nn::err::CTR::FatalErrInfo* pInfo);
+}
+namespace{
+//    static CTR::FatalErrInfo sFatalErrInfo; 
+}
 namespace detail{
     template <bool(*IsTarget)(Result), void(*TargetFunc)(Result, uptr)>
     inline void CallIf(Result r, uptr pc){

@@ -2,6 +2,10 @@
 
 namespace nn {
 namespace util {
+
+template <typename T>
+class NonCopyable {};
+
 namespace ADLFireWall {
 
 template <typename T>
