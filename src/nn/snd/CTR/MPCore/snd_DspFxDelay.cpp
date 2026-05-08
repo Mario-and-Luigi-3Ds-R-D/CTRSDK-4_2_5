@@ -13,12 +13,17 @@ DspFxDelay::DspFxDelay(){
     this->mProcessCount = 0;
 }
 
-DspFxDelay::~DspFxDelay() {
-
-}
-
 size_t DspFxDelay::GetRequiredMemorySize(const DspFxDelay::Param& param) {
-
+    size_t memSize = (param.mDelayTime * 1000) / 0x1318;
+    size_t memSizeNew;
+    if(memSize == 0){
+        memSize = 1;
+    } 
+    if(param.mIsEnableSurround == false){
+        memSizeNew = 2;
+    } else{
+        memSizeNew = 4;
+    } return memSizeNew * memSize * 0x280;
 }
 
 bool DspFxDelay::Initialize(uptr buffer, size_t size) {

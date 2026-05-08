@@ -2,6 +2,11 @@
 
 #include "GLES2/gl2CTR.h"
 
+typedef struct {
+    cl_list_t    *bound_cmdlist;      // offset 0x00 - you can see this accessed
+    // ... other fields
+} sys_manager_t;
+
 typedef void            GLvoid;
 typedef unsigned int    GLenum;
 typedef unsigned char   GLboolean;

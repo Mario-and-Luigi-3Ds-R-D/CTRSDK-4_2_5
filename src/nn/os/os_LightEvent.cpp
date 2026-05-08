@@ -17,12 +17,12 @@ void LightEvent::ClearSignal(){
     else if(*this->mCounter == RESET_UNK0){
         *this->mCounter = RESET_AUTO;
     }
+    this->mLock.Unlock();
 }
 
 void LightEvent::Wait(){
     while (true){
             switch (*this->mCounter){
-
             case RESET_MANUAL:
                     this->mCounter.WaitIfLessThan (0);
                     return;

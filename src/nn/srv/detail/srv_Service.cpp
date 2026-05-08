@@ -1,5 +1,7 @@
 #include <nn/srv/detail/srv_Service.h>
 
+//extern void __ARM_common_memcpy4_8(void*, const void*, unsigned int);
+
 namespace nn{
 namespace srv{
 namespace detail{
@@ -52,7 +54,7 @@ locret_119CC4
 }*/
 
 Result GetServiceHandle(nn::Handle* pOut, const char* pService, s32 nameLen, u32 flags){
-
+    
 }
 
 __asm Result ReceiveNotification(bit32 *pOut){

@@ -45,7 +45,7 @@ namespace svc{
     }
 
     // CreateThread
-    __asm Result CreateThread(nn::Handle*, void*, uint, uint,uint,int,int){
+    __asm Result CreateThread(nn::Handle*, void (*)(uint), uint, uint, int, int){
         push {r0, r4}
         ldr r0, [sp, #8]
         ldr r4, [sp, #0xc]
@@ -90,7 +90,7 @@ namespace svc{
     }
 
     // CreateEvent - Create / Load New Memory event
-    __asm Result CreateEvent(nn::Handle*,nn::os::ResetType){
+    __asm Result CreateEvent(nn::Handle*, void (*)(uint), uint, uint, int, int){
         push {r0}
         swi 0x17
         ldr r2,[sp,#4]

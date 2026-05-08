@@ -51,8 +51,8 @@ protected:
     };
 
     s32 mArchivePriority;
-    IFile* mBaseFile;
-    IFile* mPriorFiles[5];
+    IFile* mpBaseFile;
+    IFile* mpPriorFiles[5];
     RomFsStorage mStorageDirectoryBucket;
     RomFsStorage mStorageDirectoryEntry;
     RomFsStorage mStorageFileBucket;

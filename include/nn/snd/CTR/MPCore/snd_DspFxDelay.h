@@ -21,7 +21,6 @@ public:
 
 public:
     DspFxDelay();
-    ~DspFxDelay();
     static size_t GetRequiredMemorySize(const DspFxDelay::Param& param);
     bool Initialize(uptr buffer, size_t size);
     void Finalize();

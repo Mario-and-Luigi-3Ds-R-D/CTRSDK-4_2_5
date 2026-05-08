@@ -16,10 +16,13 @@ namespace os{
         BlockList mBlockList;
         CriticalSection mLock;
 
+        AddressSpaceManager() { mSpaceBegin = mSpaceEnd = 0; }
         uptr Allocate(MemoryBlockBase *pBlock,size_t size,size_t skipSize);
         void Free(MemoryBlockBase *p);
         void Switch(MemoryBlockBase *pTo,MemoryBlockBase *pFrom);
+        void Initialize(uptr begin, size_t size);
 
+    private:
         MemoryBlockBase* FindSpace(size_t size, size_t skipSize);
     };
 

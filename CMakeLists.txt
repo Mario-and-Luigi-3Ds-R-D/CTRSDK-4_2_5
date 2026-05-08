@@ -47,8 +47,11 @@ add_library(CTRSDK ${csourcefiles})
 
 target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:CXX>:
     --apcs=//interwork --cpu=MPCore --fpmode=fast --cpp --arm
-    --signed_chars --multibyte-chars
-    -O3 -Otime --data-reorder --split_sections
+    --signed_chars --multibyte-chars -DNN_PROCESSOR_ARM11MPCORE
+    -O3 -Otime --data-reorder --split_sections --force_new_nothrow
+    --no_debug_macros --remove_unneeded_entities --no_allow_fpreg_for_nonfpdata
+    --debug_info=line_inlining_extensions --dollar
+    --no_rtti
     >)
 
 target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:C>:
@@ -56,6 +59,7 @@ target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:C>:
     --signed_chars --multibyte-chars --locale=japanese
     -Otime --data-reorder --split_sections
     >)
+
 
 target_compile_definitions(CTRSDK PUBLIC NON_MATCHING=)
 

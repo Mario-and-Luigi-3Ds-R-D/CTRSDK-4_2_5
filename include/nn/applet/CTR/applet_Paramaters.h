@@ -46,6 +46,15 @@ namespace CTR{
         PREP_TO_JUMP_TO_APP = 20,
     };
 
+    enum AppletType{
+        HOME_BUTTON = 0,
+        POWER_BUTTON = 1,
+        MII_SELECT = 2,
+        KEYBOARD = 3,
+        EULA_ERROR = 4,
+        APPLET_TYPE_MAX = 5,
+    };
+
     enum Command{
         CMD_NONE = 0,
         CMD_WAKEUP = 1,

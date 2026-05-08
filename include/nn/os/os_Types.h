@@ -142,7 +142,7 @@ namespace os{
     public:
         Handle mHandle;
 
-    protected:
+    public:
         Handle GetHandle() const{
             return mHandle;
         }
@@ -150,8 +150,12 @@ namespace os{
             return mHandle.IsValid();
         }
 
-    public:
-        HandleObj(){}
+        void SetHandle(nn::Handle handle);
+
+        #pragma push
+        #pragma diag_suppress 2530
+            HandleObj() {}
+        #pragma pop
 
         ~HandleObj(){
             Close();
@@ -171,7 +175,11 @@ namespace os{
         void ClearHandle(){
             mHandle = Handle();
         }
-        };
+    };
+    
+    inline void HandleObj::SetHandle(nn::Handle handle){
+        this->mHandle = handle;
+    }
 
     class WaitObject : public HandleObj{
     };

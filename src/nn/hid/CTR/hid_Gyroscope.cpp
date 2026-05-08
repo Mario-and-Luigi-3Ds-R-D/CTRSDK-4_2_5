@@ -46,7 +46,15 @@ void GyroscopeReader::DisableZeroPlay(){
 }
 
 void GyroscopeReader::CalculateDirection(){
-    // TODO
+    /*float xX = this->mCurrentStatus.direction.x.x;
+    float xY = this->mCurrentStatus.direction.x.y;
+    float xZ = this->mCurrentStatus.direction.x.z;
+    float yX = this->mCurrentStatus.direction.y.x;
+    float yY = this->mCurrentStatus.direction.y.y;
+    float yZ = this->mCurrentStatus.direction.y.z;
+    float zX = this->mCurrentStatus.direction.y.x;
+    float zY = this->mCurrentStatus.direction.y.y;
+    float zZ = this->mCurrentStatus.direction.y.z;*/
 }
 
 void GyroscopeReader::InitializeCalibrationData(){

@@ -17,6 +17,7 @@ namespace os {
         u32 mThreadUniqueValue;
         s32 mLockCount;
 
+        CriticalSection() : mThreadUniqueValue(GetInvalidThreadUniqueValue()), mLockCount(-1) {}
         void Initialize(void);
         void Enter(void);
         void Leave(void);
@@ -24,16 +25,20 @@ namespace os {
         ~CriticalSection() { }
         class ScopedLock;
 
-        static uptr GetThreadUniqueValue(){
-            uptr v;
-            HW_GET_CP15_THREAD_ID_USER_READ_ONLY(v);
-            return v;
-        }
         void OnLocked(){
             this->mThreadUniqueValue = GetThreadUniqueValue();
         }
         bool LockedByCurrentThread() const{
             return GetThreadUniqueValue() == mThreadUniqueValue;
+        }
+    private:
+        static uptr GetThreadUniqueValue(){
+            uptr v;
+            HW_GET_CP15_THREAD_ID_USER_READ_ONLY(v);
+            return v;
+        }
+        static uptr GetInvalidThreadUniqueValue(){
+            return static_cast<uptr>(-1);
         }
     };
     

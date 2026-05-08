@@ -54,16 +54,55 @@ namespace detail{
         Result TryRead(int*, void*, size_t);
         Result TryWrite(int*, const void*, size_t, bool);
         Result TrySeek(s64, nn::fs::PositionBase);
-        Result TryGetPosition(s64*) const;
         Result TrySetPosition(s64);
         Result TryGetSize(s64*) const;
         Result TrySetSize(s64);
         Result TryFlush();
+        /* Use these instead of calling it directly! */
+
+        s32 Read(void* buffer, size_t size){
+            s32 ret;
+            NN_ERR_THROW_FATAL_ALL(TryRead(&ret, buffer, size));
+            return ret;
+        }
+
+        s32 Write(const void* buffer, size_t size, bool flush){
+            s32 ret;
+            NN_ERR_THROW_FATAL_ALL(TryWrite(&ret, buffer, size, flush));
+            return ret;
+        }
+
+        void Seek(s64 position, PositionBase base){
+            NN_ERR_THROW_FATAL_ALL(TrySeek(position, base));
+        }
+
+        s64 GetPosition() const{
+            s64 ret;
+            NN_ERR_THROW_FATAL_ALL(TryGetPosition(&ret));
+            return ret;
+        }
+
+        void SetPosition(s64 position){
+            NN_ERR_THROW_FATAL_ALL(TrySetPosition(position));
+        }
 
         s64 GetSize() const{
             s64 ret;
             NN_ERR_THROW_FATAL_ALL(TryGetSize(&ret));
             return ret;
+        }
+
+        void SetSize(s64 size){
+            NN_ERR_THROW_FATAL_ALL(TrySetSize(size));
+        }
+
+        void Flush(){
+            NN_ERR_THROW_FATAL_ALL(TryFlush());
+        }
+
+        Result TryGetPosition(s64* pOut) const{
+            *pOut = mPosition;
+            return ResultSuccess();
         }
 
         // Sets FileBase, Luigifan27 custom inline.

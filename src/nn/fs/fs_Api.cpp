@@ -21,14 +21,14 @@ void Initialize(){
     size_t nameLen;
     Result isInit = IsInitialized().IsFailure();
 
-    servHandle = srv::Initialize();
+    servHandle = srv::Initialize().IsFailure();
     if(servHandle != 0){
-        nn::err::CTR::ThrowFatalErrAll(servHandle, __current_pc());
+        NN_ERR_THROW_FATAL_ALL(servHandle);
     }
     nameLen = strlen(detail::PORT_NAME_USER);
-    servHandle = srv::GetServiceHandle(&sFileServerSession, detail::PORT_NAME_USER,nameLen,0);
+    servHandle = srv::GetServiceHandle(&sFileServerSession, detail::PORT_NAME_USER,nameLen,0).IsFailure();
     if(servHandle != 0){
-        nn::err::CTR::ThrowFatalErrAll(servHandle, __current_pc());
+        NN_ERR_THROW_FATAL_ALL(servHandle);
     }
 }
 

@@ -2,7 +2,7 @@
 #include <rt_locale.h>
 #include <rt_sys.h>
 
-extern "C" __weak void __cpp_initialize__aeabi_();
+extern "C" __weak void __cpp_initialize__aeabi_(void);
 
 extern "C"{
     void nninitRegion(); // native
@@ -21,8 +21,8 @@ extern "C"{
     extern u8 Image$$ZI$$ZI$$Base[]; // ARMCC thingies
 
 #pragma arm
-
 __asm void __ctr_start(){
+    PRESERVE8
     bl __cpp(nninitRegion)
     bl __cpp(nninitLocale)
     bl __cpp(nninitSystem)

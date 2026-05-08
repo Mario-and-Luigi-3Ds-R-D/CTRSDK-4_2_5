@@ -1,4 +1,5 @@
 #include <nn/cfg/CTR/cfg_Api.h>
+#include <nn/cfg/CTR/cfg_DetailApi.h>
 #include <nn/Result.h>
 #include <nn/err/CTR/err_Api.h>
 
@@ -7,7 +8,11 @@ namespace cfg {
 namespace CTR {
 
 void Initialize(){
-    // TODO
+    Result res = detail::Initialize().IsFailure();
+
+    if(res != 0){
+        NN_ERR_THROW_FATAL(res);
+    }
 }
 
 u8 GetFsLatencyEmulationParam(){

@@ -16,15 +16,15 @@ Result RomFsArchive::OpenDirectory(IDirectory** pDir, const Path& path) {
 }
 
 Result RomFsArchive::DeleteFile(const Path& path) {
-
+    return ResultSuccess();
 }
 
 Result RomFsArchive::RenameFile(const Path& path, const Path& newPath) {
-
+    return ResultSuccess();
 }
 
 Result RomFsArchive::DeleteDirectory(const Path& path) {
-
+    return ResultSuccess();
 }
 
 Result RomFsArchive::TryDeleteDirectoryRecursively(const Path& path) {
@@ -32,19 +32,19 @@ Result RomFsArchive::TryDeleteDirectoryRecursively(const Path& path) {
 }
 
 Result RomFsArchive::CreateFile(const Path& path) {
-
+    return ResultSuccess();
 }
 
 Result RomFsArchive::CreateDirectory(const Path& path) {
-
+    return ResultSuccess();
 }
 
 Result RomFsArchive::RenameDirectory(const Path& path, const Path& newPath) {
-
+    return ResultSuccess();
 }
 
 RomFsArchive::~RomFsArchive() {
-
+    this->mpBaseFile  = 0; // other donconsts do the rest
 }
 
 void RomFsArchive::DuplicateHandle() {
@@ -52,7 +52,7 @@ void RomFsArchive::DuplicateHandle() {
 }
 
 void RomFsArchive::OpenLinkHandle() {
-
+    this->mpBaseFile->Close();
 }
 
 

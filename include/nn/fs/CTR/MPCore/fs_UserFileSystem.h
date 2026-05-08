@@ -42,7 +42,7 @@ class UserFileSystem{
 public:
     static void CloseFile(void*);
     bool Initialize();
-    static Result TryGetFileSize(long long* pout,void*);
+    static Result TryGetFileSize(s64* pout,void*);
     static Result TrySetFileSize(void* p, s64 size);
     Result TryWriteFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size, bool flush);
     Result TryReadFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size);

@@ -15,15 +15,15 @@ typedef nn::fslow::LowPath<const char*, const wchar_t*> Path;
 
 class IFile{
 public:
-    virtual Result TryRead (s32*, s64, size_t) = 0;
-    virtual Result TryWrite (s32*, s64, size_t, bool) = 0;
-    virtual Result TryGetSize (s64*) = 0;
-    virtual Result TrySetSize (s64) = 0;
-    virtual Result TryFlush () = 0;
-    virtual Result DuplicateHandle (Handle*, s64, s64) = 0;
-    virtual Handle GetFileHandle () const {}
-    virtual void DetachFileHandle () {}
-    virtual void Close () = 0;
+    virtual Result TryRead (s32*, s64, size_t) = 0; // 0x0
+    virtual Result TryWrite (s32*, s64, size_t, bool) = 0; // 0x4
+    virtual Result TryGetSize (s64*) = 0; // 0x8
+    virtual Result TrySetSize (s64) = 0; // 0xC
+    virtual Result TryFlush () = 0; // 0x10
+    virtual Result DuplicateHandle (Handle*, s64, s64) = 0; // 0x14
+    virtual Handle GetFileHandle () const {} // 0x18
+    virtual void DetachFileHandle () {} // 0x1C
+    virtual void Close () = 0; // 0x20
     virtual ~IFile () {}
 };
 

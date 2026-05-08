@@ -8,7 +8,7 @@ namespace applet{
 namespace CTR{
 
 void InitializeWrapper(){
-//  detail::SetReceiveCallback(ReceiveCallbackForCommands,0);
+//    detail::SetReceiveCallback(ReceiveCallbackForCommands,0);
     homeButtonCallback = 0;
     homeButtonCallbackArg = 0;
     requestMemoryCallback = 0;
@@ -78,6 +78,15 @@ void EnableSleep(bool isSleepCheck){
         return;
     }
     return;
+}
+
+bool IsExpectedToProcessHomeButton(){
+    bool Homemenu = IsExpectedToJumpToHomeMenu();
+    HomeButtonState hbState;
+    if((Homemenu != 0) || (hbState = GetHomeButtonState(), hbState != HOME_BUTTON_NONE)){
+        hbState = HOME_BUTTON_SINGLE_PRESSED;
+    }
+    return hbState;
 }
 
 void CloseAppletHook(){

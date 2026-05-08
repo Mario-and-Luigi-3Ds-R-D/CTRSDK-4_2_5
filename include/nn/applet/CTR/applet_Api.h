@@ -43,6 +43,12 @@ namespace{
     void LockTransition(u32 action,bool isForced);
     void SleepIfShellClosed(); // ASM
     void ReplySleepQueryToManager(QueryReply);
+
+    struct LockTransitionParam{
+        u32 action;
+        bool isForced;
+        s8 rev[3];
+    };
 }
 }
 }

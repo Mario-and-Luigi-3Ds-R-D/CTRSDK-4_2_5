@@ -13,7 +13,7 @@ namespace svc{
     Result ControlMemory(uint*,uint,uint,uint,uint,uint);
     Result ExitProcess();
     Result QueryMemory(nn::os::MemoryInfo*,nn::os::PageInfo*,uint);
-    Result CreateThread(nn::Handle*, void*, uint, uint,uint,int,int);
+    Result CreateThread(nn::Handle*, void (*)(uint), uint, uint, int, int);
     Result ExitThread();
     Result SleepThread(long long);
     Result GetThreadPriority();

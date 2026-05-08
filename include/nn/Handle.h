@@ -49,7 +49,9 @@ public:
         nnHandle result = {mHandle};
         return result;
     }
-    
+
+    // LF27 Addition; clean way of getting the handle.
+    u32 GetHandle() const { return mHandle; }
     u32 mHandle;
 };
 }

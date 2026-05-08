@@ -28,7 +28,6 @@ namespace detail{
 
         static Result ClearAllSlots();
         ~ThreadLocalStorage();
-        void Thread();
     };
 
 namespace{

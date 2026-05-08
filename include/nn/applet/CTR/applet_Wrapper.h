@@ -22,6 +22,7 @@ namespace{
     bool ProcessPowerButton();
     bool ProcessHomeButton();
     //void SetSleepCanceledCallback(AppletSleepCanceledCallback callback, uptr arg);
+    bool IsExpectedToProcessHomeButton();
     void CloseAppletHook();
 
 

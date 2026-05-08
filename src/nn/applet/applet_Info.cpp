@@ -40,6 +40,10 @@ void SetExpectationToJumpToHome(bool flag){
     sIsExpectedToJumpToHomeMenu = flag;
 }
 
+s8 IsExpectedToJumpToHomeMenu(){
+    return sIsExpectedToJumpToHomeMenu;
+}
+
 nn::applet::CTR::AppletId GetId(){
     return sId;
 }
