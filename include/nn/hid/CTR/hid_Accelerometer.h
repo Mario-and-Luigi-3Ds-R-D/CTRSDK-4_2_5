@@ -52,6 +52,7 @@ public:
     void Read(AccelerometerStatus* status, s32* pReadLen, s32 bufLen);
     bool ReadLatest(AccelerometerStatus* status);
     void ResetAxisRotationMatrix();
+    void DisableAxisRotation();
 private:
     void Transform(AccelerometerStatus* status);
 

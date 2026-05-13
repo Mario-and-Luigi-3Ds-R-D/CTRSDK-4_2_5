@@ -21,7 +21,7 @@ namespace svc{
     Result CreateEvent(nn::Handle*,nn::os::ResetType);
     Result CreateAddressArbiter(nn::Handle*);
     Result CreateMemoryBlock(nn::Handle* pOut, uptr pMemory, size_t size, bit32 myPermission, bit32 otherPermission);
-    Result ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,s32);
+    Result ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,s32,s64);
     Result Break(nn::dbg::BreakReason,const void*,int);
     Result CloseHandle(nn::Handle);
     Result ConnectToPort(nn::Handle*, const char*);
@@ -33,5 +33,6 @@ namespace svc{
     Result WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long);
     Result MapMemoryBlock(nn::Handle,uptr,bit32,uint);
     Result UnmapMemoryBlock(nn::Handle,uptr);
+    Result OutputDebugString(const char* text, s32 length);
 };
 }

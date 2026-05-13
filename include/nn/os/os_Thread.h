@@ -3,8 +3,23 @@
 #include "nn/types.h"
 #include "nn/os/os_Types.h"
 #include "nn/os/os_AutoStackManager.h"
+#include "nn/os/CTR/os_ErrorHandler.h"
 #include "nn/fnd/fnd_TimeSpan.h"
 #include "nn/util/util_TypeTraits.h"
+
+#define NN_OS_CORE_NO_ALL                   (-1)
+#define NN_OS_CORE_NO_USE_PROCESS_VALUE     (-2)
+#define NN_OS_THREAD_PRIORITY_RANGE_SIZE    32
+#define NN_OS_LOWEST_THREAD_PRIORITY        (NN_OS_THREAD_PRIORITY_RANGE_SIZE - 1)
+#define NN_OS_HIGHEST_THREAD_PRIORITY       0
+#define NN_OS_DEFAULT_THREAD_PRIORITY       16
+
+const s32 LOWEST_THREAD_PRIORITY = NN_OS_LOWEST_THREAD_PRIORITY;
+const s32 HIGHEST_THREAD_PRIORITY = NN_OS_HIGHEST_THREAD_PRIORITY;
+const s32 DEFAULT_THREAD_PRIORITY = NN_OS_DEFAULT_THREAD_PRIORITY;
+const s32 CORE_NO_ALL = NN_OS_CORE_NO_ALL;
+const s32 CORE_NO_USE_PROCESS_VALUE = NN_OS_CORE_NO_USE_PROCESS_VALUE;
+const s32 THREAD_PRIORITY_RANGE_SIZE = NN_OS_THREAD_PRIORITY_RANGE_SIZE;
 
 namespace nn{
 namespace os{
@@ -23,16 +38,19 @@ private:
 
 private:
     Thread(const InitializeAsCurrentTag&) { }
-    // Use this down here! Intro to the bottom!
-    //
-    // Result TryInitializeAndStartImpl(const TypeInfo& typeInfo,nn::os::ThreadFunc f,const void *p,uptr stackBottom,s32 priority, s32 coreNo,bool isAutoStack) !!!!
-    void FinalizeImpl();
+
+    // Use the top to call this!
+    
     Result TryInitializeAndStartImpl(const TypeInfo& typeInfo,nn::os::ThreadFunc f,const void *p,uptr stackBottom,s32 priority, s32 coreNo,bool isAutoStack);
-    Result TryInitializeAndStartImpl(const TypeInfo& typeInfo,nn::os::ThreadFunc f,const void *p,uptr stackBottom,s32 priority, s32 coreNo,uptr autoStackBuffer );
+    Result TryInitializeAndStartImpl(const TypeInfo& typeInfo,nn::os::ThreadFunc f,const void *p,uptr stackBottom,s32 priority, s32 coreNo,uptr autoStackBuffer);
+    Result TryInitializeAndStartImplUsingAutoStack(const TypeInfo& typeInfo, ThreadFunc f, const void* p, size_t stackSize, s32 priority, s32 coreNo);
+    uptr PreStartUsingAutoStack(size_t stackSize);
+    Result PostStartUsingAutoStack(Result result, uptr stackBottom);
 
 public:
     Thread() : mCanFinalize(true) {}
     ~Thread();
+    void FinalizeImpl();
     
     /* Paramaters */
     typedef AutoStackManager AutoStackManager;
@@ -43,32 +61,43 @@ public:
 
     static Thread sMainThread;
     static AutoStackManager* spAutoStackManager;
+private:
+    static void ThreadStart(uptr p);
+    static void CallDestructorAndExit(void*);
+
+    static void OnThreadStart();
+    static void OnThreadExit();
+    static void NoParameterFunc(void (*)());
 
 public:
-        
-
     class ProtectedAccessor{
+    private:
         inline void InitializeAsMainThread(void* p){
             new(p) Thread(Thread::InitializeAsCurrentTag());
         }
     };
 
-    /* Funcs */
-    static void NoParamaterFunc(void (*)());
-    static void SetAutoStackManager(os::AutoStackManager*);
-    static void ThreadStart(uptr p);
-    static void CallDestructorAndExit(void*);
-    static void SleepImpl(fnd::TimeSpan span); // nn::fnd::TimeSpan* span
+    void StartUsingAutoStack(void (*f)(), size_t stackSize, s32 priority = DEFAULT_THREAD_PRIORITY, s32 coreNo = CORE_NO_USE_PROCESS_VALUE);
+    template <typename T, typename U>
+    void StartUsingAutoStack(void (*f)(T), U param, size_t stackSize, s32 priority = DEFAULT_THREAD_PRIORITY, s32 coreNo = CORE_NO_USE_PROCESS_VALUE);
 
-    static void OnThreadStart();
-    static void OnThreadExit();
+    Result TryStartUsingAutoStack(void (*f)(), size_t stackSize, s32 priority = DEFAULT_THREAD_PRIORITY, s32 coreNo = CORE_NO_USE_PROCESS_VALUE);
+    Result TryStartUsingAutoStack(ThreadFunc f, size_t stackSize, const void* pParam, size_t paramSize, s32 priority = DEFAULT_THREAD_PRIORITY, s32 coreNo = CORE_NO_USE_PROCESS_VALUE);
+    template <typename T, typename U>
+    Result TryStartUsingAutoStack(void (*f)(T), U param, size_t stackSize, s32 priority = DEFAULT_THREAD_PRIORITY, s32 coreNo = CORE_NO_USE_PROCESS_VALUE);
+
+    static void SetAutoStackManager(os::AutoStackManager*);
+
+    static void SleepImpl(fnd::TimeSpan span); // nn::fnd::TimeSpan* span
 };
 
+/* Thread::FunctionInfo */
+
 struct Thread::FunctionInfo{
-    void (*destroy)(void* p);                    //
-    void (*invoke)(ThreadFunc f, const void* p); //
-    void (*f)(uptr);                             //
-    void* p;                                     //
+    void (*destroy)(void* p);
+    void (*invoke)(ThreadFunc f, const void* p);
+    void (*f)(uptr);
+    void* p;
     void* pAutoStackBuffer;
 
     void Invoke(){
@@ -78,6 +107,8 @@ struct Thread::FunctionInfo{
         destroy(p);
     }
 };
+
+/* Thread::TypeInfo */
 
 struct Thread::TypeInfo{
 private:
@@ -127,8 +158,39 @@ public:
     }
 };
 
+
+/* Inlines */
 inline Thread::~Thread(){ 
     this->FinalizeImpl();
+}
+
+/* AutoStacks */
+
+template <typename T, typename U>
+inline void Thread::StartUsingAutoStack(void (*f)(T), U param, size_t stackSize, s32 priority, s32 coreNo){
+    TypeInfo info;
+    info.SetData<T, U>();
+    NN_OS_ERROR_IF_FAILED(TryInitializeAndStartImplUsingAutoStack(info, reinterpret_cast<ThreadFunc>(f), &param, stackSize, priority, coreNo));
+}
+
+inline void Thread::StartUsingAutoStack(void (*f)(), size_t stackSize, s32 priority, s32 coreNo){
+    StartUsingAutoStack(NoParameterFunc, f, stackSize, priority, coreNo);
+}
+
+template <typename T, typename U>
+inline Result Thread::TryStartUsingAutoStack(void (*f)(T), U param, size_t stackSize, s32 priority, s32 coreNo){
+    TypeInfo info;
+    info.SetData<T, U>();
+    Result result = TryInitializeAndStartImplUsingAutoStack(info, reinterpret_cast<ThreadFunc>(f), &param, stackSize, priority, coreNo);
+    if (result.GetSummary() == Result::SUMMARY_OUT_OF_RESOURCE){
+        return result;
+    }
+    NN_OS_ERROR_IF_FAILED(result);
+    return result;
+}
+
+inline nn::Result Thread::TryStartUsingAutoStack(void (*f)(), size_t stackSize, s32 priority, s32 coreNo){
+    return TryStartUsingAutoStack(NoParameterFunc, f, stackSize, priority, coreNo);
 }
 
 }

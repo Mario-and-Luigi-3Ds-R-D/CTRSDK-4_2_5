@@ -12,8 +12,8 @@ namespace detail{
     Result LeaveApplication();
 
 namespace{
-    extern bool isInitialized;
-    extern bool leaveApplication;
+    extern u8 isInitialized;
+    extern u8 leaveApplication;
 
 }
 }

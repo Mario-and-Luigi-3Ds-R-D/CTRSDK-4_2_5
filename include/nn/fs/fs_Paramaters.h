@@ -1,6 +1,7 @@
 #pragma once
 
 #include "nn/types.h"
+#include "nn/util/util_Int64.h"
 
 namespace nn{
 namespace fs{
@@ -37,7 +38,7 @@ namespace fs{
 
     struct ProgramDataPath{
         int mTag;
-        s64 mId;
+        util::Int64<ProgramDataPath> mId;
     };
 
     struct ContentPath{

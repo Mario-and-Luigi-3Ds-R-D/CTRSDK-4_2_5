@@ -103,6 +103,10 @@ void AccelerometerReader::Transform(AccelerometerStatus* status){
     // TODO
 }
 
+void AccelerometerReader::DisableAxisRotation(){
+    this->mEnableRotate = 0;
+}
+
 AccelerometerReader::~AccelerometerReader(){
     detail::Ipc::DisableAccelerometer();
 }

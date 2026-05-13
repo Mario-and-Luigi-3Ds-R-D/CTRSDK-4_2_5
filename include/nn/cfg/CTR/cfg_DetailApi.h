@@ -17,7 +17,6 @@ namespace detail {
 
         Result Initialize();
         Result InitializeProperPort(IPCPortType* pPortType);
-
         void Finalize();
         void FinalizeProperPort(IPCPortType portType);
 

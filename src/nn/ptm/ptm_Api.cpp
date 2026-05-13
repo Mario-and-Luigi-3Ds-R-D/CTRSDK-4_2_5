@@ -14,37 +14,26 @@ Result Initialize(){
     const char* portName = PORT_NAMES[1];
     if(detail::PtmIpc::sSession != 0){
         goto done;
-    }
-    {
+    }{
         u32 len = strlen(portName);
-        Result rc = nn::srv::GetServiceHandle(&detail::PtmIpc::sSession, portName, len, 0);
-        u32 failed = rc.mResult >> 31;
+        Result res = nn::srv::GetServiceHandle(&detail::PtmIpc::sSession, portName, len, 0);
+        u32 failed = res.mResult >> 31;
         if(failed)
-            return rc;
+            return res;
     }
 done:
-    Result isDone;
-    isDone.mResult = 0;
+    Result isDone; isDone.mResult = 0;
     return isDone;
 }
 
 #pragma O3
 
-#ifdef NONMATCHING
-#endif
 
 Result Finalize(){
-    Result pResult;
-    if(detail::PtmIpc::sSession != 0){
-        __asm{svc 0x23}
-        if(pResult.IsFailure()){
-            return pResult;
-        }
-        detail::PtmIpc::sSession = 0;
-    }
-    Result ret;
-    ret.mResult = 0;
-    return ret;
+/*    if(detail::PtmIpc::sSession != 0){
+        svc::CloseHandle(detail::PtmIpc::sSession);
+
+    }*/
 }
     
 }

@@ -2,15 +2,18 @@
 
 #include "nn/types.h"
 #include "nn/util/util_NonCopyable.h"
+#include "nn/util/detail/util_ScopeLockImpl.h"
 #include "nn/os/os_WaitableCounter.h"
 #include "nn/os/os_Types.h"
 
 namespace nn{ 
 namespace os{
     class SimpleLock : private nn::util::NonCopyable<SimpleLock>{
-    private:
+    public:
         WaitableCounter mCounter;
     public:
+        class ScopedLock;
+
         SimpleLock()  {}
         ~SimpleLock() {}
         
@@ -22,3 +25,5 @@ namespace os{
     };
 }
 };
+
+NN_UTIL_DETAIL_DEFINE_SCOPED_LOCK(nn::os::SimpleLock, Lock(), Unlock());

@@ -44,7 +44,8 @@ public:
     virtual bool IsLinearFilterEnableAtSmall() const;
     virtual bool IsLinearFilterEnableAtLarge() const;
     virtual u32 GetTextureWrapFilterValue() const;
-    uint FindGlyphIndex(uint code);
+
+    uint FindGlyphIndex(CharCode code) const;
 };
 
 }

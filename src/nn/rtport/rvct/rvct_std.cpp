@@ -12,6 +12,7 @@
 
 #define NN_UNUSED_VAR(x) ((void)(x))
 
+
 typedef int FILEHANDLE;
 
 extern "C"{

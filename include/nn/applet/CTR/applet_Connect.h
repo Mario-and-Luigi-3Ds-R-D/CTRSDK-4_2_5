@@ -8,12 +8,14 @@ namespace applet{
 namespace CTR{
 namespace detail{
 namespace{
-    extern os::Mutex* sMutex;
-} 
-    void LockAndConnect();
-    void InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority);
+    extern os::Mutex sMutex;
+}
+namespace{
+    const char PORT_NAME_SYSTEM[] = "APT:S";
+    const char PORT_NAME_USER[] = "APT:U";
+}
     void DisconnectAndUnlock();
-    void Disconnect();
+    void LockAndConnect();
     void GetDisplayInfo(AppletDisplayInfo* pInfo);
     void InitializeMutex(Handle handle);
 

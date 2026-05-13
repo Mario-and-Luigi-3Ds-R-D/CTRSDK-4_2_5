@@ -8,10 +8,6 @@
 namespace nn { 
 namespace applet {
 namespace CTR {
-namespace{
-    extern os::CriticalSection* sSleepAcceptedCriticalSection;
-
-}
     void InitializeWrapper();
     void ClearHomeButtonState();
     void SetSleepQueryCallback(AppletSleepQueryCallback callback,uptr arg);
@@ -37,44 +33,6 @@ namespace{
         void Register();
         void Unregister();
     };
-namespace{
-    bool sleepEnable;
-    SysSleepAcceptedCallbackInfo* spHead;
-    SysSleepAcceptedCallbackInfo* spTail;
-    int homeButtonCallback;
-    int requestMemoryCallback;
-    int receiveMessageCallback;
-    int dspSleepCallback;
-    int dspWakeUpCallback;
-    int sleepQueryCallback;
-    int sleepCanceledCallback;
-    int sleepAcceptedCallback;
-    int awakeCallback;
-    int shutdownCallback;
-    int powerButtonCallback;
-    int transitionCallback;
-    int closeCallback;
-    int releaseMemoryCallback;
-    int closeAppletCallback;
-    int commandCallback;
-    int homeButtonCallbackArg;
-    int requestMemoryCallbackArg;
-    int receiveMessageCallbackArg;
-    int dspSleepCallbackArg;
-    int dspWakeUpCallbackArg;
-    int sleepQueryCallbackArg;
-    int sleepCanceledCallbackArg;
-    int sleepAcceptedCallbackArg;
-    int awakeCallbackArg;
-    int shutdownCallbackArg;
-    int powerButtonCallbackArg;
-    int transitionCallbackArg;
-    int closeCallbackArg;
-    int releaseMemoryCallbackArg;
-    int closeAppletCallbackArg;
-    int commandCallbackArg;
-
-}
 
 namespace detail{
     Result CaptureScreenForSystemApplet(AppletId id);

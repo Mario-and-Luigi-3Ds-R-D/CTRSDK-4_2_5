@@ -7,6 +7,9 @@
 namespace nn{
 namespace snd{
 namespace CTR{
+
+class DspFxManagerImpl;
+
 class DspFxManager{
 protected:
     bool mIsAttached[2][2];
@@ -15,10 +18,13 @@ protected:
 
 public:
     void Initialize();
-    DspFxManager* GetInstance();
+    DspFxManagerImpl* Finalize();
+    static DspFxManager* GetInstance();
     bool Detach(s32, s8);
     bool Attach(s8, s8, s8);
     s32 GetDspCycles();
+
+    static DspFxManager* sInstance;
 };
 
 class DspFxManagerImpl{
@@ -30,9 +36,11 @@ public:
     void Initialize();
     DspFxManagerImpl* Finalize();
     void ForceUpdateParams();
-    DspFxManagerImpl* GetInstance();
+    static DspFxManagerImpl* GetInstance();
     void SetDspDelayEffect(); // more params, check AliceP.
     void SetDspReverbEffect(); // more params, check AliceP.
+
+    static DspFxManagerImpl* sInstance;
 };
 }
 }

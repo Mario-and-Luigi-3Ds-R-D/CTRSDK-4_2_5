@@ -1,4 +1,5 @@
 #include <nn/err/CTR/err_Api.h>
+#include <nn/dbg/dbg_Printf.h>
 
 namespace nn{
 namespace err{
@@ -10,19 +11,27 @@ void Throw(nn::err::CTR::FatalErrInfo* pInfo){
 
 }
 
-//void ThrowFatalErr(Result result, nnerrFatalErrType type, uptr pc){
+void ThrowFatalErr(Result result, nnerrFatalErrType type, uptr pc){
+    #ifdef NN_DEBUG
+        dbg::TPrintf("----\n");
+        dbg::TPrintf("Fatal Error occured. (pc=0x%08x)\n", pc);
+    #endif
 /*    sFatalErrInfo.mRevisionHi = 0;
     sFatalErrInfo.mRevisionLo = 0xC449;
     sFatalErrInfo.mType = type;
     sFatalErrInfo.mResult = result;
     sFatalErrInfo.mPc = pc;*/
-//}
+}
 
 void ThrowFatalErr(Result result, uptr pc){
 
 }
 
 void ThrowFatalErrAll(Result result, uptr pc) {
+    #ifdef NN_DEBUG
+        dbg::TPrintf("----\n");
+        dbg::TPrintf("Fatal Error occured. (pc=0x%08x)\n", pc);
+    #endif
 /*    sFatalErrInfo.mRevisionHi = 0;
     sFatalErrInfo.mRevisionLo = 0xC449;
     sFatalErrInfo.mType = 0;

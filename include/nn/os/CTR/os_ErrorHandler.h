@@ -7,8 +7,6 @@ namespace nn{
 namespace os{
 namespace CTR{
 namespace detail{
-
-
     void SetInternalErrorHandlingMode(bool preferFatal);
     void HandleInternalError(Result result);
 
@@ -23,7 +21,7 @@ namespace detail{
     do                                          \
     {                                           \
         ::Result nn_os_result = (result);   \
-        if ( nn_os_result.Failed() )         \
+        if ( nn_os_result.IsFailure() )         \
         {                                       \
             ::nn::os::CTR::detail::HandleInternalError(nn_os_result); \
         }                                       \

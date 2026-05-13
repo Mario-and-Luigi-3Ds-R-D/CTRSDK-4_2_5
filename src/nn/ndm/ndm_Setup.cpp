@@ -9,8 +9,9 @@ namespace ndm{
 
 void SetupDaemonsDefault(){
     if(nn::applet::CTR::IsInitialized() && !nn::applet::CTR::GetAppletType()){
-        Result canInit = nn::ndm::Initialize().IsFailure();
-        if(canInit != 0){
+        Result canInit; 
+        canInit.mResult = nn::ndm::Initialize().IsFailure();
+        if(canInit.mResult != 0){
             nndbgPanic();
         }
         nn::ndm::CTR::detail::Interface::OverrideDefaultDaemons(0xfu);

@@ -9,10 +9,11 @@ enum nndbgBreakReason{
     NN_DBG_BREAK_REASON_MAX_BIT = 1073741824,
 };
 
+
 namespace nn{
 namespace dbg{
 namespace detail{
-Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size);
+    Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size);
 
 }
     enum BreakReason{
@@ -33,6 +34,9 @@ Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size);
 }
 
 extern "C"{
+    void nndbgBreakWithResultMessage_ (nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
+    void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
+
     Result nndbgBreak(nn::dbg::BreakReason pReason);
     void nndbgPanic();
 }

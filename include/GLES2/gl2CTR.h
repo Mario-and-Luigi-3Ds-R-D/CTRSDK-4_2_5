@@ -25,3 +25,5 @@ typedef unsigned __int64 GLuint64EXT;
 typedef signed long long GLint64EXT;
 typedef unsigned long long GLuint64EXT;
 #endif
+
+# define GL_APICALL

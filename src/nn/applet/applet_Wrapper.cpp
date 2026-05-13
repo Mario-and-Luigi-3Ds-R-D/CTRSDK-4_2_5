@@ -1,14 +1,57 @@
 #include <nn/applet/CTR/applet_Wrapper.h>
 #include <nn/applet/CTR/applet_Connect.h>
 #include <nn/applet/CTR/applet_Info.h>
+#include <nn/applet/CTR/applet_ClientThread.h>
 #include <nn/applet/CTR/applet_Api.h>
+#include <nn/os/os_CriticalSection.h>
 
 namespace nn{
 namespace applet{
 namespace CTR{
+namespace{
+    bool sleepEnable;
+    SysSleepAcceptedCallbackInfo* spHead;
+    SysSleepAcceptedCallbackInfo* spTail;
+    int homeButtonCallback;
+    int requestMemoryCallback;
+    int receiveMessageCallback;
+    int dspSleepCallback;
+    int dspWakeUpCallback;
+    int sleepQueryCallback;
+    int sleepCanceledCallback;
+    int sleepAcceptedCallback;
+    int awakeCallback;
+    int shutdownCallback;
+    int powerButtonCallback;
+    int transitionCallback;
+    int closeCallback;
+    int releaseMemoryCallback;
+    int closeAppletCallback;
+    int commandCallback;
+    int homeButtonCallbackArg;
+    int requestMemoryCallbackArg;
+    int receiveMessageCallbackArg;
+    int dspSleepCallbackArg;
+    int dspWakeUpCallbackArg;
+    int sleepQueryCallbackArg;
+    int sleepCanceledCallbackArg;
+    int sleepAcceptedCallbackArg;
+    int awakeCallbackArg;
+    int shutdownCallbackArg;
+    int powerButtonCallbackArg;
+    int transitionCallbackArg;
+    int closeCallbackArg;
+    int releaseMemoryCallbackArg;
+    int closeAppletCallbackArg;
+    int commandCallbackArg;
+
+}
+namespace{
+    static os::CriticalSection sSleepAcceptedCriticalSection;
+}
 
 void InitializeWrapper(){
-//    detail::SetReceiveCallback(ReceiveCallbackForCommands,0);
+    detail::SetReceiveCallback(ReceiveCallbackForCommands,0);
     homeButtonCallback = 0;
     homeButtonCallbackArg = 0;
     requestMemoryCallback = 0;
@@ -59,6 +102,10 @@ bool ProcessPowerButton(){
     // TODO
 }
 
+bool ReceiveCallbackForCommands(uptr callback){
+    // TODO
+}
+
 bool ProcessHomeButton(){
     // TODO
 }
@@ -98,6 +145,18 @@ void CloseAppletHook(){
         return;
 
     reinterpret_cast<void(*)(int)>(closeAppletCallback)(closeAppletCallbackArg);
+}
+
+//
+// SysSleepAcceptedCallbackInfo 
+//
+
+void SysSleepAcceptedCallbackInfo::Unregister(){
+
+}
+
+void SysSleepAcceptedCallbackInfo::Register(){
+
 }
 
 }

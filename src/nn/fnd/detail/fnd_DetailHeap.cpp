@@ -1,9 +1,99 @@
 #include <nn/fnd/detail/fnd_DetailHeap.h>
 #include <nn/fnd/detail/fnd_DetailList.h>
+#include <nn/fnd/detail/fnd_DetailCommon.h>
+
+#define MBLOCK_FREE_SIGNATURE ('FR')
+
+#define MIN_FREE_BLOCK_SIZE 4
 
 namespace nn{
 namespace fnd{
 namespace detail{
+
+typedef struct NNSiMemRegion NNSiMemRegion;
+
+struct NNSiMemRegion{
+    void*       start;
+    void*       end;
+};
+
+/* Static Inlines n Shit */
+/*
+static inline void* GetMBlockEndAddr(NNSiFndExpHeapMBlockHead* pMBHead){
+    return AddU32ToPtr(GetMemPtrForMBlock(pMBHead), pMBHead->blockSize);
+}
+
+static inline void* GetMemPtrForMBlock(NNSiFndExpHeapMBlockHead* pMBlkHd){
+    return AddU32ToPtr(pMBlkHd, sizeof(NNSiFndExpHeapMBlockHead));
+}
+
+static inline u16 GetAlignmentForMBlock(const NNSiFndExpHeapMBlockHead* pMBlkHd){
+    return (u16)NNSi_FndGetBitValue(pMBlkHd->attribute, 8, 7);
+}
+
+static inline NNSiFndExpHeapMBlockHead* InitFreeMBlock(const NNSiMemRegion* pRegion){
+    return InitMBlock(pRegion, MBLOCK_FREE_SIGNATURE);
+}
+
+static NNSiFndExpHeapMBlockHead* InitMBlock(const NNSiMemRegion* pRegion,u16 signature){
+    NNSiFndExpHeapMBlockHead* block = reinterpret_cast<NNSiFndExpHeapMBlockHead*>(pRegion->start);
+
+    block->signature = signature;
+    block->attribute = 0;
+    block->blockSize = GetOffsetFromPtr(GetMemPtrForMBlock(block), pRegion->end);
+    block->pMBHeadPrev = NULL;
+    block->pMBHeadNext = NULL;
+
+    return block;
+}
+
+static NNSiFndExpHeapMBlockHead* RemoveMBlock(NNSiFndExpMBlockList* list,NNSiFndExpHeapMBlockHead* block){
+    NNSiFndExpHeapMBlockHead *const prev = block->pMBHeadPrev;
+    NNSiFndExpHeapMBlockHead *const next = block->pMBHeadNext;
+
+    if (prev){
+        prev->pMBHeadNext = next;
+    }
+    else{
+        list->head = next;
+    }
+
+    if (next){
+        next->pMBHeadPrev = prev;
+    }
+    else{
+        list->tail = prev;
+    }
+
+    return prev;
+}
+
+static NNSiFndExpHeapMBlockHead* InsertMBlock(NNSiFndExpMBlockList* list,NNSiFndExpHeapMBlockHead* target, NNSiFndExpHeapMBlockHead* prev){
+    NNSiFndExpHeapMBlockHead* next;
+
+    target->pMBHeadPrev = prev;
+    if (prev){
+        next = prev->pMBHeadNext;
+        prev->pMBHeadNext = target;
+    }
+    else{
+        next = list->head;
+        list->head = target;
+    }
+
+    target->pMBHeadNext = next;
+    if (next){
+        next->pMBHeadPrev = target;
+    }
+    else{
+        list->tail = target;
+    }
+    return target;
+}
+*/
+/* Funcs */
+
+
 
 ushort SetGroupIDForHelp(Heap heap, ushort groupId){
     ushort setGroupId;
@@ -25,142 +115,59 @@ bool UseMarginOfAlignmentForHeap(Heap heap, bool reuse){
     heap->reuse = reuse;
     return isReuse;
 }
+/*
+static void GetRegionOfMBlock(NNSiMemRegion* region,NNSiFndExpHeapMBlockHead* block){
+    region->start = SubU32ToPtr(block, GetAlignmentForMBlock(block));
+    region->end = GetMBlockEndAddr(block);
+}*/
 
-// ASM AllocUsedBlockFromFreeBlock
-// This function allocates a new memory from free blocks.
+/* Allocation */
 
-__asm void* AllocUsedBlockFromFreeBlock(NNSiFndExpHeapHead* pEHHead, NNSiFndExpHeapMBlockHead* pMBHeadFree,void* mblock,u32 size,u16 direction){
-    PUSH            {R4-R11}
-    ADD             R5, R1, #0x10
-    SUB             R6, R2, #0x10
-    LDR             R4, [R1,#4]
-    LDRH            R12, [R1,#2]
-    LDR             R7, [SP,#0x20]
-    ADD             R8, R4, R5
-    ADD             R5, R2, R3
-    MOV             R12, R12,LSL#17
-    LDR             R3, [R1,#8]
-    SUB             R4, R1, R12,LSR#25
-    LDR             R1, [R1,#0xC]
-    CMP             R3, #0
-    LDR             R9, =0x4652
-    STRNE           R1, [R3,#0xC]
-    STREQ           R1, [R0]
-    CMP             R1, #0
-    STRNE           R3, [R1,#8]
-    SUB             R10, R6, R4
-    STREQ           R3, [R0,#4]
-    CMP             R10, #0x14
-    MOV             R12, R6
-    MOV             R1, #0
-    BCC             loc_13E03C
-    CMP             R7, #0
-    LDRBEQ          R11, [R0,#0x14]
-    CMPEQ           R11, #0
-    BEQ             loc_13E03C
-    STRH            R9, [R4]
-    STRH            R1, [R4,#2]
-    STR             R1, [R4,#0xC]
-    SUB             R10, R10, #0x10
-    STR             R3, [R4,#8]
-    CMP             R3, #0
-    STR             R10, [R4,#4]
-    LDRNE           R10, [R3,#0xC]
-    LDREQ           R10, [R0]
-    STRNE           R4, [R3,#0xC]
-    STREQ           R4, [R0]
-    CMP             R10, #0
-    STR             R10, [R4,#0xC]
-    STRNE           R4, [R10,#8]
-    MOV             R3, R4
-    STREQ           R4, [R0,#4]
-    B               loc_13E040
+void* AllocUsedBlockFromFreeBlock(NNSiFndExpHeapHead* pEHHead, NNSiFndExpHeapMBlockHead* pMBHeadFree,void* mblock,u32 size,u16 direction){
+/*    NNSiMemRegion freeRgnT;
+    NNSiMemRegion freeRgnB;
+    NNSiFndExpHeapMBlockHead* pMBHeadFreePrev;
 
-loc_13E03C
-    MOV             R6, R4
+    GetRegionOfMBlock(&freeRgnT, pMBHeadFree);
+    freeRgnB.end   = freeRgnT.end;
+    freeRgnB.start = AddU32ToPtr(mblock, size);
+    freeRgnT.end   = SubU32ToPtr(mblock, sizeof(NNSiFndExpHeapMBlockHead));
 
-loc_13E040
-    SUB             R4, R8, R5
-    CMP             R4, #0x14
-    BCC             loc_13E09C
-    CMP             R7, #1
-    LDRBEQ          R10, [R0,#0x14]
-    CMPEQ           R10, #0
-    BEQ             loc_13E09C
-    STRH            R9, [R5]
-    STRH            R1, [R5,#2]
-    STR             R1, [R5,#0xC]
-    SUB             R4, R4, #0x10
-    STR             R3, [R5,#8]
-    CMP             R3, #0
-    STR             R4, [R5,#4]
-    LDRNE           R4, [R3,#0xC]
-    LDREQ           R4, [R0]
-    STRNE           R5, [R3,#0xC]
-    STREQ           R5, [R0]
-    CMP             R4, #0
-    STR             R4, [R5,#0xC]
-    STRNE           R5, [R4,#8]
-    STREQ           R5, [R0,#4]
-    B               loc_13E0A0
+    pMBHeadFreePrev = RemoveMBlock(&pEHHead->mbFreeList, pMBHeadFree);  // delete the free block for the time being
 
-loc_13E09C
-    MOV             R5, R8
+    if ((GetOffsetFromPtr(freeRgnT.start, freeRgnT.end) < sizeof(NNSiFndExpHeapMBlockHead) + MIN_FREE_BLOCK_SIZE) ||
+       (direction == NN_OS_EXPHEAP_ALLOC_DIR_FRONT && !pEHHead->reuse)){
+        freeRgnT.end = freeRgnT.start;
+    }
+    else{
+        pMBHeadFreePrev = InsertMBlock(&pEHHead->mbFreeList, InitFreeMBlock(&freeRgnT), pMBHeadFreePrev);
+    }
 
-loc_13E0A0
-    LDR             R3, [R0,#-4]
-    SUB             R4, R5, R6
-    AND             R3, R3, #1
-    CMP             R3, #0
-    MOVNE           R8, #0
-    CMPNE           R4, #3
-    BLS             loc_13E0E4
-    MOV             R9, R4,LSL#29
-    SUB             R3, R6, #4
-    CMP             R9, #0
-    STRLT           R8, [R3,#4]!
-    MOVS            R4, R4,LSR#3
-    BEQ             loc_13E0E4
+    if ((GetOffsetFromPtr(freeRgnB.start, freeRgnB.end) < sizeof(NNSiFndExpHeapMBlockHead) + MIN_FREE_BLOCK_SIZE) ||
+       (direction == NN_OS_EXPHEAP_ALLOC_DIR_REAR && !pEHHead->reuse)){
+        freeRgnB.start= freeRgnB.end;
+    }
+    else{
+        (void)InsertMBlock(&pEHHead->mbFreeList, InitFreeMBlock(&freeRgnB), pMBHeadFreePrev);
+    }
 
-loc_13E0D4
-    STR             R8, [R3,#4]
-    SUBS            R4, R4, #1
-    STR             R8, [R3,#8]!
-    BNE             loc_13E0D4
+    FillAllocMemory(GetHeapHeadPtrFromHeapHead(pEHHead), freeRgnT.end, GetOffsetFromPtr(freeRgnT.end, freeRgnB.start));
+    {
+        NNSiFndExpHeapMBlockHead* pMBHeadNewUsed;
+        NNSiMemRegion region;
 
-loc_13E0E4
-    LDR             R3, =0x5544
-    SUB             R4, R5, R12
-    SUB             R4, R4, #0x10
-    STRH            R3, [R12]
-    STR             R1, [R12,#8]
-    STR             R4, [R12,#4]
-    SUB             R3, R12, R6
-    STR             R1, [R12,#0xC]
-    ORR             R1, R1, R7,LSL#15
-    AND             R3, R3, #0x7F
-    BIC             R1, R1, #0x7F00
-    ORR             R1, R1, R3,LSL#8
-    STRH            R1, [R12,#2]
-    LDRH            R3, [R0,#0x10]
-    BIC             R1, R1, #0xFF
-    AND             R3, R3, #0xFF
-    ORR             R1, R1, R3
-    STRH            R1, [R12,#2]
-    LDR             R1, [R0,#0xC]
-    CMP             R1, #0
-    STR             R1, [R12,#8]
-    LDRNE           R3, [R1,#0xC]
-    LDREQ           R3, [R0,#8]
-    STRNE           R12, [R1,#0xC]
-    STREQ           R12, [R0,#8]
-    CMP             R3, #0
-    STR             R3, [R12,#0xC]
-    STRNE           R12, [R3,#8]
-    STREQ           R12, [R0,#0xC]
-    POP             {R4-R11}
-    MOV             R0, R2
-    BX              LR
+        region.start = SubU32ToPtr(mblock, sizeof(NNSiFndExpHeapMBlockHead));
+        region.end   = freeRgnB.start;
+
+        pMBHeadNewUsed = InitMBlock(&region, MBLOCK_USED_SIGNATURE);
+        SetAllocDirForMBlock(pMBHeadNewUsed, direction);
+        SetAlignmentForMBlock(pMBHeadNewUsed, (u16)GetOffsetFromPtr(freeRgnT.end, pMBHeadNewUsed));
+        SetGroupIDForMBlock(pMBHeadNewUsed, pEHHead->groupID);
+        AppendMBlock(&pEHHead->mbUsedList, pMBHeadNewUsed);
+    }
+
+    return mblock;
+*/
 }
 
 // ASM AllocFromHeap
@@ -269,11 +276,7 @@ loc_132CF4
     POP             {R3-R11,PC}
 }
 
-// ASM CreateHeap
-// Returns the memory block to the expanded heap base.
-// Also, as the title saids, it frees the heap.
-//
-// Paramaters: nn::fnd::Heap heap, void* pointer
+/* Freeing Heap */
 
 __asm void FreeToHeap(Heap heap, void* p){
     SUB             R1, R1, #0x10
@@ -365,10 +368,8 @@ loc_4603D4
     POP             {R4}
     BX              LR
 }
-// ASM CreateHeap
-// Creates Heap to the expanded memory base.
-//
-// Paramaters: nn::fnd::Heap heapHandle, void* startAddr, u32 size, ushort optFlag.
+
+/* Creating Heap */
 
 __asm Heap CreateHeap(Heap heapHandle, void* startAddr, u32 size, ushort optFlag){
     PRESERVE8
@@ -426,8 +427,6 @@ NNSiFndHeapHead* FindContainHeap(NNSFndList* pList, void* memBlock){
     return 0;
 }
 
-#ifdef NONMATCHING
-#endif
 void NNSi_FndInitHeapHead(NNSiFndHeapHead* pHeapHd,u32 signature,void* heapStart,void* heapEnd,ushort optFlag){
     pHeapHd->signature = signature;
     pHeapHd->attribute = optFlag & 0xFF;

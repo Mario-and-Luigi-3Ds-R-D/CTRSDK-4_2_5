@@ -1,5 +1,4 @@
 #include <nn/hid/CTR/hid_Pad.h>
-#include <nn/applet/applet_All.h>
 
 namespace nn{
 namespace hid{

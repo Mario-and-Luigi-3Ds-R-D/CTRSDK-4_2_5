@@ -209,12 +209,11 @@ namespace CTR{
     typedef void (*AppletAwakeCallback)(uptr);
     typedef int (*AppletSleepQueryCallback)(uptr);
     typedef void (*AppletSysSleepAcceptedCallback)(uptr);
+    typedef bool (*AppletReceiveCallback)(uptr);
     typedef Notification AppletNotification;
     typedef QueryReply AppletQueryReply;
     typedef bit32 AppletAttr;
     typedef bit32 AppletId;
-
-    extern const nn::Handle HANDLE_NONE;
 
     const nn::fnd::TimeSpan WAIT_INFINITE = nn::fnd::TimeSpan::FromNanoSeconds((s64)-1);
     const nn::fnd::TimeSpan NO_WAIT = nn::fnd::TimeSpan::FromNanoSeconds(0);

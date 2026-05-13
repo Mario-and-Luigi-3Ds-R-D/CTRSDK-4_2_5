@@ -13,7 +13,7 @@ namespace fs{
     class FileStream : public IStream, public detail::FileBase{ // public FileBase as well
     public:
         FileStream() { }
-        virtual ~FileStream() { this->Finalize(); } // 0x0 - 0x4
+        virtual ~FileStream() {} // 0x0 - 0x4
 
         virtual Result TrySeek(s64 position, PositionBase base){ // 0x8
             return this->detail::FileBase::TrySeek(position, base);

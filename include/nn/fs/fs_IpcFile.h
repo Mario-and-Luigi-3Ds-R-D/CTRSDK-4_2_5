@@ -25,7 +25,7 @@ namespace ipc{
         nn::Handle mSession;
     public:
         Result SetPriority(int pPriority);
-        Result OpenLinkFIle(nn::Handle pOut);
+        Result OpenLinkFile(nn::Handle pOut);
         Result Read(int* pRead, s64 pOffset, void* pBuffer, size_t pSize);
         Result Close();
         Result Write(int* pWritten, s64 pOffset, void* pBuffer, size_t pSize, nn::fs::WriteOption pOption);

@@ -34,7 +34,7 @@ template <typename T>
 class InterlockedVariable{
 private:
     template <typename U, typename = void>
-    struct StorageSelecter;
+    struct StorageSelecter {};
 
     template <typename U>
     struct StorageSelecter<U, typename nn::util::enable_if<sizeof (U) == sizeof (s64)>::type>{

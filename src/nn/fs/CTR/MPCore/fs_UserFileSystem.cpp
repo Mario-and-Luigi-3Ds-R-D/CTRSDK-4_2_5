@@ -23,7 +23,7 @@ ArchiveTableEntry::ArchiveTableEntry(){
 // UserFileSystem
 //
 
-bool UserFileSystem::Initialize(){
+Result UserFileSystem::Initialize(nn::Handle handle){
 
 }
 

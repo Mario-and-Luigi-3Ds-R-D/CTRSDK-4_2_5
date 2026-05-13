@@ -2,6 +2,7 @@
 
 #include "nn/types.h"
 #include "nn/os/os_Types.h"
+#include "nn/fnd/fnd_TimeSpan.h"
 #include "nn/fnd/fnd_InterlockedVariable.h"
 #include "nn/svc/svc_Api.h"
 
@@ -19,15 +20,15 @@ namespace os{
         ValueType&       operator* () {return mValue; }
         const ValueType& operator* () const { return mValue; }
         ValueType*       operator->() { return &mValue; }
-
-        Result ArbitrateAddress (ArbitrationType type, s32 value){
-                return svc::ArbitrateAddress (sHandle, (uptr)&mValue, type, value);
-        }
+    public:
         Result WaitIfLessThan (s32 value){
                 return ArbitrateAddress(ARBITRATION_TYPE_WAIT_IF_LESS_THAN, value);
         }
         Result WaitIfLessThanWithTimeout (s32 value){
                 return ArbitrateAddress(ARBITRATION_TYPE_WAIT_IF_LESS_THAN_WITH_TIMEOUT, value);
+        }
+        Result WaitIfLessThan(s32 value, fnd::TimeSpan timeout){
+                return ArbitrateAddress(nn::os::ARBITRATION_TYPE_WAIT_IF_LESS_THAN_WITH_TIMEOUT, value, timeout);
         }
         Result DecrementAndWaitIfLessThan (s32 value){
                 return ArbitrateAddress(ARBITRATION_TYPE_DECREMENT_AND_WAIT_IF_LESS_THAN, value);
@@ -40,6 +41,13 @@ namespace os{
         }
         Result SignalAll (){
                 return Signal (-1);
+        }
+    private:
+        Result ArbitrateAddress (ArbitrationType type, s32 value){
+                return svc::ArbitrateAddress (sHandle, (uptr)&mValue, type, value, 0);
+        }
+        Result ArbitrateAddress(nn::os::ArbitrationType type, s32 value, fnd::TimeSpan timeout){
+                return nn::svc::ArbitrateAddress(sHandle, reinterpret_cast<uptr>(&mValue), type, value, timeout.GetNanoSeconds());
         }
     };
 }

@@ -110,7 +110,7 @@ namespace svc{
     }
 
     // ArbitrateAddress - Arb New Addr
-    __asm Result ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,s32){
+    __asm Result ArbitrateAddress(nn::Handle,uint,nn::os::ArbitrationType,s32,s64){
         push {r4,r5}
         ldr r4,[sp,#0]
         ldr r5,[sp,#4]
@@ -221,5 +221,12 @@ namespace svc{
         add sp,sp,#4
         bx lr
     }
+
+#ifdef NN_DEBUG
+    __asm Result OutputDebugString(const char* text, s32 length){
+        swi 0x3d
+        bx lr
+    }
+#endif
 } // svc
 }; // nn

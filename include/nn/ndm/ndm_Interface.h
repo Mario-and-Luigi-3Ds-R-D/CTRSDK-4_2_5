@@ -10,7 +10,7 @@ namespace CTR{
 namespace detail{
 namespace Interface{
 
-extern const nn::Handle sSession;
+extern nn::Handle sSession;
 
 Result OverrideDefaultDaemons(uint);
 }

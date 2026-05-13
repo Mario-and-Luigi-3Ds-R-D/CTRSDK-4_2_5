@@ -1,26 +1,18 @@
-#include <nn/applet/applet_All.h>
+#include <nn/applet/CTR/applet_Connect.h>
 
 namespace nn{
 namespace applet{
 namespace CTR{
 namespace detail{
 namespace{
-    static os::Mutex* sMutex = 0;
+    static os::Mutex sMutex;
 }
 
 void LockAndConnect(){
     // TODO
 }
 
-void InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority){
-    // TODO
-}
-
 void DisconnectAndUnlock(){
-    // TODO
-}
-
-void Disconnect(){
     // TODO
 }
 
@@ -29,7 +21,7 @@ void GetDisplayInfo(AppletDisplayInfo* pInfo){
 }
 
 void InitializeMutex(nn::Handle handle){
-    sMutex = (os::Mutex*)handle.mHandle;
+    sMutex.mHandle = handle.mHandle;
 }
 
 }

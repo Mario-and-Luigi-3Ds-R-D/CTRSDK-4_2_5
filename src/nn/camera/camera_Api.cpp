@@ -6,15 +6,15 @@ namespace camera{
 namespace CTR{
 namespace detail{
 namespace{
-    bool isInitialized;
-    bool leaveApplication;
+    u8 isInitialized;
+    u8 leaveApplication;
 
 }
 
 Result ArriveApplication(){
     Result ipc;
-    if((isInitialized != 0) && (ipc = Camera::Activate(leaveApplication), ipc.mResult == 0xC9405001)){
-        Camera::SetSleepCamera(leaveApplication);
+    if((detail::isInitialized != 0) && (ipc = Camera::Activate(detail::leaveApplication), ipc.mResult == 0xC9405001)){
+        Camera::SetSleepCamera(detail::leaveApplication);
     }
 }
 

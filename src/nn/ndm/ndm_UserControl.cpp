@@ -1,25 +1,33 @@
 #include <nn/ndm/ndm_UserControl.h>
 #include <nn/ndm/ndm_Interface.h>
 #include <nn/os/os_CriticalSection.h>
+#include <nn/srv/srv_Api.h>
+#include <nn/util/util_Result.h>
 #include <nn/dbg/dbg_Break.h>
+#include <string.h>
 
 namespace nn{
 namespace ndm{
+namespace{
+    static os::CriticalSection sCs;
+}
+namespace{
+    static int sInitializedCount;
+}
 
 Result Initialize(){
-/*    nn::os::CriticalSection::ScopedLock locker(s_cs);
+    nn::os::CriticalSection::ScopedLock locker(sCs);
+    size_t nameLen;
     Result result;
-
-    NN_DBG_USE_GET_RESULT_DESCRIPTION_STRING_IMPL_KEEPER(ndm);
 
     if (sInitializedCount == 0){
         nn::srv::Initialize();
-
-        result = nn::srv::GetServiceHandle(&Interface::s_Session, PORT_NAME_USER);
+        nameLen = strlen(PORT_NAME_USER);
+        result = nn::srv::GetServiceHandle(&CTR::detail::Interface::sSession, PORT_NAME_USER, nameLen, 0);
         NN_UTIL_RETURN_IF_FAILED(result);
     }
     ++sInitializedCount;
-    return ResultSuccess();*/
+    return ResultSuccess();
 }
 // Suspends the current Daemons.
 __asm Result SuspendDaemons(bit32 mask){

@@ -21,10 +21,26 @@ inline void Thread::OnThreadStart(){
 }
 
 inline void Thread::OnThreadExit(){
-
+    // nop{0}
 }
 
-/* Functions */
+/* ThreadStart */
+void Thread::ThreadStart(uptr p){
+    FunctionInfo& info = *reinterpret_cast<FunctionInfo*>(p);
+
+    OnThreadStart();
+    info.Invoke();
+    info.Destroy();
+    OnThreadExit();
+
+    if(info.pAutoStackBuffer != NULL){
+        CallDestructorAndExit(info.pAutoStackBuffer);
+    }
+
+    nn::svc::ExitThread();
+}
+
+/* FinalizeImpl */
 void Thread::FinalizeImpl(){
     if (this->mCanFinalize)
         return;
@@ -41,29 +57,43 @@ void Thread::FinalizeImpl(){
     this->mCanFinalize = true;
 }
 
-void Thread::ThreadStart(uptr p){
-    FunctionInfo& info = *reinterpret_cast<FunctionInfo*>(p);
-
-    OnThreadStart();
-    info.Invoke();
-    info.Destroy();
-    OnThreadExit();
-
-    if(info.pAutoStackBuffer != NULL){
-        CallDestructorAndExit(info.pAutoStackBuffer);
-    }
-
-    nn::svc::ExitThread();
-}
-
-void Thread::NoParamaterFunc(void (*f)()){
+void Thread::NoParameterFunc(void (*f)()){
     f();
 }
 
+/* AutoStackManagers */
+
+/* SetAutoStackManager */
 void Thread::SetAutoStackManager(nn::os::AutoStackManager* pManager){
     nn::os::Thread::spAutoStackManager = pManager;
 }
 
+/* PreStartUsingAutoStack */
+uptr Thread::PreStartUsingAutoStack(size_t stackSize){
+    void* pStackBottom = spAutoStackManager->Construct(stackSize);
+
+    return reinterpret_cast<uptr>(pStackBottom);
+}
+
+/* PostStartUsingAutoStack */
+Result Thread::PostStartUsingAutoStack(Result result, uptr stackBottom){
+    if (result.IsFailure()){
+        spAutoStackManager->Destruct(reinterpret_cast<void*>(stackBottom), true);
+        return result;
+    }
+
+    this->mUsingAutoStack = true;
+    return ResultSuccess();
+}
+
+/* TryInitializeImplUsingAutoStack, use the inline StartUsingAutoStack() */
+Result Thread::TryInitializeAndStartImplUsingAutoStack(const TypeInfo& typeInfo, ThreadFunc f, const void* p, size_t stackSize, s32 priority, s32 coreNo){
+    const uptr stackBottom = PreStartUsingAutoStack(stackSize);
+    Result result = TryInitializeAndStartImpl(typeInfo, f, p, stackBottom, priority, coreNo, true);
+    return PostStartUsingAutoStack(result, stackBottom);
+}
+
+/* SleepImpl */
 void Thread::SleepImpl(fnd::TimeSpan span){
     if(span.GetNanoSeconds() >= 0){ // >= 0 could be wrong
         svc::SleepThread(span.GetNanoSeconds());
@@ -73,9 +103,11 @@ void Thread::SleepImpl(fnd::TimeSpan span){
     }
 }
 
+/* TryInitializeAndStartImpl, use this entry. */
 Result Thread::TryInitializeAndStartImpl(const TypeInfo& typeInfo,nn::os::ThreadFunc f,const void *p,uptr stackBottom,s32 priority, s32 coreNo,bool isAutoStack){
     return TryInitializeAndStartImpl(typeInfo,f,p,stackBottom,priority,coreNo,(isAutoStack ? stackBottom: NULL));
 }
+
 
 Result Thread::TryInitializeAndStartImpl(const TypeInfo& typeInfo,nn::os::ThreadFunc f,const void *p,uptr stackBottom,s32 priority, s32 coreNo,uptr autoStackBuffer){
     uptr stack = stackBottom;
@@ -108,11 +140,11 @@ __asm void Thread::CallDestructorAndExit(void* pStackBottom){
     MOV             R2, #0 
     MOV             R1, R0 
     LDR             R0, =__cpp(&spAutoStackManager) // load AutoStackManager
-    LDR             R0, [R0]
+    LDR             R0, [R0] 
     LDR             R3, [R0]
     LDR             R3, [R3,#0xC] // load AutoStackManager's 0xC vtable slot
-    LDR             LR, =__cpp(nn::svc::ExitThread) // goto -> nn::svc::ExitThread and prroceed
-    BX              R3 // Branch eXchange R3's vtable, in this case AutoStackManager
+    LDR             LR, =__cpp(nn::svc::ExitThread) // goto -> nn::svc::ExitThread and proceed
+    BX              R3 // Branch eXchange AutoStackManager's vtable.
 }
 
 
@@ -122,14 +154,15 @@ os::CTR::ThreadLocalRegion* spTlr = NULL;
 namespace detail{
 
 s32 ConvertLibraryToSvcPriority(s32 lib){
-    // if ( (u32)lib <= 32 )
-  if ( lib >= 0 && lib <= 32 )
+  if (lib >= 0 && lib <= 32)
     return lib + 32;
-  if ( lib >= 0x5109D500 && lib <= 0x5109D527 ) {
+
+  if (lib >= 0x5109D500 && lib <= 0x5109D527) {
       const s32 offset = lib - 0x5109D500;
     return 24 + offset;
+
   }
-  if ( lib >= 0x6C8DA500 && lib <= 0x6C8DA540 ) {
+  if (lib >= 0x6C8DA500 && lib <= 0x6C8DA540) {
       const s32 offset = lib - 0x6C8DA500;
     return offset;
   }

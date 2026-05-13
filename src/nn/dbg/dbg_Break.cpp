@@ -1,12 +1,30 @@
-#include <cstdarg>
 #include <nn/dbg/dbg_Break.h>
+#include <nn/dbg/dbg_Printf.h>
 #include <nn/svc/svc_Api.h>
 #include <cstdarg>
+
+#ifdef NN_DEBUG
+
+using namespace nn::dbg;
+
+namespace{
+    void PrintErrorMessageHeader(nndbgBreakReason reason, const char* filename, int lineno){
+        detail::TPrintf("----\n");
+        if(reason == NN_DBG_BREAK_REASON_ASSERT){
+            detail::TPrintf("Assertion failure at %s:%d\n  ", filename, lineno);
+        }
+        else{
+            detail::TPrintf("Panic at %s:%d\n  ", filename, lineno);
+        }
+    }
+}
+
+#endif
 
 namespace{
 static nn::dbg::BreakHandler s_pBreakHandler = NULL;
 
-// Things needed for nn::dbg::Break, ignore these.
+/* nn::dbg::Break Call Handlers */
 
 void CallBreakHandler(nn::dbg::BreakReason reason, Result* pResult, const char* filename, int lineno, const char* fmt, std::va_list args){
     nn::dbg::BreakHandler pBreakHandler = s_pBreakHandler;
@@ -36,16 +54,22 @@ namespace nn{
 namespace dbg{
 nn::dbg::BreakHandler s_pBreakHandler = 0;
 
+/* dbg::Break */
+
 __attribute__((noinline)) Result Break(BreakReason reason){
     CallBreakHandler(reason);
     return nn::svc::Break(reason, NULL, 0);
 }
+
+/* dbg::Panic */
 
 void Panic(){
     Break(BREAK_REASON_PANIC);
 }
 
 namespace detail{
+
+/* nn::ro things */
 
 Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size){
     return nn::svc::Break(BREAK_REASON_UNLOAD_RO, pDllInfo, size);
@@ -59,6 +83,73 @@ Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size){
 // Panic. 
 
 extern "C" {
+
+#ifdef NN_DEBUG
+
+void nndbgBreakWithMessage_ (nndbgBreakReason reason, const char* filename, int lineno, const char* fmt, ...){
+    va_list arg;
+    va_start(arg, fmt);
+    PrintErrorMessageHeader(reason, filename, lineno);
+    detail::VPrintf(fmt, arg);
+    detail::TPrintf("\n");
+    va_end(arg);
+
+    va_start(arg, fmt);
+    CallBreakHandler(reason, filename, lineno, fmt, arg);
+    va_end(arg);
+
+    Break(static_cast<BreakReason>(reason));
+}
+
+void nndbgBreakWithTMessage_(nndbgBreakReason reason, const char* filename, int lineno, const char* fmt, ...){
+    va_list arg;
+    va_start(arg, fmt);
+    PrintErrorMessageHeader(reason, filename, lineno);
+    detail::TVPrintf(fmt, arg);
+    detail::TPrintf("\n");
+    va_end(arg);
+
+    va_start(arg, fmt);
+    CallBreakHandler(reason, filename, lineno, fmt, arg);
+    va_end(arg);
+
+    Break(static_cast<BreakReason>(reason));
+}
+
+void nndbgBreakWithResultMessage_ (nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...){
+    va_list arg;
+    va_start(arg, fmt);
+    PrintErrorMessageHeader(reason, filename, lineno);
+    detail::VPrintf(fmt, arg);
+    detail::TPrintf("\n");
+    detail::PrintResult(result);
+    va_end(arg);
+
+    va_start(arg, fmt);
+    CallBreakHandler(reason, result, filename, lineno, fmt, arg);
+    va_end(arg);
+
+    Break(static_cast<BreakReason>(reason));
+}
+
+void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...){
+    va_list arg;
+    va_start(arg, fmt);
+    PrintErrorMessageHeader(reason, filename, lineno);
+    detail::TVPrintf(fmt, arg);
+    detail::TPrintf("\n");
+    detail::PrintResult(result);
+    va_end(arg);
+
+    va_start(arg, fmt);
+    CallBreakHandler(reason, result, filename, lineno, fmt, arg);
+    va_end(arg);
+
+    Break(static_cast<BreakReason>(reason));
+}
+
+#endif
+
 void nndbgPanic(){
     nn::dbg::Panic();
 }

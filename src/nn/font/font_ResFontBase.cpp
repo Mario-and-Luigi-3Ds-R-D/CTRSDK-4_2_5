@@ -80,43 +80,43 @@ void ResFontBase::GetGlyph(Glyph* pGlyph,CharCode code) const{
 }
 
 bool ResFontBase::HasGlyph(CharCode code) const {
-    // TODO
+    return FindGlyphIndex(code) != 0xffff;
 }
 
 CharacterCode ResFontBase::GetCharacterCode() const{
-    // TODO
+    this->mFontInfo[0].characterCode;
 }
 
 int ResFontBase::GetBaselinePos() const{
-    // TODO
+    return this->mFontInfo[0].linefeed;
 }
 
 int ResFontBase::GetCellHeight() const{
-    // TODO
+    return this->mFontInfo[0].pGlyph->cellHeight;
 }
 
 int ResFontBase::GetCellWidth() const{
-    // TODO
+    return this->mFontInfo[0].pGlyph->cellWidth;
 }
 
 void ResFontBase::EnableLinearFilter(bool atSmall,bool atLarge){
-    // TODO
+
 }
 
 bool ResFontBase::IsLinearFilterEnableAtSmall() const{
-    // TODO
+    return (this->mWrapFilter & 4) >> 2;
 }
 
 bool ResFontBase::IsLinearFilterEnableAtLarge() const{
-    // TODO
+    return (this->mWrapFilter & 2) >> 1;
 }
 
 u32 ResFontBase::GetTextureWrapFilterValue() const{
-    // TODO
+    return this->mWrapFilter;
 }
 
-uint ResFontBase::FindGlyphIndex(uint code){
-    // TODO
+uint ResFontBase::FindGlyphIndex(CharCode code) const{
+    return this->mFontInfo[0].pGlyph->sheetNum;
 }
 }
 }

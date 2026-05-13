@@ -19,15 +19,11 @@ size_t DspFxDelay::GetRequiredMemorySize(const DspFxDelay::Param& param) {
     if(memSize == 0){
         memSize = 1;
     } 
-    if(param.mIsEnableSurround == false){
-        memSizeNew = 2;
-    } else{
+    if(param.mIsEnableSurround != false){
         memSizeNew = 4;
+    } else{
+        memSizeNew = 2;
     } return memSizeNew * memSize * 0x280;
-}
-
-bool DspFxDelay::Initialize(uptr buffer, size_t size) {
-
 }
 
 void DspFxDelay::Finalize() {
@@ -50,17 +46,7 @@ bool DspFxDelay::Enable(bool enable) {
 
 }
 
-bool DspFxDelay::IsBufferInUse() {
 
-}
-
-bool DspFxDelay::AssignWorkBuffer(uptr buffer, size_t size) {
-
-}
-
-void DspFxDelay::ReleaseWorkBuffer() {
-
-}
 }
 }
 }

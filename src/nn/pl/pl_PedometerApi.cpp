@@ -10,8 +10,8 @@ void GetStepHistory(ushort pStepCounts, s32 numHours, nn::fnd::DateTime start){
     Result result;
 
     result.mResult = nn::ptm::CTR::detail::PtmIpc::GetStepHistory().IsFailure();
-    if(result != 0){
-        nndbgBreak((nn::dbg::BreakReason)result.IsFailure());
+    if(result.mResult != 0){
+        nndbgBreak((nn::dbg::BreakReason)result.mResult);
     }
     return;
 }

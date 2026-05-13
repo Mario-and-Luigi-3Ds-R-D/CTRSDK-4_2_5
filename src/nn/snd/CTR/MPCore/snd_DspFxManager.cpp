@@ -5,7 +5,6 @@ namespace snd {
 namespace CTR {
 
 void DspFxManager::Initialize() {
-    DspFxManagerImpl* pFxManagerImpl;
     this->mIsAttached[0][0] = false;
     this->mIsEnabled[0][0] = false;
     this->mChannelNum[0][0] = 0;
@@ -18,11 +17,14 @@ void DspFxManager::Initialize() {
     this->mIsAttached[1][1] = false;
     this->mIsEnabled[1][1] = false;
     this->mChannelNum[1][1] = 0;
-    pFxManagerImpl->GetInstance();
-    pFxManagerImpl->Initialize();
+    GetInstance()->Initialize();
 }
 
-DspFxManager* sInstance;
+
+
+DspFxManagerImpl* DspFxManager::Finalize(){
+    return DspFxManagerImpl::GetInstance()->Finalize();
+}
 
 DspFxManager* DspFxManager::GetInstance() {
     return sInstance;
@@ -49,16 +51,20 @@ void DspFxManagerImpl::Initialize() {
 
 }
 
-DspFxManagerImpl* DspFxManagerImpl::Finalize() {
-
-}
+DspFxManagerImpl* DspFxManagerImpl::Finalize(){ }
 
 void DspFxManagerImpl::ForceUpdateParams() {
-
+    for(int i = 0; i < 2; i++){
+        int index; i = index;
+        this->mDspFxDelayParams[index].mDelayTime = 0xffff;
+        //internal::sDspsnd.SetDspDelayEffect(index, &this->mDspFxDelayParams[index].mDelayTime);
+        this->mDspFxReverbParams[index].mEarlyReflectionTime = 0xffff;
+        //internal::sDspsnd.SetDspReverbEffect(index, &this->mDspFxReverbParams[index].mEarlyReflectionTime);
+    }
 }
 
 DspFxManagerImpl* DspFxManagerImpl::GetInstance() {
-
+    return sInstance;
 }
 
 void DspFxManagerImpl::SetDspDelayEffect() {

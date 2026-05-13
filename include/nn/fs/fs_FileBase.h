@@ -22,6 +22,7 @@ namespace detail{
         }
     public:
         FileBaseImpl() : mFile(0) {}
+        ~FileBaseImpl(){ this->Finalize(); }
         
         Result TryGetSize(s64* pOut) const {
             return UserFileSystem::TryGetFileSize(pOut, GetPtr()); 

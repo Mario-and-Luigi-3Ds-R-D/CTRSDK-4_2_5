@@ -61,3 +61,6 @@ namespace os {
 
 } // namespace os
 } // namespace nn
+
+NN_DEFINE_RESULT_CONST(ResultMisalignedAddress,Result::LEVEL_USAGE, Result::SUMMARY_INVALID_ARGUMENT, Result::MODULE_NN_OS, nn::Result::DESCRIPTION_MISALIGNED_ADDRESS);
+NN_DEFINE_RESULT_CONST(ResultMisalignedSize,Result::LEVEL_USAGE, Result::SUMMARY_INVALID_ARGUMENT, Result::MODULE_NN_OS, nn::Result::DESCRIPTION_MISALIGNED_SIZE);

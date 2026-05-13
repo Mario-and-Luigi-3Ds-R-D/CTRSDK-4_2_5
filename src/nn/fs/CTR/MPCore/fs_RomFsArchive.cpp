@@ -16,35 +16,35 @@ Result RomFsArchive::OpenDirectory(IDirectory** pDir, const Path& path) {
 }
 
 Result RomFsArchive::DeleteFile(const Path& path) {
-    return ResultSuccess();
+    return *(Result*)0xe0c046f8;
 }
 
 Result RomFsArchive::RenameFile(const Path& path, const Path& newPath) {
-    return ResultSuccess();
+    return *(Result*)0xe0c046f8;
 }
 
 Result RomFsArchive::DeleteDirectory(const Path& path) {
-    return ResultSuccess();
+    return *(Result*)0xe0c046f8;
 }
 
 Result RomFsArchive::TryDeleteDirectoryRecursively(const Path& path) {
-
+    return *(Result*)0xe0c046f8;
 }
 
 Result RomFsArchive::CreateFile(const Path& path) {
-    return ResultSuccess();
+    return *(Result*)0xe0c046f8;
 }
 
 Result RomFsArchive::CreateDirectory(const Path& path) {
-    return ResultSuccess();
+    return *(Result*)0xe0c046f8;
 }
 
 Result RomFsArchive::RenameDirectory(const Path& path, const Path& newPath) {
-    return ResultSuccess();
+    return *(Result*)0xe0c046f8;
 }
 
 RomFsArchive::~RomFsArchive() {
-    this->mpBaseFile  = 0; // other donconsts do the rest
+    this->mpBaseFile = 0; // other donconsts do the rest
 }
 
 void RomFsArchive::DuplicateHandle() {

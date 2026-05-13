@@ -6,7 +6,7 @@ namespace CTR{
 namespace detail{
 namespace Interface{
 
-const nn::Handle sSession = 0;
+nn::Handle sSession = 0;
 // A User will never need this, so dont recreate it.
 //
 // Fuck you, because.

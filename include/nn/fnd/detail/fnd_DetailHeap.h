@@ -3,6 +3,11 @@
 #include "nn/fnd/detail/fnd_DetailHeapHead.h"
 #include "nn/fnd/fnd_ExpHeap.h"
 
+#define NN_OS_EXPHEAP_ALLOC_DIR_FRONT 0
+#define NN_OS_EXPHEAP_ALLOC_DIR_REAR  1
+#define NN_OS_EXPHEAP_ALLOC_MODE_FIRST 0
+#define NN_OS_EXPHEAP_ALLOC_MODE_NEAR 1
+
 namespace nn{
 namespace fnd{
 namespace detail{

@@ -21,6 +21,8 @@ namespace{
     extern fnd::UnitHeapBase sArchiveHeap;
 }
 
+typedef nn::fslow::LowPath<const char*, const wchar_t*> Path;
+
 Result OpenSpecialArchiveRaw(IArchive** pOut, bit32 archiveKind);
 
 class ArchiveName{
@@ -41,7 +43,7 @@ public:
 class UserFileSystem{
 public:
     static void CloseFile(void*);
-    bool Initialize();
+    static Result Initialize(nn::Handle handle);
     static Result TryGetFileSize(s64* pout,void*);
     static Result TrySetFileSize(void* p, s64 size);
     Result TryWriteFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size, bool flush);

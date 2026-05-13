@@ -18,6 +18,8 @@ namespace detail{
     class StackMemoryBlock : public nn::os::MemoryBlockBase{
     public:
         uptr mMemoryAddress;
+
+        uptr GetStackBottom() const { return GetAddress() + GetSize(); }
     };
 }
 }
@@ -30,7 +32,7 @@ typedef union nnosStackMemoryBlock{
 extern "C"{
 void nnosStackMemoryBlockAllocate(nnosStackMemoryBlock* p, size_t size);
 void nnosStackMemoryBlockFree(nnosStackMemoryBlock* p);
-void nnosStackMemoryBlockGetStackBottom(nnosStackMemoryBlock* p);
+uptr nnosStackMemoryBlockGetStackBottom(nnosStackMemoryBlock* p);
 void nnosStackMemoryBlockInitialize(nnosStackMemoryBlock* p);
 
 }
