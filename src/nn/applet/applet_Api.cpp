@@ -4,10 +4,71 @@
 #include <nn/applet/CTR/applet_ClientThread.h>
 #include <nn/applet/CTR/applet_Wrapper.h>
 #include <nn/applet/CTR/detail/applet_Ipc.h>
+#include <nn/camera/camera_Api.h>
 //#include <nn/gxlow/gxlow_SystemUse.h>
 #include <nn/srv/srv_Api.h>
 #include <nn/os/os_Thread.h>
 #include <nn/err/CTR/err_Api.h>
+
+// Legitimate Clusterfuck.
+
+namespace nn{
+namespace applet{
+namespace CTR{
+namespace detail{
+
+/* ---- INLINES ---- */
+
+inline bool IsRegistered(AppletId id){
+    bool isRegistered; Result res;
+
+    LockAndConnect();
+    res = APPLET::IsRegistered(id, &isRegistered);
+    NN_ERR_THROW_FATAL(res);
+    DisconnectAndUnlock();
+    return isRegistered;
+}
+
+inline Result CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize){
+    return CallUtility(utilityId, pInParam, inParamSize, 0,0,0);
+}
+
+inline Result FinalizePort(Handle* pSession){
+    Result res;
+    if(pSession->IsValid()){
+        res.mResult = svc::CloseHandle(*pSession).mResult;
+        *pSession = INVALID_HANDLE_VALUE;
+    } else{
+        return (Result)0xe0a0cff8;
+    }
+    return res;
+}
+
+#ifdef NONMATCHING
+#endif
+
+inline AppletId GetHomeMenuAppletId(){
+    Result res; AppletId id2; AppletId id3; AppletId id1; AppletPos pos;
+
+    LockAndConnect();
+    res = APPLET::GetAppletManInfo(POS_NONE,&pos,&id1,&id2,&id3);
+    NN_ERR_THROW_FATAL(res);
+    DisconnectAndUnlock();
+    return id2;
+}
+
+inline void WaitBySleep(int msecs){
+    fnd::TimeSpan span = fnd::TimeSpan::FromMilliSeconds(msecs);
+    os::Thread::Sleep(span);
+}
+
+
+} // detail
+} // CTR
+} // applet
+} // nn
+
+/* ---- FUNCTIONS ---- */
 
 namespace nn{
 namespace applet{
@@ -16,58 +77,112 @@ namespace CTR{
 const nn::Handle HANDLE_NONE = 0;
 
 namespace detail{
-
-void Initialize(){
-
+namespace{
+    bool isApplication;
 }
 
-void Enable(bool isSleepEnable){
-    
-}
+/* Initialize */
 
-void CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize, u8* pOutParam, size_t outParamSize, s32* pReadSize){
+void Initialize(AppletAttr applerAttr){
     // TODO
 }
+
+/* Enable */
+/* Not Finished */
+void Enable(bool isSleepEnable){
+    // TODO
+}
+
+/* WaitForRegister */
 
 bool WaitForRegister(AppletId appletId,nn::fnd::TimeSpan span){
     // TODO
 }
 
-Result CloseApplication(u8 *pParam,size_t paramSize,nn::Handle handle){
-    // TODO
-}
-
-/* Applet Connect, do shit with Port Names and shit. */
-
-Result InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority){
-
-}
-
-Result Connect(){
-    // TODO
-}
-
-void Disconnect(){
-    // TODO
-}
-
-/* #AppletRightsMatter */
-
-void AssignGpuRight(bool flag){
-    // TODO
-}
-
-void AssignDspRight(bool flag){
-    // TODO
-}
-
-/* Cancel Things */
+/* CancelLibraryAppletIfRegistered */
 
 Result CancelLibraryAppletIfRegistered(bool isApplicationEnd, nn::applet::CTR::AppletWakeupState *pWakeupState){
     // TODO
 }
 
-bool CancelParamater(bool isSenderCheck, nn::applet::CTR::AppletId senderId, bool isReceiverCheck, nn::applet::CTR::AppletId receiverId){
+/* NotifyToWait */
+/* Finished */
+
+void NotifyToWait(){
+    AppletId id;
+    Result res;
+    LockAndConnect();
+    id = GetId();
+    res = APPLET::NotifyToWait(id);
+    NN_ERR_THROW_FATAL(res);
+    DisconnectAndUnlock();
+}
+
+/* CallUtility */
+
+Result CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize, u8* pOutParam, size_t outParamSize, s32* pReadSize){
+    // TODO
+}
+
+/* CloseApplication */
+
+Result CloseApplication(u8 *pParam,size_t paramSize,nn::Handle handle){
+    // TODO
+}
+
+/* #AppletRightsMatter */
+
+/* AssignGpuRight */
+
+void AssignGpuRight(bool flag){
+    // TODO
+}
+
+/* PrepareToStartSystemApplet */
+
+Result PrepareToStartSystemApplet(AppletId id){
+    // TODO
+}
+
+/* StartSystemApplet */
+
+Result StartSystemApplet(AppletId id, u8* pParam, size_t size, nn::Handle handle){
+    // TODO
+}
+
+/* AssignDspRight */
+
+void AssignDspRight(bool flag){
+/*
+    if(flag){
+        if(isDspSleeping != false){
+            dsp::CTR::WakeUp();
+            isDspSleeping = false;
+        }
+    }
+    else{
+        if(dsp::CTR::IsComponentLoaded()){
+            dsp::CTR::Sleep();
+            isDspSleeping = true;
+        }
+    }
+*/
+}
+
+/* AssignCameraRight */
+/* Finished */
+
+void AssignCameraRight(bool flag){
+    if(flag == 0){
+        camera::CTR::detail::LeaveApplication();
+    }
+    camera::CTR::detail::ArriveApplication();
+}
+
+/* CancelParamater */
+/* Finished */
+
+bool CancelParameter(bool isSenderCheck, nn::applet::CTR::AppletId senderId, bool isReceiverCheck, nn::applet::CTR::AppletId receiverId){
     bool isCanceled;
     LockAndConnect();
     Result res = APPLET::CancelParamater(isSenderCheck, senderId, isReceiverCheck, receiverId, &isCanceled);
@@ -76,21 +191,42 @@ bool CancelParamater(bool isSenderCheck, nn::applet::CTR::AppletId senderId, boo
     return (s8)isCanceled;
 }
 
-/* HomeMenu things */
-
-static void WaitBySleep(s64 impl){
-    nn::os::Thread::SleepImpl(nn::fnd::TimeSpan::FromMilliSeconds(impl));
-}
+/* JumpToHomeMenu */
+/* Not Finished */
 
 Result JumpToHomeMenu(u8 *pParam,size_t paramSize,Handle handle){
-    // TODO
+    /*AppletId appletId; AppletId homemenuId; 
+    Result res; 
+    Handle hand_local;
+    appletId = GetHomeMenuAppletId();
+    bool appletCheck = IsApplication();
+    if(appletCheck){
+        while(!IsRegistered(appletId)){
+            WaitBySleep(10);
+        }
+        sIsVramSaved = true;
+        gxlow::CTR::SaveVramSysArea();
+        res = CaptureScreenForSystemApplet(appletId);
+    }
+    if(dsp::CTR::IsComponentLoaded()){
+        dsp::CTR::Sleep();
+        sIsDspSleeping = true;
+    }
+    AssignGpuRight(false);
+    camera::CTR::LeaveApplication();
+    LockAndConnect();
+    res = APPLET::JumpToHomeMenu(pParam, paramSize, handle);
+    NN_ERR_THROW_FATAL(res);
+    DisconnectAndUnlock();
+    SetInactive();
+    return res;*/
 }
 
-#ifdef NON_MATCHING
-#endif 
+/* PrepareToJumpToHomeMenu*/
+/* Finished */
 
 Result PrepareToJumpToHomeMenu(){
-    /*CTR::SetTransitionType(TRANSITION_JUMP_HOME);
+    SetTransitionType(TRANSITION_JUMP_HOME);
         
     const Result ERROR_A(0xc8a0cff0);
     const Result ERROR_B(0xe0a0cc08);
@@ -101,12 +237,14 @@ Result PrepareToJumpToHomeMenu(){
         LockAndConnect();
         res = APPLET::PrepareToJumpToHomeMenu();
         DisconnectAndUnlock();
-    if (res != ERROR_A && res != ERROR_B && res != ERROR_C) break;
-        WaitBySleep(0xa);
+        if (res != ERROR_A && res != ERROR_B && res != ERROR_C) break;
+            WaitBySleep(10);
     }
-
-    return res;*/
+    return res;
 }
+
+/* GetAppletManInfo */
+/* Finished */
 
 void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pRequestedId,AppletId *pHomeMenuId,AppletId *pCurrentId){
     AppletPos currentPos; AppletId requestedId; AppletId homeMenuId; AppletId currentId; Result result;
@@ -120,45 +258,30 @@ void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pReq
     if (pCurrentId)   *pCurrentId   = currentId;
 }
 
+/* Glance */
+
 Result Glance(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle){
-    AppletId receiverId; Result res; Handle tmpHandle; AppletId tmpSenderId; u32 tmpCmd; u8 tmpBuf[1]; s32 tmpReadLen;
-    LockAndConnect();
-    if(pSenderId == 0) pSenderId =&tmpSenderId;
-    if(pCommand == 0) pCommand =&tmpCmd;
-    
-    if(pParam == 0 || paramSize == 0) 
-        pParam = tmpBuf; paramSize = 0;
-
-    if(pReadLen == 0) pReadLen =&tmpReadLen;
-    if(pHandle == 0) pHandle =&tmpHandle;
-
-    receiverId = GetId();
-    res = APPLET::GlanceParameter(pSenderId,receiverId,pCommand,pParam,paramSize,pReadLen,pHandle);
-    if(tmpHandle.mHandle != 0){ __asm{ swine 0x23}}
-    DisconnectAndUnlock();
-    return res;
+    // TODO
 }
 
+/* --Transitions-- */
 
-#ifdef NONMATCHING
-#endif
-/* Transitions */
+/* UnlockTransition */
+
 void UnlockTransition(u32 action){
-    u32 actionLocal = action;
-    CallUtility(7,(u8*)&actionLocal,4,0,0,0);
+    // TODO
 }
 
-#ifdef NONMATCHING
-#endif
-void LockTransition(u32 action,bool isForced){
-    LockTransitionParam param;
+/* LockTransition */
 
-    param.action = action;
-    param.isForced = isForced;
-    CallUtility(4,(u8*)&param,8,0,0,0);
+void LockTransition(u32 action,bool isForced){
+    // TODO
 }
 
 // I love this hack
+
+/* SleepIfShellClosed */
+/* Finished */
 #pragma O2
 void SleepIfShellClosed() {
     u32 flags = 0;
@@ -167,12 +290,14 @@ void SleepIfShellClosed() {
 }
 #pragma O3
 
-/* SLEEPMANAGERS */
+/* -- SLEEPMANAGERS -- */
+
+/* ReplyToSleepQueryToManager */
+/* Finished */
 
 void ReplySleepQueryToManager(QueryReply reply){
     AppletId id;
     Result res;
-
     LockAndConnect();
     id = GetId();
     res = APPLET::ReplySleepQuery(id,reply);
@@ -180,7 +305,23 @@ void ReplySleepQueryToManager(QueryReply reply){
     DisconnectAndUnlock();
 }
 
+/* ReplySleepNotificationCompleteToManager */
+/* Finished */
+
+void ReplySleepNotificationCompleteToManager(){
+    AppletId id;
+    Result res;
+    LockAndConnect();
+    id = GetId();
+    res = APPLET::ReplySleepNotificationComplete();
+    NN_ERR_THROW_FATAL(res);
+    DisconnectAndUnlock();
+}
+
 } // detail
+
+/* IsInitialized */
+/* Finished */
 
 bool IsInitialized(){
     return CTR::detail::sIsInitialized;

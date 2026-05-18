@@ -10,10 +10,14 @@ namespace CTR {
 namespace detail{
     void InitializeClientThread(s32 threadPriority, Handle hControl, Handle hMessage);
     void ThreadFunc(int param);
-    void FinalizeClientThread();
+
     void SetReceiveCallback(AppletReceiveCallback callback,uptr parameter);
+
+    void FinalizeClientThread();
+    
     void WaitForControlEvent();
     bool TryWaitForControlEvent();
+    void ClearControlEvent();
 
 }
 }

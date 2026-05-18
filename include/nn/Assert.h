@@ -14,6 +14,7 @@
 #define NN_PANIC_SDK(...) nndbgPanic();
 #define NN_PANIC_IF_FAILED(result)
 
-#define NN_TASSERT_(exp) NN_TASSERTMSG_((exp), "%s", #exp) // DateTime uses this..? 
+#define NN_TASSERT_(exp) NN_TASSERTMSG_((exp), "%s", #exp)
+#define NN_TASSERTMSG_(exp, ...)
 
 #define NN_ASSERT_WITH_RESULT(exp, result)

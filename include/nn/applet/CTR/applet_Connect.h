@@ -14,10 +14,15 @@ namespace{
     const char PORT_NAME_SYSTEM[] = "APT:S";
     const char PORT_NAME_USER[] = "APT:U";
 }
-    void DisconnectAndUnlock();
-    void LockAndConnect();
-    void GetDisplayInfo(AppletDisplayInfo* pInfo);
+    Result InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority);
     void InitializeMutex(Handle handle);
+    Result Connect();
+    void LockAndConnect();
+
+    Result Disconnect();
+    void DisconnectAndUnlock();
+
+    void GetDisplayInfo(AppletDisplayInfo* pInfo);
 
 }
 }

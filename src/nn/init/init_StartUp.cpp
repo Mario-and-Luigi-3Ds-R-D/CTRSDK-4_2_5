@@ -1,19 +1,13 @@
+// Filename: init_StartUp.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/os/os_Initialize.h>
 #include <nn/os/CTR/os_ErrorHandler.h>
 #include <nn/ndm/ndm_UserControl.h>
 #include <nn/applet/CTR/applet_Api.h>
-
-namespace nn {
-namespace applet {
-namespace CTR {
-namespace detail {
-    __declspec(noinline) Result Initialize(AppletAttr appletAttr){ // TODO MACRO
-        return ResultSuccess();
-    }
-}
-}
-}
-}
 
 #define NN_SYSTEM_DEFAULT_HEAP_SIZE     0x00800000
 

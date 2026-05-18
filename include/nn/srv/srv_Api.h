@@ -7,15 +7,20 @@
 
 namespace nn {
 namespace srv {
+class NotificationHandler;
+
 namespace detail {
 Result Connect(const char*);
-}
+
 class HandlerManager{
 public:
-    nn::fnd::IntrusiveLinkedList<HandlerManager> mHandler;
+    nn::fnd::IntrusiveLinkedList<NotificationHandler> mHandler;
         
     ~HandlerManager();
+    Result Register(NotificationHandler* pHandler, u32 message);
 };
+
+}
 
 struct NotificationHandler : public fnd::IntrusiveLinkedList<NotificationHandler>::Item{
     bit32 mAttachedMessage;

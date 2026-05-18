@@ -7,8 +7,8 @@ namespace nn {
 namespace cfg {
 namespace CTR {
     const char PORT_NAME_USER[] = "cfg:u";
+    const char PORT_NAME_INIT[] = "cfg:i";
     const char PORT_NAME_SYSTEM[] = "cfg:s";
-    const char PORT_NAME_IPC[] = "cfg:i";
     
     void Initialize();
     void Finalize();
@@ -23,6 +23,17 @@ namespace CTR {
 
     extern LanguageCfgData LANGUAGE_CFG_DEFAULT;
 
+    struct DebugParamCfgData{
+        union debugParam{
+            u8 flags1;
+            u8 param1;
+        };
+
+        bool dlpDebug;
+        debugParam param;
+        u8 fsLatencyParam;
+        u8 rsv;
+    };
 } // namespace CTR
 } // namespace cfg
 } // namespace nn

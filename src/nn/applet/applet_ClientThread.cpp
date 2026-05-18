@@ -26,7 +26,11 @@ void WaitForControlEvent(){
 }
 
 bool TryWaitForControlEvent(){
-//    return sControlLight.TryWait();
+    return sControlLight.TryWait();
+}
+
+void ClearControlEvent(){
+    sControlLight.ClearSignal();
 }
 
 }

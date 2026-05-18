@@ -1,7 +1,13 @@
+// Filename: math_Aritmetic.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/math/math_Arithmetic.h>
 #include <cstdlib>
 
-/*namespace nn{
+namespace nn{
 namespace math{
 namespace{
     struct ExpTbl{
@@ -49,7 +55,7 @@ namespace{
         f32 log_val;
         f32 log_delta;
     };
-    struct LogTbl sLogTbl[256+1]{
+    struct LogTbl sLogTbl[256+1] ={
         { 0.000000000f, 0.003898640f },     // Log(1.00000000)
         { 0.003898640f, 0.003883500f },     // Log(1.00390625)
         { 0.007782140f, 0.003868477f },     // Log(1.00781250)
@@ -310,5 +316,6 @@ namespace{
     };
 
 }
+
 }
-}*/
+}

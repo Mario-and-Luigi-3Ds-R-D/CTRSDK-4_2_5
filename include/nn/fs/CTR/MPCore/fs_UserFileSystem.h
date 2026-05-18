@@ -20,6 +20,12 @@ namespace{
     extern nn::Handle gFileServerArchive;
     extern fnd::UnitHeapBase sArchiveHeap;
 }
+namespace{
+    static fnd::TimeSpan ConstantWait;
+}
+namespace{
+    extern bool sIsEmulateEndurance;
+}
 
 typedef nn::fslow::LowPath<const char*, const wchar_t*> Path;
 

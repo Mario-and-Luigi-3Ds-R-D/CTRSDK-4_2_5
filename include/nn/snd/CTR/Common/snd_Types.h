@@ -118,6 +118,20 @@ struct ThreadParameter{
     size_t priority;
 };
 
+union BusVolume{
+    f32 f32value;
+    short s16value;
+};
+
+struct OutputCapture{
+    uptr mBufferAddess;
+    s32 mBufferLength;
+    s32 mReadPos;
+    s32 mWritePos;
+    bool mIsEnabled;
+    u8 rev[3];
+};
+
 enum SyncMode{
     SYNC_MODE_STRICT = 0,
     SYNC_MODE_LOOSE  = 1,

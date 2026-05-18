@@ -1,10 +1,7 @@
 #pragma once
 
-#include "nn/hid/CTR/hid_HidBase.h"
 #include "nn/hid/CTR/hid_Accelerometer.h"
 #include "nn/math/math_Vec3.h"
-#include "nn/math/math_Matrix34.h"
-#include "nn/util/util_NonCopyable.h"
 
 namespace nn{
 namespace hid{

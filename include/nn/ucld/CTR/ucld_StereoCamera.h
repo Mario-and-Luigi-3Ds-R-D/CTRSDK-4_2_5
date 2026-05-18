@@ -16,8 +16,9 @@ namespace{
         VEC3 up;
         VEC3 target;
     };
-}
+
     void GetLookPose(const nn::math::MTX34 *view,nn::math::VEC3 *pos,Direction *dir);
+}
 
     class StereoCamera{
     public:

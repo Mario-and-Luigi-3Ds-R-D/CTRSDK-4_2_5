@@ -42,7 +42,7 @@ namespace{
         bit8 mType;
         u8 mRevisionHi;
         ushort mRevisionLo;
-        Result mResult;
+        nnResult mResult;
         uptr mPc;
         bit32 mProcessId;
         bit64 mTitleId;
@@ -60,9 +60,6 @@ namespace{
     void ThrowFatalErrAll(Result, uptr pc);
 namespace{
     void Throw(nn::err::CTR::FatalErrInfo* pInfo);
-}
-namespace{
-//    static CTR::FatalErrInfo sFatalErrInfo; 
 }
 namespace detail{
     template <bool(*IsTarget)(Result), void(*TargetFunc)(Result, uptr)>

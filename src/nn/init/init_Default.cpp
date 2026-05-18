@@ -1,3 +1,9 @@
+// Filename: init_Default.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/svc/svc_Api.h>
 #include <nn/init/init_Alloc.h>
 #include <nn/os/os_Memory.h>
@@ -20,7 +26,7 @@ namespace{
 extern "C" {
     
 void nninitStartUpDefault(){
-/*    const size_t assingment = nn::os::GetAppMemorySize();
+    const size_t assingment = nn::os::GetAppMemorySize();
     const size_t currentUsing = nn::os::GetUsingMemorySize();
 
     const size_t DEVICE_MEMORY_SIZE = 32 * 1024 * 1024;
@@ -32,7 +38,7 @@ void nninitStartUpDefault(){
 
     nn::init::InitializeAllocator(8 * 1024 * 1024);
 
-    sUsingStartUpDefault = true;*/
+    sUsingStartUpDefault = true;
 }
 
 void nninitSetupDefault(){

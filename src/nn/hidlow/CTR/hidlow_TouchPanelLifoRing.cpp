@@ -1,3 +1,9 @@
+// Filename: hidlow_TouchPanelLifoRing.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/hidlow/CTR/hidlow_TouchPanelLifoRing.h>
 
 namespace nn{

@@ -1,16 +1,19 @@
 #pragma once
 
 #include "nn/hid/CTR/hid_HidBase.h"
+#include "nn/util/util_SizedEnum.h"
+
+using namespace nn::util;
 
 namespace nn{
 namespace hid{
 namespace CTR{
 
-const f32 DEFAULT_SCALE_OF_NORMALIZE_STICK = 1.5f;
-const s16 DEFAULT_THRESHOLD_OF_NORMALIZE_STICK = 141;
-const s16 MIN_OF_STICK_CLAMP_MODE_CIRCLE = 40;
-const s16 MIN_OF_STICK_CLAMP_MODE_CROSS = 36;
-const s16 LIMIT_OF_STICK_CLAMP_MAX = 145;
+    const f32 DEFAULT_SCALE_OF_NORMALIZE_STICK = 1.5f;
+    const s16 DEFAULT_THRESHOLD_OF_NORMALIZE_STICK = 141;
+    const s16 MIN_OF_STICK_CLAMP_MODE_CIRCLE = 40;
+    const s16 MIN_OF_STICK_CLAMP_MODE_CROSS = 36;
+    const s16 LIMIT_OF_STICK_CLAMP_MAX = 145;
 
 struct AnalogStickStatus{
     short x;
@@ -18,6 +21,12 @@ struct AnalogStickStatus{
 };
 
 class AnalogStickClamper{
+public:
+enum ClampMode{
+    STICK_CLAMP_MODE_CIRCLE = 0,
+    STICK_CLAMP_MODE_CROSS,
+    STICK_CLAMP_MODE_MINIMUM
+};
 protected:
     short mMinOfStickClampCircle;
     short mMinOfStickClampCross;
@@ -25,7 +34,7 @@ protected:
     short mMaxOfStickClampCircle;
     short mMaxOfStickClampCross;
     short mMaxOfStickClampMinimum;
-    s8 mStickClampMode;
+    SizedEnum1<ClampMode> mStickClampMode;
     s8 rev;
     short mThreshold;
     f32 mScale;
@@ -34,13 +43,6 @@ protected:
     f32 mLastLength;
     f32 mLastDiff;
 public:
-
-enum ClampMode{
-    STICK_CLAMP_MODE_CIRCLE = 0,
-    STICK_CLAMP_MODE_CROSS,
-    STICK_CLAMP_MODE_MINIMUM
-};
-
 AnalogStickClamper();
 void ClampCore(short* pOutX, short* pOutY,  s32 x, s32 y);
 void ClampValueOfClamp();

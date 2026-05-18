@@ -1,4 +1,6 @@
 #include <nn/svc/svc_Api.h>
+#include <nn/init/init_Default.h>
+#include <nn/util/detail/util_Symbol.h>
 #include <rt_locale.h>
 #include <rt_sys.h>
 
@@ -10,28 +12,27 @@ extern "C"{
     void nninitSystem(); // init_Startup.cpp
     void nninitStartUp(); // init_Startup.cpp
 
-    u32* __rt_locale(void);
-    void _fp_init(void);
+    u32* __rt_locale(void); // ARMCC
+    void _fp_init(void); // ARMCC
 
-    void nnMain();
     void nninitCallStaticInitializers(); // init_Startup.cpp
     void nninitSetup(); // init_Startup.cpp
 
-    extern u8 Image$$ZI$$ZI$$Limit[]; // ARMCC thingies
-    extern u8 Image$$ZI$$ZI$$Base[]; // ARMCC thingies
+    extern u8 Image$$ZI$$ZI$$Limit[]; // ARMCC
+    extern u8 Image$$ZI$$ZI$$Base[]; // ARMCC
 
 #pragma arm
 __asm void __ctr_start(){
     PRESERVE8
-    bl __cpp(nninitRegion)
-    bl __cpp(nninitLocale)
-    bl __cpp(nninitSystem)
-    bl __cpp(nninitStartUp)
-    blx __cpp(__cpp_initialize__aeabi_) // BLX, Moddimation makes it BL'n yet ghidra saids otherwise.Plus raw bytes do to.
-    bl __cpp(nninitCallStaticInitializers)
-    bl __cpp(nninitSetup)
-    bl __cpp(nnMain)
-    b __cpp(nn::svc::ExitProcess)
+    bl __cpp(nninitRegion) // Region
+    bl __cpp(nninitLocale) // Locale
+    bl __cpp(nninitSystem) // System
+    bl __cpp(nninitStartUp) // Startup
+    blx __cpp(__cpp_initialize__aeabi_) // Initialize CPP ARM
+    bl __cpp(nninitCallStaticInitializers) // Static Initializer Manager
+    bl __cpp(nninitSetup) // Initializes Setup
+    bl __cpp(nnMain) // Main Application Loop
+    b __cpp(nn::svc::ExitProcess) // Exit Process if needed
 }
 
 __asm void nninitRegion(){

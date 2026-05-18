@@ -34,5 +34,6 @@ namespace svc{
     Result MapMemoryBlock(nn::Handle,uptr,bit32,uint);
     Result UnmapMemoryBlock(nn::Handle,uptr);
     Result OutputDebugString(const char* text, s32 length);
+    Result ReleaseMutex(nn::Handle);
 };
 }

@@ -20,7 +20,7 @@ struct ExtraPadStatus{
 
 class ExtraPad{
 public:
-    bool IsSampling();
+    static bool IsSampling();
 };
 
 }

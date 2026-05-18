@@ -1,3 +1,9 @@
+// Filename: os_SpinWait.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/os/ARM/os_SpinWait.h>
 
 namespace nn{

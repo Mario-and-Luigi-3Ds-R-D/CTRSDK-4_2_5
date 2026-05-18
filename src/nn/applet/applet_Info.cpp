@@ -4,15 +4,15 @@ namespace nn{
 namespace applet{
 namespace CTR{
 
-nn::applet::CTR::AppletAttr GetAttribute(){
+CTR::AppletAttr GetAttribute(){
     return sAttribute;
 }
 
-nn::applet::CTR::AppletAttr GetAppletType(){
+CTR::AppletAttr GetAppletType(){
     return sAttribute & 7;
 }
 
-void SetAttribute(nn::applet::CTR::AppletAttr attribute){
+void SetAttribute(CTR::AppletAttr attribute){
     sAttribute = attribute;
 }
 
@@ -28,12 +28,12 @@ s8 IsInfoAccess(){
     return sAttribute & 7 == 6;
 }
 
-void SetHomeButtonState(nn::applet::CTR::HomeButtonState state){
+void SetHomeButtonState(CTR::HomeButtonState state){
     sHomeButtonState = state;
 }
 
-nn::applet::CTR::HomeButtonState GetHomeButtonState(){
-    return (nn::applet::CTR::HomeButtonState)sHomeButtonState;
+CTR::HomeButtonState GetHomeButtonState(){
+    return (CTR::HomeButtonState)sHomeButtonState;
 }
 
 void SetExpectationToJumpToHome(bool flag){
@@ -60,19 +60,19 @@ void SetMessageCommand(u32 message){
     sMessageCommand = message;
 }
 
-nn::applet::CTR::SleepNotificationState GetSleepNoticationState(){
-    return (nn::applet::CTR::SleepNotificationState)sSleepNotificationState;
+CTR::SleepNotificationState GetSleepNoticationState(){
+    return (CTR::SleepNotificationState)sSleepNotificationState;
 }
 
-void SetSleepNotificationState(nn::applet::CTR::SleepNotificationState state){
+void SetSleepNotificationState(CTR::SleepNotificationState state){
     sSleepNotificationState = state;
 }
 
-nn::applet::CTR::TransitionType GetTransitionType(){
-    return (nn::applet::CTR::TransitionType)sPrevTransitionType;
+CTR::TransitionType GetTransitionType(){
+    return (CTR::TransitionType)sPrevTransitionType;
 }
 
-void SetTransitionType(nn::applet::CTR::TransitionType type){
+void SetTransitionType(CTR::TransitionType type){
     sPrevTransitionType = type;
 }
 
@@ -110,67 +110,65 @@ s8 IsReceivedWakeupByCancel(){
 
 namespace detail{
 
-nn::applet::CTR::HomeButtonState GetAbsoluteHomeButtonState(){
-    nn::applet::CTR::sAbsoluteHomeButtonState;
+CTR::HomeButtonState GetAbsoluteHomeButtonState(){
+    CTR::sAbsoluteHomeButtonState;
 }
 
-void SetAbsoluteHomeButtonState(nn::applet::CTR::HomeButtonState state){
-    nn::applet::CTR::sAbsoluteHomeButtonState = state;
+void SetAbsoluteHomeButtonState(CTR::HomeButtonState state){
+    CTR::sAbsoluteHomeButtonState = state;
 }
 
 void ClearAbsoluteHomeButtonState(){
-    nn::applet::CTR::sAbsoluteHomeButtonState = 0;
+    CTR::sAbsoluteHomeButtonState = 0;
 }
 
-nn::applet::CTR::OrderToCloseState GetOrderToCloseState(){
-    return (nn::applet::CTR::OrderToCloseState)nn::applet::CTR::sOrderToCloseState;
+CTR::SleepSysState GetSleepSysState(){
+    return (CTR::SleepSysState)CTR::sSleepSysState;
 }
 
-void SetOrderToCloseState(nn::applet::CTR::OrderToCloseState state){
-    nn::applet::CTR::sOrderToCloseState = state;
+void SetSleepSysState(CTR::SleepSysState state){
+    CTR::sSleepSysState = state;
 }
 
-nn::applet::CTR::PowerButtonState GetPowerButtonState(){
-    return (nn::applet::CTR::PowerButtonState)nn::applet::CTR::sPowerButtonState;
-}
-
-void SetPowerButtonState(nn::applet::CTR::PowerButtonState state){
-    nn::applet::CTR::sPowerButtonState = state;
-}
-
-nn::applet::CTR::SleepSysState GetSleepSysState(){
-    return (nn::applet::CTR::SleepSysState)nn::applet::CTR::sSleepSysState;
-}
-
-void SetSleepSysState(nn::applet::CTR::SleepSysState state){
-    nn::applet::CTR::sSleepSysState = state;
-}
-
-void ClearSleepSysState(){
-    nn::applet::CTR::sSleepSysState = 0;
-}
-
-void SetShutDownState(nn::applet::CTR::ShutdownState state){
-    nn::applet::CTR::sShutdownState = state;
-}
-
-s8 IsActive(){
-    return nn::applet::CTR::isActive;
-}
-
-s8 IsAppletMode(){
-    return nn::applet::CTR::isAppletMode;
+bool IsActive(){
+    return CTR::isActive;
 }
 
 void SetActive(){
-    nn::applet::CTR::isActive = 1;
+    CTR::isActive = 1;
 }
 
 void SetInactive(){
     nn::applet::CTR::isActive = 0;
 }
 
+CTR::PowerButtonState GetPowerButtonState(){
+    return (CTR::PowerButtonState)CTR::sPowerButtonState;
+}
 
+void SetPowerButtonState(CTR::PowerButtonState state){
+    CTR::sPowerButtonState = state;
+}
+
+CTR::OrderToCloseState GetOrderToCloseState(){
+    return (CTR::OrderToCloseState)CTR::sOrderToCloseState;
+}
+
+void SetOrderToCloseState(CTR::OrderToCloseState state){
+    CTR::sOrderToCloseState = state;
+}
+
+void ClearSleepSysState(){
+    CTR::sSleepSysState = 0;
+}
+
+void SetShutDownState(CTR::ShutdownState state){
+    CTR::sShutdownState = state;
+}
+
+s8 IsAppletMode(){
+    return CTR::isAppletMode;
+}
 
 }
 }

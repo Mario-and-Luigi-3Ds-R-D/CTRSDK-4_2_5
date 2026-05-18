@@ -7,20 +7,32 @@
 namespace nn{
 namespace fs{
 namespace{
-    extern u8 buf[0x8];
-    extern CTR::MPCore::detail::IArchive* gSaveDataArchive;
+    u8 buf[0x8];
+    CTR::MPCore::detail::IArchive* gSaveDataArchive;
 }
-Result MountSaveData(char* pArchiveName){
 
+Result MountSaveData(const char* archive) {
+    CTR::MPCore::detail::IArchive* p;
+    Result result;
+
+    if (gSaveDataArchive != 0) {
+        return Result(0xc92044e7);
+    }
+
+    result = CTR::MPCore::detail::OpenSpecialArchiveRaw(&p, 4);
+    if (result.IsSuccess()){
+        result = CTR::MPCore::detail::RegisterArchive(archive,p,false,false);
+        if(result.IsFailure()){
+            p->DeleteObject();
+        } else{
+            gSaveDataArchive = p;
+        }
+    }
+    return result;
 }
 
 Result FormatSaveData(size_t maxFiles, size_t maxDirectories, bool isDuplicated){
-    u32 countDirectoryEntryBucket = fslow::QueryOptimalBucketCount(maxDirectories);
-    u32 countFileEntryBucket = fslow::QueryOptimalBucketCount(maxFiles);
-    CTR::MPCore::detail::Path path;
-    //ipc::FileSystem filesys[2];
-    //filesys[0].mSession = gFileServerArchive;
-    //filesys.FormatSaveData(4, 1, path.mData, 1, 0x200, maxDirectories, maxFiles, countDirectoryEntryBucket, countFileEntryBucket, isDuplicated);
+    // TODO
 }
 
 Result CommitSaveData(const char* pArchiveName){
@@ -47,12 +59,6 @@ int GetRomRequiredMemorySize(size_t maxFile, size_t maxDirectory, bool useCache)
 int GetRomRequiredMemorySizeImpl(size_t maxFile, size_t maxDirectory, bool useCache, ProgramDataPath* pContentPath){
     // TODO
 }
-
-/* Add "NN_USE_SDMC" to your complier flags to use these. */
-
-#ifdef NN_USE_SDMC
-
-#endif
 
 }
 }

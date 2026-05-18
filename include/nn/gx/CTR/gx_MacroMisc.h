@@ -1,0 +1,34 @@
+#include "nn/types.h"
+
+enum PicaDataColorPixelSize{
+    PICA_DATA_COLOR_PIXEL_SIZE16 = 0x0,
+    PICA_DATA_COLOR_PIXEL_SIZE32 = 0x2
+};
+
+enum PicaDataColor{
+    PICA_DATA_COLOR_RGBA8_OES = 0x0,
+    PICA_DATA_COLOR_GAS_DMP   = 0x0,
+    PICA_DATA_COLOR_RGB5_A1   = 0x2,
+    PICA_DATA_COLOR_RGB565    = 0x3,
+    PICA_DATA_COLOR_RGBA4     = 0x4
+};
+
+enum PicaDataDepth{
+    PICA_DATA_DEPTH_COMPONENT16     = 0x0,
+    PICA_DATA_DEPTH_COMPONENT24_OES = 0x2,
+    PICA_DATA_DEPTH24_STENCIL8_EXT  = 0x3
+};
+
+enum PicaDataGasColorLutInput{
+    PICA_DATA_GAS_DENSITY_DMP      = 0x0,
+    PICA_DATA_GAS_LIGHT_FACTOR_DMP = 0x1
+};
+
+enum PicaDataDepthTest2{ 
+    PICA_DATA_DEPTH_TEST2_NEVER   = 0x0,
+    PICA_DATA_DEPTH_TEST2_ALWAYS  = 0x1,
+    PICA_DATA_DEPTH_TEST2_GREATER = 0x2,
+    PICA_DATA_DEPTH_TEST2_GEQUAL  = 0x2,
+    PICA_DATA_DEPTH_TEST2_OTHER   = 0x3
+};
+

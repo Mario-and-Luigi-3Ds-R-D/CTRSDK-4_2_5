@@ -50,6 +50,33 @@ namespace{
     static os::CriticalSection sSleepAcceptedCriticalSection;
 }
 
+/* Inlines */
+
+inline void ProcessShutdownCommand(){
+    if(shutdownCallback != 0){
+        reinterpret_cast<void(*)(int)>(shutdownCallback)(shutdownCallbackArg);
+    }
+}
+
+inline bool ProcessHomeButtonCommand(){
+    AppletHomeButtonState state;
+    int callback;
+    bool active = detail::IsActive();
+    state = detail::GetAbsoluteHomeButtonState();
+    detail::ClearAbsoluteHomeButtonState();
+    callback = 1;
+    if(homeButtonCallback != 0){
+        callback = reinterpret_cast<int(*)(int,int,int)>(homeButtonCallback)(homeButtonCallbackArg,active,state);
+    }
+    if(((callback != 0) && (active)) && (GetHomeButtonState() == HOME_BUTTON_NONE)){
+        SetHomeButtonState(state);
+        if(GetHomeButtonState() != HOME_BUTTON_SINGLE_PRESSED){
+            GetHomeButtonState();
+        }
+    }
+    return false;
+}
+
 void InitializeWrapper(){
     detail::SetReceiveCallback(ReceiveCallbackForCommands,0);
     homeButtonCallback = 0;
@@ -127,6 +154,29 @@ void EnableSleep(bool isSleepCheck){
     return;
 }
 
+bool IsEnableSleep(){
+    return sleepEnable;
+}
+
+SleepNotificationState IsExpectedToReplySleepQuery(){
+    SleepNotificationState state = GetSleepNoticationState();
+    if(state != NOTIFY_SLEEP_QUERY){
+        state = NOTIFY_NONE;
+    } return state;
+}
+
+void ReplySleepQuery(QueryReply reply){
+    // TODO
+}
+
+inline Result TryReceive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle,fnd::TimeSpan timeout){
+    // TODO
+}
+
+Result Receive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle,fnd::TimeSpan timeout){
+    // TODO
+}
+
 bool IsExpectedToProcessHomeButton(){
     bool Homemenu = IsExpectedToJumpToHomeMenu();
     HomeButtonState hbState;
@@ -152,11 +202,11 @@ void CloseAppletHook(){
 //
 
 void SysSleepAcceptedCallbackInfo::Unregister(){
-
+    // TODO
 }
 
 void SysSleepAcceptedCallbackInfo::Register(){
-
+    // TODO
 }
 
 }

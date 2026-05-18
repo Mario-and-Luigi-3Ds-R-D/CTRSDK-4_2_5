@@ -31,7 +31,7 @@ namespace APPLET{
     Result SleepSystem(bit64 awakeReason);
     Result StartSystemApplet(AppletId id,u8 *pParam,size_t paramSize,Handle handle);
 
-    extern const nn::Handle sSession;
+    extern nn::Handle sSession;
 }
 }
 }

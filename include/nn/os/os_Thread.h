@@ -88,6 +88,7 @@ public:
 
     static void SetAutoStackManager(os::AutoStackManager*);
 
+    static void Sleep(fnd::TimeSpan span){ SleepImpl(span); }
     static void SleepImpl(fnd::TimeSpan span); // nn::fnd::TimeSpan* span
 };
 

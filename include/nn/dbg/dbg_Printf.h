@@ -1,4 +1,5 @@
-#include <nn/types.h>
+#include "nn/Result.h"
+#include "nn/types.h"
 #include <cstdarg>
 
 namespace nn{
@@ -8,6 +9,7 @@ namespace detail{
     void TPrintf(const char* fmt, ...);
     void VPrintf(const char* fmt, ::std::va_list arg);
     void TVPrintf(const char* fmt, ::std::va_list arg);
+    void PrintResult(Result res);
     void PutString(const char* text, s32 length);
     void PutString(const char* text);
 }

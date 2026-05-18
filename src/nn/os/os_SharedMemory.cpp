@@ -1,3 +1,9 @@
+// Filename: os_SharedMemory.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/os/os_SharedMemory.h>
 #include <nn/os/CTR/os_ErrorHandler.h>
 #include <nn/os/os_Result.h>

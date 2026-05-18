@@ -4,7 +4,7 @@ namespace nn{
 namespace fnd{
 
 FrameHeapBase::~FrameHeapBase(){
-    this->mAddr = 0;
+
 }
 
 void FrameHeapBase::FreeV(void* ptr){

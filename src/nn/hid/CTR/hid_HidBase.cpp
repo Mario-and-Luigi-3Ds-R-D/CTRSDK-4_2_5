@@ -1,3 +1,9 @@
+// Filename: hid_HidBase.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/hid/CTR/hid_HidBase.h>
 #include <nn/hid/CTR/detail/Ipc/hid_Ipc.h>
 #include <nn/srv/srv_Api.h>

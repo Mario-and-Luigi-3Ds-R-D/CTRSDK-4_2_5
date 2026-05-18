@@ -33,5 +33,8 @@ namespace ipc{
         Result SetSize(s64 pSize);
     };
 }
+namespace detail{
+    ipc::FileSystem GetIpcFileSystem();
+}
 }
 }

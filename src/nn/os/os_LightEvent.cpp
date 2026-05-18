@@ -1,6 +1,12 @@
+// Filename: os_LightEvent.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/os/os_LightEvent.h>
 #include <nn/svc/svc_Api.h>
-// Should be 100%
+
 namespace nn{
 namespace os{
 
@@ -51,44 +57,12 @@ void LightEvent::Signal() {
     }
 }
 
-bool LightEvent::TryWait(fnd::TimeSpan timeout){
-    for(;;){
-        switch(*this->mCounter){
-
-        case NOT_RESETED_MANUAL:
-            return this->mCounter.WaitIfLessThan(0, timeout) == ResultSuccess();
-        case RESETED_MANUAL:       
-            return true;
-        case NOT_RESETED_AUTO:     
-            break;
-        case RESETED_AUTO:{
-            if(this->mCounter->CompareAndSwap(RESETED_AUTO, NOT_RESETED_AUTO) == RESETED_AUTO ){
-                return true;
-            }
-        } 
-        break;
-        //os::Tick begin = os::Tick::GetSystemCurrent();
-        //os::Tick end = begin + timeout;
-
-        }
+bool LightEvent::TryWait(){
+    if(*this->mCounter == RESETED_MANUAL ){
+        return true;
     }
-    for(;;){
-/*        os::Tick remainTick = end - os::Tick::GetSystemCurrent();
-
-        if(remainTick <= 0){
-            return false;
-        }
-        Result result = this->mCounter.WaitIfLessThan(0, remainTick);
-
-        if(result != ResultSuccess()){
-            return false;
-        }
-*/         
-        if(*this->mCounter == RESETED_AUTO){
-            if(this->mCounter->CompareAndSwap(RESETED_AUTO, NOT_RESETED_AUTO) == RESETED_AUTO ){
-                return true;
-            }
-        }
+    else{
+        return this->mCounter->CompareAndSwap(RESETED_AUTO, NOT_RESETED_AUTO) == RESETED_AUTO;
     }
 }
     

@@ -8,102 +8,12 @@ namespace nn{
 namespace fs{
 namespace detail{
 
-__asm Result FileBase::TryRead(int* pReadOut, void* pBuffer, size_t pSize){
-    PUSH            {R4-R9,LR}
-    MOVS            R5, R3
-    SUB             SP, SP, #0xC
-    MOV             R7, R0
-    MOV             R9, R1
-    MOV             R6, R2
-    MOV             R8, #0
-    BEQ             loc_10D96C
+Result FileBase::TryRead(int* pReadOut, void* pBuffer, size_t pSize){
 
-loc_10D914
-    LDM             R7, {R0,R2,R3}
-    STR             R5, [SP,#0x4]
-    BIC             R1, R0, #1
-    ADD             R0, SP, #0x8
-    STR             R6, [SP,#0x0]
-    BL              __cpp(nn::fs::CTR::MPCore::detail::UserFileSystem::TryReadFile)
-    MOVS            R1, R0,LSR#31
-    NOP
-    BNE             loc_10D974
-    ADD             R1, R7, #4
-    LDR             R12, [SP,#0x8]
-    LDM             R1, {R0,R3}
-    ADD             R8, R8, R12
-    ADDS            R0, R0, R12
-    ADC             R4, R3, R12,ASR#31
-    STM             R1, {R0,R4}
-    CMP             R12, R5
-    BEQ             loc_10D96C
-    CMP             R12, #0
-    ADDNE           R6, R6, R12
-    SUBNE           R5, R5, R12
-    BNE             loc_10D914
-
-loc_10D96C
-    MOV             R0, #0
-    STR             R8, [R9]
-
-loc_10D974
-    ADD             SP, SP, #0xC
-
-locret_10D978
-    POP             {R4-R9,PC}
 }
 
-__asm Result FileBase::TryWrite(int* pReadOut, const void* pBuffer, size_t pSize, bool pFlush=true){
-    PUSH            {R4-R11,LR}
-    SUB             SP, SP, #0x14
-    MOVS            R5, R3
-    MOV             R4, R0
-    MOV             R9, R1
-    LDR             R8, [SP,#0x38]
-    MOV             R7, #0
-    MOVNE           R6, R2
-    BEQ             loc_45EAF8
+Result FileBase::TryWrite(int* pReadOut, const void* pBuffer, size_t pSize, bool pFlush=true){
 
-loc_45EA7C
-    ADD             R0, R4, #4
-    CMP             R8, #0
-    LDRD            R2, R3, [R0]
-    LDR             R1, [R4]
-    ADD             R10, SP, #0x4
-    ADD             R12, SP, #0xC
-    ORREQ           R1, R1, #1
-    BICNE           R1, R1, #1
-    STR             R1, [R4]
-    STR             R6, [SP,#0x0]
-    BIC             R1, R1, #1
-    MOV             R0, R12
-    STM             R10, {R5,R8}
-    BL              __cpp(nn::fs::CTR::MPCore::detail::UserFileSystem::TryWriteFile)
-    MOVS            R1, R0,LSR#31
-    NOP
-    BNE             loc_45EB00
-    ADD             R3, R4, #4
-    LDR             R0, [SP,#0xC]
-    LDM             R3, {R2,R12}
-    ADD             R7, R7, R0
-    ADDS            R2, R2, R0
-    ADC             R1, R12, R0,ASR#31
-    STR             R1, [R4,#8]
-    CMP             R0, R5
-    STR             R2, [R4,#4]
-    BEQ             loc_45EAF8
-    CMP             R0, #0
-    ADDNE           R6, R6, R0
-    SUBNE           R5, R5, R0
-    BNE             loc_45EA7C
-
-loc_45EAF8
-    MOV             R0, #0
-    STR             R7, [R9]
-
-loc_45EB00
-    ADD             SP, SP, #0x14
-    POP             {R4-R11,PC}
 }
 
 __asm Result FileBase::TrySeek(s64 pSeekOut, nn::fs::PositionBase pPosBase){

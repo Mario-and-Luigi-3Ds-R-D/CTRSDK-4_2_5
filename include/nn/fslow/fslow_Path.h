@@ -20,7 +20,7 @@ public:
     LowPath (const wchar_t* path){
         this->mPathType   = 4;
         this->mData       = path;
-        //this->mBinarySize = 2 * (wcslen (path) + 1);
+//        this->mBinarySize = 2 * (wcslen (path) + 1);
     }
 
     const wchar_t* GetWStringRaw (){

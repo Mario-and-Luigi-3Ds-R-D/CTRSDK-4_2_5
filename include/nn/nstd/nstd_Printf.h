@@ -9,5 +9,7 @@ s32 TVSNPrintf (char* dst, size_t len, const char* fmt, va_list vlist);
 s32 TSNPrintf (char* dst, size_t len, const char* fmt, ...);
 s32 TSPrintf (char* dst, const char* fmt, ...);
 
+s32 TSNPrintf(wchar_t *dst, size_t len, const wchar_t *fmt, ...);
+
 } // namespace nstd
 } // namespace nn

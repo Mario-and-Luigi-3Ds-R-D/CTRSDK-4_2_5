@@ -4,9 +4,7 @@ namespace nn{
 namespace fnd{
 
 UnitHeapBase::~UnitHeapBase() {     
-    if (this->mFreeNode == 0) 
-        return;
-    this->mFreeNode = 0;
+    this->Finalize();
 }
 
 void UnitHeapBase::FreeV(void* p){

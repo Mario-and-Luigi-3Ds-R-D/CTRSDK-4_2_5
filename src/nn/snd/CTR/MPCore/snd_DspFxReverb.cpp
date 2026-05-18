@@ -1,3 +1,9 @@
+// Filename: snd_DspFxReverb.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include "nn/snd/CTR/MPCore/snd_DspFxReverb.h"
 
 namespace nn {

@@ -1,7 +1,5 @@
 #include <nn/fnd/fnd_ExpHeap.h>
 #include <nn/fnd/detail/fnd_DetailHeap.h>
-#include <nn/fnd/detail/fnd_DetailList.h>
-#include <nn/dbg/dbg_Break.h>
 
 namespace nn{
 namespace fnd{
@@ -10,11 +8,7 @@ namespace fnd{
 #endif
 
 ExpHeapBase::~ExpHeapBase(){
-    void* ptr;
-    if (this->mExpHeapImpl.signature != 0) {
-        nn::fnd::detail::RemoveListObject((detail::NNSFndList*)&this->mExpHeapImpl, ptr);
-        this->mExpHeapImpl.signature = 0;
-    }
+    this->Finalize();
 }
 
 void ExpHeapBase::FreeV(void* p){

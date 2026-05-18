@@ -23,30 +23,49 @@ namespace{
 }
 
     // Main Applet
-    void Enable(bool isSleepEnabled);
-    void Initialize();
-    void CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize, u8* outParam, size_t outParamSize, s32* readSize);
-    bool WaitForRegister(AppletId appletId,nn::fnd::TimeSpan span);
+    void Initialize(AppletAttr applerAttr);
+    void Enable(bool isSleepEnabled = true);
+
+    bool IsRegistered(AppletId appletId); // inline
+    bool WaitForRegister(AppletId appletId, nn::fnd::TimeSpan span);
+
+    Result CancelLibraryApplet( bool isApplicationEnd = false ); // inline
+    Result CancelLibraryAppletIfRegistered(bool isApplicationEnd = false, AppletWakeupState *pWakeupState=NULL);
+
+    Result PrepareToCloseApplication(bool isCancelPreload = false);
     Result CloseApplication(u8 *pParam,size_t paramSize,nn::Handle handle);
 
-    Result InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority);
-    Result Connect();
-    void Disconnect();
+    Result CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize, u8* outParam, size_t outParamSize, s32* readSize);
 
     void AssignGpuRight(bool flag);
     void AssignCameraRight(bool flag);
     void AssignDspRight(bool flag);
 
-    Result CancelLibraryAppletIfRegistered(bool isApplicationEnd, nn::applet::CTR::AppletWakeupState *pWakeupState);
-    bool CancelParamater(bool isSenderCheck, AppletId senderId, bool isReceiverCheck, AppletId receiverId);
     Result JumpToHomeMenu(u8 *pParam,size_t paramSize,Handle handle);
     Result PrepareToJumpToHomeMenu();
-    void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pRequestedId,AppletId *pHomeMenuId,AppletId *pCurrentId);
+
     void UnlockTransition(u32 action);
     void LockTransition(u32 action,bool isForced);
-    void SleepIfShellClosed(); // ASM
+
+    bool CancelParemater(bool isSenderCheck, AppletId senderId, bool isReceiverCheck, AppletId receiverId);
+
+    void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pRequestedId,AppletId *pHomeMenuId,AppletId *pCurrentId);
+
+    void SleepIfShellClosed();
+
+    void SetActive();
+
     void ReplySleepQueryToManager(QueryReply);
+    void ReplySleepNotificationCompleteToManager();
+
+    Result PrepareToStartSystemApplet(AppletId id);
+    Result StartSystemApplet(AppletId id, u8* pParam, size_t size, nn::Handle handle);
+    
     Result Glance(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle);
+
+    void NotifyToWait();
+
+    Result Receive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle,fnd::TimeSpan timeout);
 
     struct LockTransitionParam{
         u32 action;

@@ -1,6 +1,14 @@
+// Filename: init_Alloc.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/init/init_Alloc.h>
 #include <nn/fnd/fnd_ExpHeap.h>
 #include <nn/os/os_MemoryBlock.h>
+
+#include <nn/dbg/dbg_Break.h>
 #include <nn/Assert.h>
 
 #include <algorithm>

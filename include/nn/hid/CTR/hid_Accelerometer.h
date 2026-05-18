@@ -52,11 +52,24 @@ public:
     void Read(AccelerometerStatus* status, s32* pReadLen, s32 bufLen);
     bool ReadLatest(AccelerometerStatus* status);
     void ResetAxisRotationMatrix();
+    void DisableOffset();
     void DisableAxisRotation();
+    void SetAxisRotationMatrix(const nn::math::MTX34& mtx);
+
+    void ResetOffset();
+    void SetOffset(short x, short y, short z);
 private:
     void Transform(AccelerometerStatus* status);
 
 };
+
+/* Inlines */
+
+inline void AccelerometerReader::ResetOffset(){ SetOffset(0,0,0); }
+
+inline void AccelerometerReader::SetOffset(short x, short y, short z){
+    this->mOffsetAccStatus.x = x; this->mOffsetAccStatus.y = y; this->mOffsetAccStatus.z = z;
+}
 
 }
 }

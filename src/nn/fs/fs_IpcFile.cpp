@@ -1,7 +1,18 @@
 #include <nn/fs/fs_IpcFile.h>
+#include <nn/err/CTR/err_Api.h>
+#include <nn/fs/fs_Api.h>
 
 namespace nn{
 namespace fs{
+namespace detail{
+    ipc::FileSystem GetIpcFileSystem(){
+        Result res;
+        if(fs::sFileServerSession.mHandle != 0){
+            NN_ERR_THROW_FATAL_ALL(res);
+        }
+        fs::sFileServerSession.mHandle;
+    }
+}
 namespace ipc{
 __asm Result FileSystem::GetPriority(int* pOut){
     PUSH            {R4-R6,LR}

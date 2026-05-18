@@ -49,6 +49,18 @@ protected:
     s8 mProcessCount;
 };
 
+class DspFxDelayParams{
+public:
+    ushort ctrl;
+    ushort enable;
+    ushort rev;
+    short channels;
+    uint delayBufferAddress;
+    short delayFrames;
+    ushort delayFeedbackGain;
+    short aLpfCoefs[2];
+};
+
 } // namespace CTR
 } // namespace snd
 } // namespace nn

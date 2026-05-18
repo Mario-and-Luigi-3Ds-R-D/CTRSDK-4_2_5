@@ -13,6 +13,11 @@ namespace CTR{
 class HidBase : public nn::os::EventBase{
 public:
     uptr mResourcePtr;
+
+    /* Inlines */
+    inline uptr HidBase::GetResource(){
+        return mResourcePtr;
+    }
 };
 
 class Pad : public HidBase{

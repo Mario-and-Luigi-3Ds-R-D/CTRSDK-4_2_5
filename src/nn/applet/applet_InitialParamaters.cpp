@@ -5,7 +5,6 @@ namespace applet{
 namespace CTR { 
 namespace detail {
 namespace {
-    //u8* sInitializeParamBuffer[4096];
     bool sIsInitializedParamVaild;
     u8 sInitialWakeupState;
     short rev;

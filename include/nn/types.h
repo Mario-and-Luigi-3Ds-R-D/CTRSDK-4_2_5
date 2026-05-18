@@ -53,3 +53,14 @@ typedef u32 uptr;
 #ifndef nullptr
 #define nullptr NULL
 #endif
+
+#define splits(S) __attribute__((section("i." #S))) S
+
+/* Defines */
+
+#define NN_INLINE inline
+#define NN_NOINLINE __attribute__((noinline))
+
+#ifdef NN_DEBUG
+    #pragma O0
+#endif

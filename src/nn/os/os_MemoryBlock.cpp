@@ -1,4 +1,11 @@
+// Filename: os_MemoryBlock.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/os/os_MemoryBlock.h>
+#include <nn/dbg/dbg_Break.h>
 
 namespace nn{
 namespace os{

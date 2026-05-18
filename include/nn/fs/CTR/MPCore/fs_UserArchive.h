@@ -41,11 +41,14 @@ public:
     virtual Result DeleteFile (const Path&) = 0;
     virtual Result RenameFile (const Path&, const Path&) = 0;
     virtual Result DeleteDirectory (const Path&) = 0;
-    virtual Result TryDeleteDirectoryRecursively (const Path&) = 0;
+    virtual Result DeleteDirectoryRecursively (const Path&) = 0;
     virtual Result CreateFile (const Path&) = 0;
     virtual Result CreateDirectory (const Path&) = 0;
+    virtual Result SetArchivePriority(s32) = 0;
+    virtual Result GetArchivePriority(s32*) = 0;
     virtual Result RenameDirectory (const Path&, const Path&) = 0;
     virtual Result GetFreeBytes (s64* pOut) {}
+    virtual void DeleteObject() = 0;
     virtual ~IArchive () {}
 };
 

@@ -3,9 +3,12 @@
 #include "nn/types.h"
 #include "nn/fnd/fnd_HeapBase.h"
 #include "nn/fnd/fnd_Allocator.h"
+#include "nn/fnd/detail/fnd_DetailList.h"
 #include "nn/fnd/detail/fnd_DetailHeapHead.h"
 #include "nn/os/os_LockPolicy.h"
 #include "nn/os/os_CriticalSection.h"
+
+#include "nn/dbg/dbg_Break.h"
 
 // 100%
 
@@ -46,7 +49,18 @@ public:
     ExpHeapBase(uptr addr, size_t size, bit32 option); // 100%
     void Initialize(uptr addr, size_t size, bit32 option); // 100%
     void Invalidate(); // 100%
-    void Finalize(); // 100%
+    void Finalize(){
+        void* ptr;
+        #ifdef NN_DEBUG
+            if(this->mAllocCount == 0){
+                nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"fnd_ExpHeap.h",54,"%s","this->mAllocCount != 0");
+            }
+        #endif
+        if (this->mExpHeapImpl.signature != 0) {
+            nn::fnd::detail::RemoveListObject((detail::NNSFndList*)&this->mExpHeapImpl, ptr);
+            this->mExpHeapImpl.signature = 0;
+        }
+    }
 
     void* Allocate(size_t byteSize, s32 alignment, bit8 groupId, AllocationMode mode, bool reuse);
     void Free(void* p); // 100%

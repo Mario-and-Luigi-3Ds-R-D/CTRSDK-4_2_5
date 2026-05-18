@@ -20,7 +20,7 @@ namespace detail{
         BREAK_REASON_PANIC = 0,
         BREAK_REASON_ASSERT = 1,
         BREAK_REASON_USER = 2,
-        BREAK_REASON_LOAD_RO = 3, // Hey, thats my line!
+        BREAK_REASON_LOAD_RO = 3,
         BREAK_REASON_UNLOAD_RO = 4,
         BREAK_REASON_MAX_BIT = 0x80000000,
     };
@@ -33,10 +33,17 @@ namespace detail{
 }
 }
 
-extern "C"{
-    void nndbgBreakWithResultMessage_ (nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
-    void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
+/* Panic() and Break() */
 
+/* Use these! */
+
+extern "C"{
     Result nndbgBreak(nn::dbg::BreakReason pReason);
     void nndbgPanic();
 }
+
+/* Debug messages makers */
+
+    void nndbgBreakWithTMessage_(nndbgBreakReason reason,const char *filename,int lineno,const char *fmt,...); 
+    void nndbgBreakWithResultMessage_ (nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
+    void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);

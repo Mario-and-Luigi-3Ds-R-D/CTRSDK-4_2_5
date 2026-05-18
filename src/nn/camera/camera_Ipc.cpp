@@ -5,9 +5,9 @@ namespace camera{
 namespace CTR{
 namespace detail{
 namespace Camera{
-const nn::Handle sSession = 0;
+nn::Handle sSession = 0;
 
-__asm Result Activate(CameraSelect camera){
+__asm Result Activate(bool){
     PUSH            {R0,R4,R5,LR}
     MRC             p15, 0, R4,c13,c0, 3
     LDR             R0, =0x003D0040
@@ -61,7 +61,7 @@ locret_12A8F4
     POP             {R4-R6,PC}
 }
 
-__asm Result SetSleepCamera(CameraSelect camera){
+__asm Result SetSleepCamera(bool){
     PUSH            {R0,R4,R5,LR}
     MRC             p15, 0, R4,c13,c0, 3
     LDR             R0, =0x130040

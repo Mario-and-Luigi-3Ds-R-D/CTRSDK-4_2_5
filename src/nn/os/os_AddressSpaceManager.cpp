@@ -1,10 +1,28 @@
+// Filename: os_AddressSpaceManager.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/os/os_AddressSpaceManager.h>
 #include <nn/os/os_CriticalSection.h>
 #include <nn/fnd/fnd_Intrusive.h>
+#include <nn/dbg/dbg_Break.h>
 
 namespace nn{
 namespace os{
 uptr AddressSpaceManager::Allocate(MemoryBlockBase* pBlock, size_t size, size_t skipSize){
+    #ifdef NN_DEBUG
+        if(pBlock == 0){
+            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_AddressSpaceManager.cpp",16,"%s must not be NULL","pBlock");
+        }
+        if((size & 0xfff) != 0){
+            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_AddressSpaceManager.cpp",19,"%s(=0x%08x) must be %d byte aligned","size",size,0x1000);
+        }
+        if((skipSize & 0xfff) != 0){
+            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_AddressSpaceManager.cpp",22,"%s(=0x%08x) must be %d byte aligned","skipSize",skipSize,0x1000);
+        }
+    #endif
     Lock::ScopedLock scopedLock(mLock);
 
     MemoryBlockBase* pPrev = FindSpace(size, skipSize);

@@ -1,3 +1,9 @@
+// Filename: ptm_Api.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/ptm/CTR/ptm_Api.h>
 #include <nn/ptm/CTR/detail/ptm_PtmIpc.h>
 #include <nn/srv/srv_Api.h>
@@ -30,10 +36,11 @@ done:
 
 
 Result Finalize(){
-/*    if(detail::PtmIpc::sSession != 0){
-        svc::CloseHandle(detail::PtmIpc::sSession);
-
-    }*/
+    if(detail::PtmIpc::sSession.IsValid()){
+        Result res; res.IsFailure();
+        detail::PtmIpc::sSession = 0;
+    }
+    return ResultSuccess();
 }
     
 }

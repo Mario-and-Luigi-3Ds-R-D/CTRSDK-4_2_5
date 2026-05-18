@@ -20,7 +20,16 @@ public:
 
     void Initialize(size_t unit, uptr addr, size_t size, s32 alignment = DEFAULT_ALIGNMENT, bit32 option = 0);
     void Invalidate();
-    void Finalize();
+    void Finalize(){
+        if(this->mFreeNode != 0){
+            #ifdef NN_DEBUG
+                if(this->mCount != 0){
+                    nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"fnd_UnitHeapBase.h",26,"%s","this->mCount != 0");
+                }
+            #endif
+            this->mFreeNode = 0;
+        }
+    }
     void* Allocate();
     void Free(void* p);
 
@@ -46,13 +55,6 @@ protected:
     size_t mCount;
 
 };
-
-    // Funny Macros cuz im lazy
-
-    inline void UnitHeapBase::Finalize() {
-        if (this->mFreeNode == 0) return;
-        this->mFreeNode = 0;
-    }
 
     inline void UnitHeapBase::Invalidate() {
         this->mFreeNode = 0;

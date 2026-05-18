@@ -196,12 +196,18 @@ namespace CTR{
         TRANSITION_SKIP = 99
     };
 
-    struct AppletDisplayInfo{
+
+
+    struct AppletDisplayInfoParams{
         uptr mAddr;
         uptr mAddrB;
-
+        DisplayBufferMode mode;
+        u32 stride;
     };
-/* Externs To make things work*/
+
+    struct AppletDisplayInfo{
+        AppletDisplayInfoParams d[2];
+    };
 
     typedef enum WakeupState AppletWakeupState;
     typedef void (*AppletAwakeCallback)(uptr);
@@ -212,6 +218,7 @@ namespace CTR{
     typedef bool (*AppletReceiveCallback)(uptr);
     typedef Notification AppletNotification;
     typedef QueryReply AppletQueryReply;
+    typedef HomeButtonState AppletHomeButtonState;
     typedef bit32 AppletAttr;
     typedef bit32 AppletId;
 
@@ -220,3 +227,5 @@ namespace CTR{
 }
 }
 }
+
+#define NN_APPLET_HANDLE_NONE (nn::applet::CTR::HANDLE_NONE)

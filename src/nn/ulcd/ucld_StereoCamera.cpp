@@ -1,10 +1,39 @@
+// Filename: ucld_StereoCamera.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/ucld/CTR/ucld_StereoCamera.h>
+#include <nn/cfg/CTR/cfg_Api.h>
+#include <nn/cfg/CTR/cfg_DetailApi.h>
+#include <nn/dbg/dbg_Break.h>
 
 namespace nn{
 namespace ulcd{
 namespace CTR{
+namespace{
 
 void GetLookPose(const nn::math::MTX34 *view,nn::math::VEC3 *pos,Direction *dir){
+    MTX34 im;
+
+    math::ARMv6::MTX34Inverse(&im,view);
+    pos->x = im.matrix[0][3];
+    pos->y = im.matrix[1][3];
+    pos->z = im.matrix[2][3];
+    dir->right.x = im.matrix[0][0];
+    dir->right.y = im.matrix[1][0];
+    dir->right.z = im.matrix[2][0];
+    dir->up.x = im.matrix[0][1];
+    dir->up.y = im.matrix[1][1];
+    dir->up.z = im.matrix[2][1];
+    dir->target.x = im.matrix[0][2];
+    dir->target.y = im.matrix[1][2];
+    dir->target.z = im.matrix[2][2];
+    /*math::ARMv6::VEC3Normalize(&dir->right,&dir->right);
+    math::ARMv6::VEC3Normalize(&dir->up,&dir->up);
+    math::ARMv6::VEC3Normalize(&dir->target,&dir->target);*/
+}
 
 }
 
@@ -39,8 +68,15 @@ void StereoCamera::SetBaseFrustum(const nn::math::MTX44 *proj){
     this->mBaseCamera.mBottom = (proj->matrix[1][2] - 1.0f) * inverseProjY;
 }
 
-void StereoCamera::Initialize(){
+// ROUGH DRAFT
 
+void StereoCamera::Initialize(){
+    Result res;
+    if(IsInitialized == false){
+        cfg::CTR::Initialize();
+        //res = cfg::CTR::detail::GetConfig(sCfgData,0x20,0x500005);
+        //memcpy
+    }
 }
 
 void StereoCamera::Finalize(){

@@ -26,28 +26,31 @@ namespace CTR {
     void SetShutdownCallbackFlag();
     s8 IsToCallShutdownCallback();
     void ClearShutdownCallbackFlag();
+    void SetOrderToCloseState(CTR::OrderToCloseState state);
     void SetPowerButtonCallbackFlag();
     s8 IsToCallPowerButtonCallback();
     void ClearPowerButtonCallbackFlag();
     void SetReceivedWakeupByCancelFlag();
     s8 IsReceivedWakeupByCancel();
+    void SetActive(void);
 
 namespace detail{
-    nn::applet::CTR::HomeButtonState GetAbsoluteHomeButtonState();
-    void SetAbsoluteHomeButtonState(nn::applet::CTR::HomeButtonState);
+    bool IsActive(void);
+    CTR::HomeButtonState GetAbsoluteHomeButtonState();
+    void SetAbsoluteHomeButtonState(CTR::HomeButtonState);
     void ClearAbsoluteHomeButtonState();
-    nn::applet::CTR::OrderToCloseState GetOrderToCloseState();
-    void SetOrderToCloseState(nn::applet::CTR::OrderToCloseState);
-    nn::applet::CTR::PowerButtonState GetPowerButtonState();
-    void SetPowerButtonState(nn::applet::CTR::PowerButtonState);
-    nn::applet::CTR::SleepSysState GetSleepSysState();
-    void SetSleepSysState(nn::applet::CTR::SleepSysState);
+    CTR::OrderToCloseState GetOrderToCloseState();
+    void SetPowerButtonState(CTR::PowerButtonState);
+    CTR::SleepSysState GetSleepSysState();
+    void SetSleepSysState(CTR::SleepSysState);
     void ClearSleepSysState();
-    void SetShutDownState(nn::applet::CTR::ShutdownState);
-    s8 IsActive();
+    void SetInactive(void);
+    CTR::PowerButtonState GetPowerButtonState();
+    void ClearPowerButtonState(void);
+    CTR::OrderToCloseState GetOrderToCloseState();
+    void ClearOrderToCloseState(void);
+    void SetShutDownState(CTR::ShutdownState);
     s8 IsAppletMode();
-    void SetActive();
-    void SetInactive();
     
 }
 namespace{

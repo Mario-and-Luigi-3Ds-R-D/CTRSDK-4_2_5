@@ -1,3 +1,9 @@
+// Filename: hid_AnalogStick.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/hid/CTR/hid_AnalogStick.h>
 #include <nn/hidlow/hidlow_Api.h>
 
@@ -5,38 +11,35 @@ namespace nn{
 namespace hid{
 namespace CTR{
 
-// nonmatch but does the exact same thing
-AnalogStickClamper::AnalogStickClamper(){
-    this->mMinOfStickClampCircle = 0x28;
-    this->mMinOfStickClampCross = 0x24;
-    this->mMinOfStickClampMinimum = 0x28;
-    this->mMaxOfStickClampCircle = 0x91;
-    this->mMaxOfStickClampCross = 0x91;
-    this->mMaxOfStickClampMinimum = 0x91;   
-    this->mStickClampMode = 0;
-    this->mThreshold = 0x8d;
-    this->mStrokeVelocity = 0.0;
-    this->mLastLength = 0.0;
-    this->mLastDiff = 0.0;
-    this->mScale = 1.5;
-    this->mStroke = 141.0;
+AnalogStickClamper::AnalogStickClamper() : 
+    mMinOfStickClampCircle(MIN_OF_STICK_CLAMP_MODE_CIRCLE),
+    mMinOfStickClampCross(MIN_OF_STICK_CLAMP_MODE_CROSS),
+    mMinOfStickClampMinimum(MIN_OF_STICK_CLAMP_MODE_CIRCLE),
+    mMaxOfStickClampCircle(LIMIT_OF_STICK_CLAMP_MAX),
+    mMaxOfStickClampCross(LIMIT_OF_STICK_CLAMP_MAX),
+    mMaxOfStickClampMinimum(LIMIT_OF_STICK_CLAMP_MAX),
+    mStickClampMode(STICK_CLAMP_MODE_CIRCLE){
+        
+    this->mThreshold = DEFAULT_THRESHOLD_OF_NORMALIZE_STICK;
+    this->mStrokeVelocity = 0.0f;
+    this->mLastLength = 0.0f;
+    this->mLastDiff = 0.0f;
+    this->mScale = DEFAULT_SCALE_OF_NORMALIZE_STICK;
+    this->mStroke = 141.0f;
 }
 
 void AnalogStickClamper::ClampCore(short* pOutX, short* pOutY, s32 x, s32 y){
-    bit8 clampMode = this->mStickClampMode;
-
-    if(clampMode == 0){
-        hidlow::ClampStickCircle(pOutX,pOutY,x,y,this->mMinOfStickClampCircle,this->mMaxOfStickClampCircle);
-        return;
+    switch (this->mStickClampMode) {
+    case STICK_CLAMP_MODE_CIRCLE:
+        hidlow::ClampStickCircle(pOutX, pOutY, x, y, this->mMinOfStickClampCircle, this->mMaxOfStickClampCircle);
+        break;
+    case STICK_CLAMP_MODE_CROSS:
+        hidlow::ClampStickCross(pOutX, pOutY, x, y, this->mMinOfStickClampCross, this->mMaxOfStickClampCross);
+        break;
+    case STICK_CLAMP_MODE_MINIMUM:
+        hidlow::ClampStickMinimum(pOutX, pOutY, x, y, this->mMinOfStickClampMinimum, this->mMaxOfStickClampMinimum);
+        break;
     }
-
-    if(clampMode != 1){
-        if(clampMode == 2){
-            hidlow::ClampStickMinimum(pOutX,pOutY,x,y,this->mMinOfStickClampMinimum, this->mMaxOfStickClampMinimum);
-        }
-        return;
-    }
-    hidlow::ClampStickCross(pOutX,pOutY,x,y,this->mMinOfStickClampCross,this->mMaxOfStickClampCross);
 }
 
 void AnalogStickClamper::ClampValueOfClamp() {
@@ -57,17 +60,15 @@ void AnalogStickClamper::ClampValueOfClamp() {
 }
 
 f32 AnalogStickClamper::NormalizeStick(short x, short y) {
-    bit8 clampMode = this->mStickClampMode;
-
     if (y > 0x91) y = 0x91;
 
-    if (clampMode == 0) {
+    if (this->mStickClampMode == STICK_CLAMP_MODE_CIRCLE) {
         if (x < 0x28) x = 0x28;
         this->mMinOfStickClampCircle = x;
         this->mMaxOfStickClampCircle = y;
         return;
     }
-    if (clampMode != 1) {
+    if (this->mStickClampMode != STICK_CLAMP_MODE_CROSS) {
         this->mMaxOfStickClampMinimum = y;
         return;
     }

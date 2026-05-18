@@ -56,7 +56,7 @@ nn::dbg::BreakHandler s_pBreakHandler = 0;
 
 /* dbg::Break */
 
-__attribute__((noinline)) Result Break(BreakReason reason){
+NN_NOINLINE Result Break(BreakReason reason){
     CallBreakHandler(reason);
     return nn::svc::Break(reason, NULL, 0);
 }
@@ -79,10 +79,6 @@ Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size){
 
 }
 }
-
-// Panic. 
-
-extern "C" {
 
 #ifdef NN_DEBUG
 
@@ -149,6 +145,7 @@ void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, con
 }
 
 #endif
+extern "C" {
 
 void nndbgPanic(){
     nn::dbg::Panic();

@@ -1,3 +1,9 @@
+// Filename: hidlow_Api.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/hidlow/hidlow_All.h>
 
 namespace nn{

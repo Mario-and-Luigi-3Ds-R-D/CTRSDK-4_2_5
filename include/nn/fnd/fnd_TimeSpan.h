@@ -51,7 +51,6 @@ public:
     static TimeSpan FromMilliSeconds(s64 milliSeconds) {
         return FromNanoSeconds(milliSeconds * 1000 * 1000); 
     }
-
 struct ZeroOnlyTag{
 
 };

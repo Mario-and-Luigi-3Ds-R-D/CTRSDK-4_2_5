@@ -107,7 +107,12 @@ inline void IntrusiveLinkedList<T, Tag>::ClearLinks(Item* p){
 
 template <typename T, typename Tag>
 inline void IntrusiveLinkedList<T, Tag>::PushBack(T* p){
+    NN_ASSERT_WITH_RESULT(p, MakeResultInvalidAddress());
+    NN_TASSERT_(p);
     Item* pNode = static_cast<Item*>(p);
+    NN_ASSERT_WITH_RESULT(!pNode->mPrevLink, MakeResultAlreadyListed());
+    NN_TASSERT_(!pNode->mPrevLink);
+    NN_TASSERT_(!pNode->mNextLink);
     if (IsEmpty()){
         p->mPrevLink = p->mNextLink = p;
         this->mHead = p;

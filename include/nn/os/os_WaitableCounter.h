@@ -13,7 +13,7 @@ namespace os{
         typedef fnd::InterlockedVariable<s32> ValueType;
         ValueType mValue;
 
-        static s32 sHandle;
+        static nnHandle sHandle;
     public:
 
         static void Initialize();

@@ -1,6 +1,15 @@
+// Filename: util_Symbol.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/srv/srv_Api.h>
 #include <nn/srv/detail/srv_Service.h>
 #include <nn/os/os_Thread.h>
+
+#include <nn/dbg/dbg_DebugString.h>
+#include <nn/dbg/dbg_Break.h>
 
 namespace nn{
 namespace srv{
@@ -15,6 +24,30 @@ Result Connect(const char*){
 
 }
 
+static HandlerManager* sHandlerManager = 0;
+
+#ifdef NONMATCHING
+#endif
+
+NN_INLINE Result HandlerManager::Register(NotificationHandler* pHandler, u32 message){
+    //NotificationHandler* handler = pHandler;
+    Result res; res.mResult = message;
+    #ifdef NN_DEBUG
+    if(pHandler){
+        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",36,"%s(=0x%08X) is invalid pointer", "pHandler", pHandler);
+    }
+    if(message != 0){
+        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",39,"%s","message != 0");
+    }
+    if(pHandler->mAttachedMessage == 0){
+        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",42,"%s","pHandler->mAttachedMessage == 0");
+    }
+    #endif
+    pHandler->mAttachedMessage = message;
+    this->mHandler.PushBack(pHandler);
+    return ResultSuccess();
+}
+
 }
 
 int sInitializeCount = 0;
@@ -25,9 +58,6 @@ Result Initialize(){
     os::CriticalSection& lock = srv::sInitializeLock;
     lock.Enter();
     if(srv::sInitializeCount > 0){
-        #ifdef NN_DEBUG
-            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",0xa7,"%s(=%d) must be >= %s(=%d).","sInitializeCount",sInitializeCount);
-        #endif
         srv::sInitializeCount++;
         Result res; res.mResult = 0x82067F9;
         lock.Leave();
@@ -42,58 +72,25 @@ Result StartNotification(){
 
 }
 
-static nn::fnd::IntrusiveLinkedList<HandlerManager>::Item* sHandlerManager = 0;
-
 #ifdef NONMATCHING
 #endif
 
 Result RegisterNotificationHandler(NotificationHandler* pHandler, u32 message){
-    #ifdef NN_DEBUG
-    if(0x1fefffff < pHandler + -0x10000){
-        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",0x28,"%s(=0x%08X) is invalid pointer", "pHandler", pHandler);
-    }
-    if(message != 0){
-        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",0x29,"%s","message != 0");
-    }
-    if(pHandler->mAttachedMessage == 0){
-        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",0x2a,"%s","pHandler->mAttachedMessage == 0");
-    }
-    #endif
-    pHandler->mAttachedMessage = message;
-
-    nn::fnd::IntrusiveLinkedList<HandlerManager>::Item* handlerLink = pHandler ? (nn::fnd::IntrusiveLinkedList<HandlerManager>::Item*)((u8*)pHandler + 4) : 0;
-    nn::fnd::IntrusiveLinkedList<HandlerManager>::Item* manager = sHandlerManager;
-
-    if(!manager){
-        nn::fnd::IntrusiveLinkedList<HandlerManager>::Item* handlerLink2 = pHandler ? (nn::fnd::IntrusiveLinkedList<HandlerManager>::Item*)((u8*)pHandler + 4) : 0;
-        *((nn::fnd::IntrusiveLinkedList<HandlerManager>::Item**)((u8*)pHandler + 8)) = handlerLink;
-        *((nn::fnd::IntrusiveLinkedList<HandlerManager>::Item**)((u8*)pHandler + 4)) = handlerLink2;
-        sHandlerManager = pHandler ? (nn::fnd::IntrusiveLinkedList<HandlerManager>::Item*)((u8*)pHandler + 4) : 0;
-    }
-    else{
-        handlerLink->mNextLink = manager;
-        manager->mPrevLink->mNextLink = handlerLink;
-        handlerLink->mPrevLink = manager->mPrevLink;
-        manager->mPrevLink = handlerLink;
-    }
-//    Result res;
-    return ResultSuccess();
+    return detail::sHandlerManager->Register(pHandler,message);
 }
 
 Result GetServiceHandle(nn::Handle *pOut, const char *pName, s32 nameLen, bit32 flags) {
     if (srv::sInitializeCount <= 0) {
-        Result res;
-        res.mResult = 0xD8A067F8;
+        Result res; res.mResult = 0xD8A067F8;
         return res;
     }
     if (nameLen > 8) {
-        Result res;
-        res.mResult = 0xD9006405;
+        Result res; res.mResult = 0xD9006405;
         return res;
     }
     return nn::srv::detail::Service::GetServiceHandle(pOut, pName, nameLen, flags);
     #ifdef NN_DEBUG
-        nndbgTPrintWarning_("srv_Api.cpp",0x170,"Failed to open service \"%s\"\n",pName);
+        nndbgTPrintWarning_("srv_Api.cpp",91,"Failed to open service \"%s\"\n",pName);
     #endif
 }
 

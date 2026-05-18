@@ -1,3 +1,9 @@
+// Filename: snd_DspFxDelay.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/snd/CTR/MPCore/snd_DspFxDelay.h>
 
 namespace nn{

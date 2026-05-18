@@ -1,3 +1,9 @@
+// Filename: hidlow_PadLifoRing.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/hidlow/CTR/hidlow_PadLifoRing.h>
 
 namespace nn{

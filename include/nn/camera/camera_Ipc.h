@@ -9,7 +9,8 @@ namespace camera{
 namespace CTR{
 namespace detail{
 namespace Camera{
-extern const nn::Handle sSession;
+extern nn::Handle sSession;
+
     Result Activate(bool camera);
     Result GetActivatedCamera(CameraSelect* camera);
     Result GetSleepCamera(CameraSelect* camera);

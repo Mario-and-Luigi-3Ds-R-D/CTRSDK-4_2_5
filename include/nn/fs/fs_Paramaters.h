@@ -131,19 +131,6 @@ namespace fs{
         FIXED = 1,
         NEW = 2,
     };
-
-    struct LatencyEmulationState {
-        u8 mIsLatencyEmuEnabled;            
-        __packed union {
-            u32 mIsEmulationEndurance; 
-            u8  mIsDebugMode;     
-        };
-        u8  _pad[0x13];           
-        s32 mLatencyParamLo;      
-        s32 mLatencyParamHi;      
-    };
-
-    extern LatencyEmulationState pLatencyState;
     
 } // fs
 } // nn

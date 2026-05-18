@@ -19,7 +19,9 @@ Result ArriveApplication(){
 }
 
 Result LeaveApplication(){
-
+    if(isInitialized == false){
+        
+    }
 }
 
 }

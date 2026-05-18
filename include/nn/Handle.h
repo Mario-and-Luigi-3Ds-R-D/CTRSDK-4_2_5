@@ -7,7 +7,11 @@ typedef struct nnHandle{
     bit32 value;
 } nnHandle;
 
+
 namespace nn{
+namespace{
+    const nnHandle INVALID_HANDLE_VALUE = {0};
+}
 struct Handle {
 public:
     Handle ()
@@ -50,8 +54,6 @@ public:
         return result;
     }
 
-    // LF27 Addition; clean way of getting the handle.
-    u32 GetHandle() const { return mHandle; }
-    u32 mHandle;
+    bit32 mHandle;
 };
 }

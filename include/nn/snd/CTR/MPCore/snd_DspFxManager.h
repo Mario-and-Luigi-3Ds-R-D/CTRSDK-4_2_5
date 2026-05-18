@@ -17,6 +17,12 @@ protected:
     s8 mChannelNum[2][2];
 
 public:
+    enum DspEffectType{
+        DSP_EFFECT_TYPE_DELAY = 0,
+        DSP_EFFECT_TYPE_REVERB = 1,
+        DSP_EFFECT_TYPE_NUM = 2
+    };
+public:
     void Initialize();
     DspFxManagerImpl* Finalize();
     static DspFxManager* GetInstance();
@@ -24,21 +30,30 @@ public:
     bool Attach(s8, s8, s8);
     s32 GetDspCycles();
 
+    inline s32 GetChannelNum(DspEffectType type, AuxBusId id){
+        if(this->mIsEnabled[type][id]){
+            return this->mChannelNum[type][id];
+        } else{
+            return 0;
+        }
+    }
+
     static DspFxManager* sInstance;
+
 };
 
 class DspFxManagerImpl{
 protected:
-    DspFxDelay::Param mDspFxDelayParams[2];
-    DspFxReverb::Param mDspFxReverbParams[2];
+    DspFxDelayParams mDspFxDelayParams[2];
+    DspFxReverbParams mDspFxReverbParams[2];
 
 public:
     void Initialize();
     DspFxManagerImpl* Finalize();
     void ForceUpdateParams();
     static DspFxManagerImpl* GetInstance();
-    void SetDspDelayEffect(); // more params, check AliceP.
-    void SetDspReverbEffect(); // more params, check AliceP.
+    bool SetDspDelayEffect(AuxBusId id, DspFxDelayParams* param);
+    bool SetDspReverbEffect(AuxBusId id, DspFxReverbParams* param);
 
     static DspFxManagerImpl* sInstance;
 };

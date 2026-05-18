@@ -5,18 +5,22 @@
 #include "nn/types.h"
 #include "nn/Result.h"
 #include "nn/Handle.h"
+#include "nn/os/CTR/os_ErrorHandler.h"
 #include "nn/util/util_NonCopyable.h"
 
 // Svc Declartion to calm ARMCC
 namespace nn {
 namespace svc {
     Result CloseHandle(nn::Handle);
+    Result WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long);
 }
 }
+
+#define NN_OS_WAIT_INFINITE -1
 
 namespace nn{
 namespace os{
-
+const s64 WAIT_INFINITE = NN_OS_WAIT_INFINITE;
     enum ArbitrationType{
         ARBITRATION_TYPE_SIGNAL = 0,
         ARBITRATION_TYPE_WAIT_IF_LESS_THAN = 1,
@@ -182,6 +186,17 @@ namespace os{
     }
 
     class WaitObject : public HandleObj{
+    public:
+        inline nn::Result WaitOneImpl(s64 nanoSecondsTimeout){
+            s32 dummy;
+            Handle handle = GetHandle();
+            return nn::svc::WaitSynchronizationN(&dummy, &handle, 1, false, nanoSecondsTimeout);
+        }
+
+        inline void WaitOne(){
+            NN_OS_ERROR_IF_FAILED(WaitOneImpl(WAIT_INFINITE));
+        }
+
     };
 
     struct NonCopyable{

@@ -28,11 +28,55 @@ CfgLanguageCode GetLanguage(){
 }
 
 u8 GetFsLatencyEmulationParam(){
-    // TODO
+    Result res;
+    DebugParamCfgData debugParam;
+    detail::_IPCPortType portType;
+
+    if (*(u8*)0x1FF80014 & 1) {
+        return 0U;
+    }
+
+    res = detail::InitializeProperPort(&portType);
+    if (res.IsFailure()) {
+        NN_ERR_THROW_FATAL_ALL(res);
+    }
+
+    void* pData = &debugParam;
+    res = detail::IpcUser::GetConfig(pData, 4, 0x130000);
+    NN_ERR_THROW_FATAL_ALL(res);
+
+    detail::_IPCPortType pt = portType;
+    detail::FinalizeProperPort(pt);
+
+    return debugParam.fsLatencyParam;
 }
 
 bool IsDebugMode(){
-    // TODO
+    Result res;
+    DebugParamCfgData debugParam;
+    detail::_IPCPortType portType;
+
+    if (*(u8*)0x1FF80014 & 1) {
+        return 0U;
+    }
+
+    res = detail::InitializeProperPort(&portType);
+    if (res.IsFailure()) {
+        NN_ERR_THROW_FATAL_ALL(res);
+    }
+
+    void* pData = &debugParam;
+    res = detail::IpcUser::GetConfig(pData, 4, 0x130000);
+    NN_ERR_THROW_FATAL_ALL(res);
+
+    detail::_IPCPortType pt = portType;
+    detail::FinalizeProperPort(pt);
+    bool isMode;
+    if((debugParam.param.flags1 & 1) == 0){
+        return isMode = false;
+    } else{
+        return isMode = true;
+    }
 }
 
 } // namespace CTR

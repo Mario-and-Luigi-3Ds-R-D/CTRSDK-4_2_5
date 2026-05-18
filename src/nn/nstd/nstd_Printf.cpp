@@ -1,3 +1,9 @@
+// Filename: nstd_Printf.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/nstd/nstd_Printf.h>
 #include <string>
 
@@ -78,6 +84,19 @@ s32 TSNPrintf (char* dst, size_t len, const char* fmt, ...){
 
     va_start (vlist, fmt);
     ret = TVSNPrintf (dst, len, fmt, vlist);
+    va_end (vlist);
+
+    return ret;
+}
+
+/* wchar_t's */
+
+s32 TSNPrintf(wchar_t *dst, size_t len, const wchar_t *fmt, ...){
+    va_list vlist;
+    s32     ret;
+
+    va_start (vlist, fmt);
+    ret = TVSNPrintfImpl<std::char_traits<char> >::TVSNPrintf((char*)dst,len,(char*)fmt,vlist);
     va_end (vlist);
 
     return ret;

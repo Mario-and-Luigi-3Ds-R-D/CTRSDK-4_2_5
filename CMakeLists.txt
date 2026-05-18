@@ -45,16 +45,17 @@ file(GLOB_RECURSE csourcefiles "src/*.cpp")
 add_library(CTRSDK ${csourcefiles})
 
 
-target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:CXX>:
+target_compile_options(CTRSDK PRIVATE $<$<COMPILE_LANGUAGE:CXX>:
     --apcs=//interwork --cpu=MPCore --fpmode=fast --cpp --arm
     --signed_chars --multibyte-chars -DNN_PROCESSOR_ARM11MPCORE
     -O3 -Otime --data-reorder --split_sections --force_new_nothrow
     --no_debug_macros --remove_unneeded_entities --no_allow_fpreg_for_nonfpdata
+    --diag_suppress=1 --diag_suppress=177 --diag_suppress=541 --diag_suppress=1134 --diag_suppress=3017 
     --debug_info=line_inlining_extensions --dollar
     --no_rtti
     >)
 
-target_compile_options(CTRSDK PUBLIC $<$<COMPILE_LANGUAGE:C>:
+target_compile_options(CTRSDK PRIVATE $<$<COMPILE_LANGUAGE:C>:
     --apcs=//interwork --cpu=MPCore --fpmode=fast --c99 --arm
     --signed_chars --multibyte-chars --locale=japanese
     -Otime --data-reorder --split_sections

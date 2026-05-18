@@ -1,3 +1,9 @@
+// Filename: svc_Api.cpp
+//
+// Project: Horizon 4_2_5 Decompilation
+//
+// Remade by user Luigifan27
+
 #include <nn/svc/svc_Api.h>
 
 /*
@@ -219,6 +225,11 @@ namespace svc{
         ldr r2,[sp,#0]
         str r1,[r2]
         add sp,sp,#4
+        bx lr
+    }
+
+    __asm Result ReleaseMutex(nn::Handle){
+        swi 0x14
         bx lr
     }
 

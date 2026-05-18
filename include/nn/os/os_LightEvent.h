@@ -22,7 +22,7 @@ namespace os{
         void ClearSignal();
         void Wait();
         void Signal();
-        bool TryWait(fnd::TimeSpan timeout);
+        bool TryWait();
         ~LightEvent(){
         };
 

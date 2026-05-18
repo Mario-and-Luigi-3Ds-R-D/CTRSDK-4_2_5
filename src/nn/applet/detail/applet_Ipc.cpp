@@ -6,7 +6,7 @@ namespace CTR{
 namespace detail{
 namespace APPLET{
 
-const nn::Handle sSession = 0;
+nn::Handle sSession = 0;
 
 __asm Result AppletUtility(u32 id,u8 *pInParam,size_t inParamSize,u8 *pOutParam,size_t outParamSize,s32 *pReadLen){
     PUSH            {R4-R10,LR}
@@ -322,6 +322,20 @@ __asm Result PrepareToStartSystemApplet(AppletId id){
     LDR             R1, =__cpp(0x00190040)
     STR             R1, [R4,#0x80]!
     STR             R0, [R4,#4]
+    LDR             R0, =__cpp(&sSession)
+    LDR             R0, [R0]
+    SVC             0x32 ; '2'
+    AND             R1, R0, #0x80000000
+    CMP             R1, #0
+    LDRGE           R0, [R4,#4]
+    POP             {R4,PC}
+}
+
+__asm Result PrepareToJumpToHomeMenu(){
+    PUSH            {R4,LR}
+    MRC             p15, 0, R4,c13,c0, 3
+    MOV             R0, #0x2B0000
+    STR             R0, [R4,#0x80]!
     LDR             R0, =__cpp(&sSession)
     LDR             R0, [R0]
     SVC             0x32 ; '2'

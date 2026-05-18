@@ -23,6 +23,7 @@ namespace os {
         void Leave(void);
         bool TryEnter(void);
         ~CriticalSection() { }
+        void Finalize(){this->mLockCount = -1;}
         class ScopedLock;
 
         void OnLocked(){

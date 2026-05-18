@@ -4,7 +4,7 @@
 
 namespace nn {
 namespace fslow {
-u32 QueryOptimalBucketCount(u32 countEntries);
+    u32 QueryOptimalBucketCount(u32 countEntries);
 
 }
 }
