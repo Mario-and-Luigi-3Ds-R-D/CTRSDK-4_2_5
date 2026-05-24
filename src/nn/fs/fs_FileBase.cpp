@@ -8,15 +8,40 @@ namespace nn{
 namespace fs{
 namespace detail{
 
-Result FileBase::TryRead(int* pReadOut, void* pBuffer, size_t pSize){
-
+Result FileBase::TryRead(s32* pOut, void* buffer, size_t size){
+    Result res; 
+    u32 n = 0;
+    if (size == 0)
+        goto done;
+    while (true) {
+        s32 bytesRead;
+        #ifdef NONMATCHING
+        #endif
+        // LSRS R0, R0 0x1f is supposed to be LSRS R1, R0 0x1f
+        res.mResult = FileBaseImpl::TryReadFile(&bytesRead,this->mPosition, buffer, size).IsFailure();
+        
+        if (res.mResult)
+            return res;  // pOut NOT written on failure
+        
+        n += bytesRead;
+        this->mPosition += bytesRead;
+        
+        if (bytesRead == size || bytesRead == 0)
+            break;
+        
+        buffer = (void*)((int)buffer + bytesRead);
+        size -= bytesRead;
+    }
+done:
+    *pOut = n;
+    return ResultSuccess();
 }
 
 Result FileBase::TryWrite(int* pReadOut, const void* pBuffer, size_t pSize, bool pFlush=true){
 
 }
 
-__asm Result FileBase::TrySeek(s64 pSeekOut, nn::fs::PositionBase pPosBase){
+__asm Result FileBase::TrySeek(s64 pSeekOut, PositionBase pPosBase){
     PUSH            {R4-R8,LR}
     SUB             SP, SP, #8
     MOV             R8, R0
@@ -124,63 +149,25 @@ loc_1281D0
     POP             {R4-R9,PC}
 }
 
-__asm Result FileBase::TryGetSize(s64* pOutSize) const{
-    PUSH            {R4,R5,LR}
-    MOV             R4, R0
-    LDR             R0, [R0]
-    MOV             R5, R1
-    SUB             SP, SP, #0xC
-    BIC             R1, R0, #1
-    MOV             R0, SP
-    BL              __cpp(nn::fs::CTR::MPCore::detail::UserFileSystem::TryGetFileSize)
-    MOV             R1, R0
-    ANDS            R0, R0, #0x80000000
-    BMI             loc_113C30
-    LDMFD           SP, {R0,R2}
-    ADD             R4, R4, #0xC
-    STM             R4, {R0,R2}
-    STM             R5, {R0,R2}
-    B               loc_113C3C
-
-loc_113C30
-    MOV             R0, #0
-    STR             R0, [R4,#0xC]
-    STR             R0, [R4,#0x10]
-
-loc_113C3C
-    ADD             SP, SP, #0xC
-    MOV             R0, R1
-    POP             {R4,R5,PC}
+Result FileBase::TryGetSize(s64* pOut) const{
+    nn::util::Int64<s64>* pointer;
+    s64 ret;
+    Result res = this->FileBaseImpl::TryGetSize(&ret);
+    if(res.IsSuccess()){
+        this->mSize = ret;
+        *pOut = ret;
+    } else{
+        this->mSize = 0;
+    }
+    return res;
 }
 
-__asm Result FileBase::TrySetSize(s64 size){
-    PUSH            {R4-R6,LR}
-    MOV             R6, R0
-    LDR             R0, [R0]
-    MOV             R5, R2
-    MOV             R4, R3
-    BIC             R0, R0, #1
-    BL              __cpp(nn::fs::CTR::MPCore::detail::UserFileSystem::TryGetFileSize)
-    ANDS            R1, R0, #0x80000000
-    BMI             locret_45EA38
-    ADD             R3, R6, #4
-    STR             R4, [R6,#0x10]
-    STR             R5, [R6,#0xC]
-    LDM             R3, {R3,R12}
-    SUBS            R3, R5, R3
-    SBCS            R3, R4, R12
-    STRLT           R5, [R6,#4]!
-    STRLT           R4, [R6,#4]
-    BGE             locret_45EA38
+Result FileBase::TrySetSize(s64 size){
 
-locret_45EA38
-    POP             {R4-R6,PC}
 }
 
 Result FileBase::TryFlush(){
-    void* buf = this->mFile;
-    this->mFile = (void*)(((uintptr_t)buf) & 0xfffffffe);
-    UserFileSystem::TryFlush((void*)(((uintptr_t)buf) & 0xfffffffe));
+    this->FileBaseImpl::TryFlush();
 }
 
 } // detail

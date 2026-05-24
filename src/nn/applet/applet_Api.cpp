@@ -3,9 +3,9 @@
 #include <nn/applet/CTR/applet_Info.h>
 #include <nn/applet/CTR/applet_ClientThread.h>
 #include <nn/applet/CTR/applet_Wrapper.h>
+#include <nn/applet/CTR/applet_InitialParamaters.h>
 #include <nn/applet/CTR/detail/applet_Ipc.h>
 #include <nn/camera/camera_Api.h>
-//#include <nn/gxlow/gxlow_SystemUse.h>
 #include <nn/srv/srv_Api.h>
 #include <nn/os/os_Thread.h>
 #include <nn/err/CTR/err_Api.h>
@@ -80,17 +80,52 @@ namespace detail{
 namespace{
     bool isApplication;
 }
+namespace{
+    srv::NotificationHandler sHandler;
+}
 
 /* Initialize */
 
-void Initialize(AppletAttr applerAttr){
-    // TODO
+Result Initialize(AppletAttr appletAttr) {
+    if (!detail::IsAppletMode()) {
+        sIsGpuRightGiven = true;
+        appletAttr = AppletAttr(appletAttr & ~7);
+        nn::srv::RegisterNotificationHandler(&sHandler, 0x100);
+        Result result = detail::InitializeConnect(0x300, appletAttr, 0xF);
+        if (result.IsFailure())
+            return result;
+    }
+    return ResultSuccess();
 }
 
 /* Enable */
-/* Not Finished */
+
 void Enable(bool isSleepEnable){
-    // TODO
+    bool applicationCheck; 
+    AppletWakeupState state; 
+    AppletAttr attr; 
+    u8* pParam; 
+    AppletId id;
+    s32 size;
+    Result result;
+    if(isSleepEnable){
+        EnableSleep(0);
+    }
+    nn::applet::CTR::detail::LockAndConnect();
+    attr = nn::applet::CTR::GetAttribute();
+    result = nn::applet::CTR::detail::APPLET::Enable(attr);
+    NN_ERR_THROW_FATAL(result);
+    nn::applet::CTR::detail::DisconnectAndUnlock();
+    applicationCheck = nn::applet::CTR::IsApplication();
+    if((applicationCheck) && (attr = nn::applet::CTR::GetAttribute(), (attr & 0x20) == 0)){
+        nn::applet::CTR::SetTransitionType(TRANSITION_ENABLE_APPLET);
+        pParam = nn::applet::CTR::detail::GetInitialParamBuffer();
+        state = nn::applet::CTR::detail::WaitForStarting(&id,pParam,0x1000,&size,(Handle *)0x0,CTR::WAIT_INFINITE);
+        nn::applet::CTR::detail::SetInitialParamSenderId(id);
+        nn::applet::CTR::detail::SetInitialParamSenderSize(size);
+        nn::applet::CTR::detail::SetInitialParamValid();
+        nn::applet::CTR::detail::SetInitialWakeupState(state);
+    }
 }
 
 /* WaitForRegister */
@@ -106,7 +141,6 @@ Result CancelLibraryAppletIfRegistered(bool isApplicationEnd, nn::applet::CTR::A
 }
 
 /* NotifyToWait */
-/* Finished */
 
 void NotifyToWait(){
     AppletId id;
@@ -180,7 +214,6 @@ void AssignCameraRight(bool flag){
 }
 
 /* CancelParamater */
-/* Finished */
 
 bool CancelParameter(bool isSenderCheck, nn::applet::CTR::AppletId senderId, bool isReceiverCheck, nn::applet::CTR::AppletId receiverId){
     bool isCanceled;
@@ -293,7 +326,6 @@ void SleepIfShellClosed() {
 /* -- SLEEPMANAGERS -- */
 
 /* ReplyToSleepQueryToManager */
-/* Finished */
 
 void ReplySleepQueryToManager(QueryReply reply){
     AppletId id;
@@ -306,7 +338,6 @@ void ReplySleepQueryToManager(QueryReply reply){
 }
 
 /* ReplySleepNotificationCompleteToManager */
-/* Finished */
 
 void ReplySleepNotificationCompleteToManager(){
     AppletId id;
@@ -321,7 +352,6 @@ void ReplySleepNotificationCompleteToManager(){
 } // detail
 
 /* IsInitialized */
-/* Finished */
 
 bool IsInitialized(){
     return CTR::detail::sIsInitialized;

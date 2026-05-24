@@ -19,9 +19,26 @@ Result ArriveApplication(){
 }
 
 Result LeaveApplication(){
-    if(isInitialized == false){
-        
-    }
+    if (!isInitialized)
+        return ResultSuccess();
+
+    u8 activatedCamera;
+    Result result = Camera::GetActivatedCamera(&activatedCamera);
+    if (result.IsFailure())
+        return result;
+
+    u8 sleepCamera;
+    result = Camera::GetSleepCamera(&sleepCamera);
+    if (result.IsFailure())
+        return result;
+
+    leaveApplication = activatedCamera | sleepCamera;
+
+    result = Camera::SetSleepCamera(0);
+    if (result.IsSuccess())
+        result = Camera::Activate(0);
+
+    return result;
 }
 
 }

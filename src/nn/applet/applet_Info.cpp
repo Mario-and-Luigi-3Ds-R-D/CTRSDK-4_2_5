@@ -44,11 +44,11 @@ s8 IsExpectedToJumpToHomeMenu(){
     return sIsExpectedToJumpToHomeMenu;
 }
 
-nn::applet::CTR::AppletId GetId(){
+CTR::AppletId GetId(){
     return sId;
 }
 
-void SetId(nn::applet::CTR::AppletId id){
+void SetId(CTR::AppletId id){
     sId = id;
 }
 

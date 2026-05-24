@@ -7,20 +7,10 @@
 
 namespace nn {
 namespace srv {
+/* Notification Forward Declared */
+
 class NotificationHandler;
 
-namespace detail {
-Result Connect(const char*);
-
-class HandlerManager{
-public:
-    nn::fnd::IntrusiveLinkedList<NotificationHandler> mHandler;
-        
-    ~HandlerManager();
-    Result Register(NotificationHandler* pHandler, u32 message);
-};
-
-}
 
 struct NotificationHandler : public fnd::IntrusiveLinkedList<NotificationHandler>::Item{
     bit32 mAttachedMessage;
@@ -28,16 +18,29 @@ struct NotificationHandler : public fnd::IntrusiveLinkedList<NotificationHandler
     NotificationHandler() { }
 };
 
+
 Result Initialize();
 Result StartNotification();
 Result RegisterNotificationHandler(NotificationHandler* pHandler, bit32 message);
-Result GetServiceHandle(nn::Handle *pOut, const char *pName, s32 nameLen, bit32 flags);
+Result GetServiceHandle(nn::Handle* pOut, const char* pName, s32 nameLen, bit32 flags);
 
-namespace{
-void DispatcherThread();
+namespace detail {
 
-extern const char const PORT_NAME_SERVICE;
-//static NotificationHandler* sHandlerManager;
-}
-} // Namespace srv
-} // Namespace nn
+Result Connect(const char* pName);
+
+class HandlerManager{
+public:
+    nn::fnd::IntrusiveLinkedList<NotificationHandler> mHandler;
+
+    ~HandlerManager();
+    Result Register(NotificationHandler* pHandler, u32 message);
+};
+
+} // namespace detail
+
+namespace {
+    extern const char PORT_NAME_SERVICE;
+} // namespace
+
+} // namespace srv
+} // namespace nn

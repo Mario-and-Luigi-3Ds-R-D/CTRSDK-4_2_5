@@ -22,10 +22,21 @@ namespace detail{
         }
     public:
         FileBaseImpl() : mFile(0) {}
+        
         ~FileBaseImpl(){ this->Finalize(); }
         
         Result TryGetSize(s64* pOut) const {
             return UserFileSystem::TryGetFileSize(pOut, GetPtr()); 
+        }
+        
+        Result TryFlush(){
+            DoneFlush();
+            return UserFileSystem::TryFlush(GetPtr());
+        }
+        Result TryReadFile(s32* pOut, s64 offset, void* buf, size_t size){
+            size_t size2 = size;
+            void* pOutPtr = this->GetPtr();
+            return UserFileSystem::TryReadFile(pOut,pOutPtr,offset,buf,size2);
         }
 
         Result TryOpenImpl(const wchar_t* path, bit32 mode){
@@ -43,6 +54,7 @@ namespace detail{
             nn::fs::CTR::MPCore::detail::UserFileSystem::CloseFile(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(this->mFile) & ~1));
             this->mFile = 0;
         }
+        void DoneFlush() { mFile = reinterpret_cast<void*>(reinterpret_cast<uptr>(mFile) & ~static_cast<uptr>(0x1)); }
     };
 
     class FileBase : public FileBaseImpl{
@@ -52,6 +64,7 @@ namespace detail{
         mutable S64 mSize;
     public:
         FileBase() : mPosition(0), mSize(0) {}
+        FileBase(const wchar_t* pathName, bit32 mode);
         Result TryRead(int*, void*, size_t);
         Result TryWrite(int*, const void*, size_t, bool);
         Result TrySeek(s64, nn::fs::PositionBase);
@@ -106,22 +119,25 @@ namespace detail{
             return ResultSuccess();
         }
 
-        // Sets FileBase, Luigifan27 custom inline.
-        void SetPositionFlags(){
-            this->mPosition.lo = 0;
-            this->mPosition.hi = 0;
+        inline Result FileBase::TryInitialize(const wchar_t* pathName, bit32 mode){
+            this->mPosition = this->mSize = 0;
+            return TryOpenImpl(pathName, mode);
         }
 
-        void SetSizeFlags(){
-            this->mSize.lo = 0;
-            this->mSize.hi = 0;
+        void FileBase::Initialize(const wchar_t* pathName, bit32 mode){
+            Result result = TryInitialize(pathName, mode);
+            if (result.IsFailure()){
+                //NN_SLOG_("file open failed: ");
+                //NN_SLOG_("%lls\n", pathName);
+                NN_ERR_THROW_FATAL_ALL(result);
+            }
         }
 
-        void SetFlagsImpl(){
-            this->SetPositionFlags();
-            this->SetSizeFlags();
+        FileBase::FileBase(const wchar_t* pathName, bit32 mode){
+            Initialize(pathName, mode);
         }
     };
+
 } // detail
 } // fs
 } // nn

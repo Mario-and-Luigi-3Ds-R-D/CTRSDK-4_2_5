@@ -47,7 +47,7 @@ namespace detail{
 
     bool ReceiveCallbackForCommands(uptr ptr);
 
-    AppletWakeupState WaitForStarting(AppletId* pSenderId,  u8* pParam, size_t paramSize, s32* pReadLen, Handle* pHandle, fnd::TimeSpan* timout);
+    AppletWakeupState WaitForStarting(AppletId* pSenderId,  u8* pParam, size_t paramSize, s32* pReadLen, Handle* pHandle, fnd::TimeSpan timeout);
 
     bool IsEnableSleep();
 

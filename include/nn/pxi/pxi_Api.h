@@ -7,7 +7,9 @@
 namespace nn{
 namespace pxi{
 namespace CTR{
-    const char PORT_NAME_DEV[] = "pxi:dev"; 
+    const char PORT_NAME_DEV[] = "pxi:dev";
+
+    const char PORT_NAME_HIO[] = "pxi:hio";
 }
 }
 }

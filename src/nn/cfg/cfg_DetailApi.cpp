@@ -36,7 +36,17 @@ Result InitializeBase(Handle* pSession, const char* name){
 }
 
 Result Initialize(){
-    // TODO
+    Result res;
+    if(!InitializeCount){
+        res = InitializeBase(&IpcUser::sSession,PORT_NAME_USER);
+        if(res.IsSuccess()){
+            sIsInitialized = true;
+        } else{
+            return (Result)0xd92103fb;
+        }
+    }
+    ++InitializeCount;
+    return res;
 }
 
 Result InitializeProperPort(IPCPortType* pPortType){

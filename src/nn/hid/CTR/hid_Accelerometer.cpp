@@ -17,8 +17,8 @@ namespace nn{
 namespace hid{
 namespace CTR{
 
-#ifdef NONMATCHING
-#endif
+
+
 
 AccelerometerReader::AccelerometerReader(Accelerometer& accelerometer) : mAccelerometer(accelerometer){
     AccelerometerStatus tempStatus;
@@ -53,7 +53,7 @@ void AccelerometerReader::ConvertToAcceleration(AccelerationFloat* pAcceleration
             nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"hid_Accelerometer.cpp",52,"%s","bufLen<=samplingLen");
         }
     #endif
-    for(int i = 0; i < bufLen; i+= 1){
+    for(int i = 0; i < bufLen; i++){
         pAcceleration[i].x = pSamplingData[i].x * 0.001953125;
         pAcceleration[i].y = pSamplingData[i].y * 0.001953125;
         pAcceleration[i].z = pSamplingData[i].z * 0.001953125;

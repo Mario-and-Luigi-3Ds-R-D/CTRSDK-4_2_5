@@ -496,8 +496,7 @@ f32 Atan2FIdx(f32 y, f32 x){
         return 0.f;
     }
 
-    if(x >= 0.f)
-    {
+    if(x >= 0.f){
         if(y >= 0.f){
             if(x >= y){
                 a = x;

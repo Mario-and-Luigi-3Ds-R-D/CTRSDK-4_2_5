@@ -48,14 +48,14 @@ public:
 
 class UserFileSystem{
 public:
-    static void CloseFile(void*);
+    static Result  CloseFile(void*);
     static Result Initialize(nn::Handle handle);
     static Result TryGetFileSize(s64* pout,void*);
     static Result TrySetFileSize(void* p, s64 size);
-    Result TryWriteFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size, bool flush);
-    Result TryReadFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size);
+    static Result TryWriteFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size, bool flush);
+    static Result TryReadFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size);
     static Result TryOpenFile(void** pout, const wchar_t* pathName,bit32 mode);
-    static void TryFlush(void*);
+    static Result TryFlush(void*);
 
 };
 

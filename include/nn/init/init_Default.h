@@ -3,6 +3,5 @@
 #include "nn/types.h"
 
 extern "C"{
-    void nnMain(); // MAIN APPLICATION
-
+    void nninitStartUpDefault(void);
 }

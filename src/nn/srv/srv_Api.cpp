@@ -90,7 +90,7 @@ Result GetServiceHandle(nn::Handle *pOut, const char *pName, s32 nameLen, bit32 
     }
     return nn::srv::detail::Service::GetServiceHandle(pOut, pName, nameLen, flags);
     #ifdef NN_DEBUG
-        nndbgTPrintWarning_("srv_Api.cpp",91,"Failed to open service \"%s\"\n",pName);
+        nndbgTPrintWarning_("srv_Api.cpp",92,"Failed to open service \"%s\"\n",pName);
     #endif
 }
 

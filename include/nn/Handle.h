@@ -10,6 +10,8 @@ typedef struct nnHandle{
 
 namespace nn{
 namespace{
+    const nnHandle PSEUDO_HANDLE_CURRENT_THREAD  = {0xFFFF8000};
+    const nnHandle PSEUDO_HANDLE_CURRENT_PROCESS = {0xFFFF8001};
     const nnHandle INVALID_HANDLE_VALUE = {0};
 }
 struct Handle {

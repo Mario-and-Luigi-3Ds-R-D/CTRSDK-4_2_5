@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 namespace nn {
 namespace math {
     
@@ -13,6 +15,60 @@ namespace math {
         float y;
         float z;
     };
+namespace ARMv6{
+    inline VEC3* VEC3NormalizeC(VEC3* pOut, const VEC3* p){
+        register f32 x, y, z, mag;
+    
+        x = p->x;
+        y = p->y;
+        z = p->z;
+    
+        mag = (x * x) + (y * y) + (z * z);
 
+        mag = 1.0f / ::std::sqrtf(mag);
+    
+        x *= mag;
+        y *= mag;
+        z *= mag;
+
+        pOut->x = x;
+        pOut->y = y;
+        pOut->z = z;
+
+        return pOut;
+    }
+    inline VEC3* VEC3NormalizeC_FAST(VEC3* pOut, const VEC3* p){
+
+        register f32 x, y, z, mag;
+        
+        x = p->x;
+        y = p->y;
+        z = p->z;
+        
+        mag = (x * x) + (y * y) + (z * z);
+
+        mag = 1.0f / ::std::sqrtf(mag);
+        
+        x *= mag;
+        y *= mag;
+        z *= mag;
+
+        pOut->x = x;
+        pOut->y = y;
+        pOut->z = z;
+
+        return pOut;
+    }
+    
+
+
+    inline VEC3* VEC3Normalize(VEC3* pOut, const VEC3* p){
+        #ifdef NN_DEBUG // Unoptimized check.
+            return ARMv6::VEC3NormalizeC(pOut, p);
+        #else  
+            return ARMv6::VEC3NormalizeC_FAST(pOut, p);
+        #endif
+    }
+}
 }
 }

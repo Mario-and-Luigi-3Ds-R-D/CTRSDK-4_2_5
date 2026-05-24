@@ -165,8 +165,21 @@ SleepNotificationState IsExpectedToReplySleepQuery(){
     } return state;
 }
 
-void ReplySleepQuery(QueryReply reply){
-    // TODO
+void ReplySleepQuery(QueryReply reply) {
+    SleepNotificationState state;
+    if (reply == REPLY_REJECT) {
+        state = NOTIFY_SLEEP_REJECT;
+    } else {
+        if (reply != REPLY_ACCEPT) {
+            if (reply != REPLY_LATER)
+                return;
+            SetSleepNotificationState(NOTIFY_SLEEP_QUERY);
+            return;
+        }
+        state = NOTIFY_SLEEP_ACCEPT;
+    }
+    SetSleepNotificationState(state);
+    detail::ReplySleepQueryToManager(reply);
 }
 
 inline Result TryReceive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle,fnd::TimeSpan timeout){
@@ -209,6 +222,12 @@ void SysSleepAcceptedCallbackInfo::Register(){
     // TODO
 }
 
+namespace detail{
+AppletWakeupState WaitForStarting(AppletId* pSenderId,  u8* pParam, size_t paramSize, s32* pReadLen, Handle* pHandle, fnd::TimeSpan timeout){
+    // TODO
+}
+
+}
 }
 }
 }

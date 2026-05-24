@@ -7,7 +7,7 @@ namespace detail{
 namespace Camera{
 nn::Handle sSession = 0;
 
-__asm Result Activate(bool){
+__asm Result Activate(u8){
     PUSH            {R0,R4,R5,LR}
     MRC             p15, 0, R4,c13,c0, 3
     LDR             R0, =0x003D0040
@@ -23,7 +23,7 @@ __asm Result Activate(bool){
     POP             {R3-R5,PC}
 }
 
-__asm Result GetActivatedCamera(CameraSelect* camera){
+__asm Result GetActivatedCamera(u8* camera){
     PUSH            {R4-R6,LR}
     MOV             R5, R0
     MRC             p15, 0, R4,c13,c0, 3
@@ -42,7 +42,7 @@ locret_12A96C
     POP             {R4-R6,PC}
 }
 
-__asm Result GetSleepCamera(CameraSelect* camera){
+__asm Result GetSleepCamera(u8* camera){
     PUSH            {R4-R6,LR}
     MOV             R5, R0
     MRC             p15, 0, R4,c13,c0, 3
@@ -61,7 +61,7 @@ locret_12A8F4
     POP             {R4-R6,PC}
 }
 
-__asm Result SetSleepCamera(bool){
+__asm Result SetSleepCamera(u8){
     PUSH            {R0,R4,R5,LR}
     MRC             p15, 0, R4,c13,c0, 3
     LDR             R0, =0x130040

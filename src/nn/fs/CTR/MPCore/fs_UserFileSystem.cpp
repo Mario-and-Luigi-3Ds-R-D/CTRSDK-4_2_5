@@ -23,17 +23,21 @@ ArchiveTableEntry::ArchiveTableEntry(){
 // UserFileSystem
 //
 
+typedef void (*File)(void*);
+
 Result UserFileSystem::Initialize(nn::Handle handle){
 
 }
 
-void UserFileSystem::CloseFile(void* p){
-    if(p != (void*)0x0){
-        uintptr_t fn = *(uintptr_t*)(*(uintptr_t*)p + 0x2c);
-        ((void(*)())fn)();
+Result UserFileSystem::CloseFile(void* p){
+    if (p == 0) {
         return;
     }
-    return;
+    reinterpret_cast<File>(
+        *reinterpret_cast<u32*>(
+            *reinterpret_cast<u32*>(p) + 0x2C
+        )
+    )(p);
 }
 
 __asm Result UserFileSystem::TryGetFileSize(s64* pOut, void* p){
@@ -52,12 +56,14 @@ locret_120980
 }
 
 Result UserFileSystem::TrySetFileSize(void* p, s64 size){
-    if(p != (void*)0x0){
-        uintptr_t fn = *(uintptr_t*)(*(uintptr_t*)p + 0xC);
-        ((void(*)())fn)();
-        return;
+    if (p == 0) {
+        return (Result)0xe0e046bc;
     }
-    return;
+    reinterpret_cast<File>(
+        *reinterpret_cast<u32*>(
+            *reinterpret_cast<u32*>(p) + 0xC
+        )
+    )(p);
 }
 
 Result UserFileSystem::TryWriteFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size, bool flush){
@@ -72,13 +78,15 @@ Result UserFileSystem::TryOpenFile(void** pout,const wchar_t* pathName,bit32 mod
 
 }
 
-void UserFileSystem::TryFlush(void* p){
-    if(p != (void*)0x0){
-        uintptr_t fn = *(uintptr_t*)(*(uintptr_t*)p + 0x10);
-        ((void(*)())fn)();
-        return;
+Result UserFileSystem::TryFlush(void* p){
+    if (p == 0) {
+        return (Result)0xe0e046bc;
     }
-    return;
+    reinterpret_cast<File>(
+        *reinterpret_cast<u32*>(
+            *reinterpret_cast<u32*>(p) + 0xC
+        )
+    )(p);
 }
 
 }

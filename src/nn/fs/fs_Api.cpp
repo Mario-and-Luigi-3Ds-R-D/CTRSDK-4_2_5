@@ -3,6 +3,7 @@
 #include <nn/fs/CTR/MPCore/fs_UserFileSystem.h>
 #include <nn/fs/fs_FileSystemBase.h>
 #include <nn/err/CTR/err_Api.h>
+#include <nn/fnd/fnd_TimeSpan.h>
 #include <nn/cfg/CTR/cfg_Api.h>
 #include <nn/srv/srv_Api.h>
 
@@ -18,8 +19,19 @@ namespace{
     detail::FileSystemBaseImpl sFileSystemBaseImpl;
 }
 
-void InitializeLatencyEmulation(void) {
+static bool sIsEmulateEndurance;
+static bool sIsLatencyEmulationEnable;
+static s64 sConstantWait;
 
+void InitializeLatencyEmulation(){
+    u8 param = cfg::CTR::GetFsLatencyEmulationParam();
+    sConstantWait = param * 10;
+    if(cfg::CTR::IsDebugMode()){
+        sIsLatencyEmulationEnable = true;
+    }
+    if((sIsLatencyEmulationEnable != false) || (sConstantWait != 0)){
+        sIsEmulateEndurance = true;
+    }
 }
 
 void Initialize(){

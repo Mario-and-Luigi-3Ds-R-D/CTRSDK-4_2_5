@@ -23,7 +23,7 @@ namespace{
 }
 
     // Main Applet
-    void Initialize(AppletAttr applerAttr);
+    Result Initialize(AppletAttr applerAttr);
     void Enable(bool isSleepEnabled = true);
 
     bool IsRegistered(AppletId appletId); // inline

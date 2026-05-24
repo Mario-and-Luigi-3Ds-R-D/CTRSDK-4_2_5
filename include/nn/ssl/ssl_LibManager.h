@@ -18,7 +18,7 @@ namespace detail{
             this->mHandleObj.Close();
         }
     };
-    static const LibManager* gLibManager = (LibManager*)0;
+    static const LibManager* gLibManager;
 }
 }
 }

@@ -47,7 +47,7 @@ void InitializeAllocator(size_t size){
 
 extern "C" {
 __weak void* malloc(std::size_t size){
-    spSystemHeap->Allocate(size,4,0,nn::fnd::ExpHeapBase::ALLOCATION_MODE_FIRST_FIT,false);
+    return spSystemHeap->Allocate(size,4,0,nn::fnd::ExpHeapBase::ALLOCATION_MODE_FIRST_FIT,false);
 }
 
 void free(void* ptr){

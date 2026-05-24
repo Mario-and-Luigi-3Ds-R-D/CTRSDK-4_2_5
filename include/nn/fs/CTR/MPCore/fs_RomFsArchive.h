@@ -73,8 +73,8 @@ public:
     virtual Result CreateDirectory (const Path&);
     virtual Result RenameDirectory (const Path&, const Path&);
     virtual ~RomFsArchive ();
-    virtual void DuplicateHandle();
-    virtual void OpenLinkHandle();
+    virtual Result DuplicateHandle(nn::Handle*, s64, s64);
+    virtual Result OpenLinkHandle(nn::Handle*);
 
     class File : public IFile{
     public:
@@ -88,9 +88,12 @@ public:
         virtual Result TryGetSize (s64*);
         virtual Result TrySetSize (s64);
         virtual Result TryFlush ();
+        virtual Result TrySetPriority(s32 priority);
+        virtual Result TryGetPriority(s32* pOut) const;
         virtual Result DuplicateHandle (Handle*, s64, s64);
-        virtual Handle GetFileHandle () const;
-        virtual void DetachFileHandle ();
+        virtual Result OpenLinkHandle(Handle* pOut);
+//        virtual Handle GetFileHandle () const;
+//        virtual void DetachFileHandle ();
         virtual void Close ();
         virtual ~File () {}
     };

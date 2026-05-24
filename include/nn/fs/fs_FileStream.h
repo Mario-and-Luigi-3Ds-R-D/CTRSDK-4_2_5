@@ -13,6 +13,7 @@ namespace fs{
     class FileStream : public IStream, public detail::FileBase{ // public FileBase as well
     public:
         FileStream() { }
+        FileStream(const wchar_t* pathName, bit32 openMode) : detail::FileBase(pathName, openMode) {}
         virtual ~FileStream() {} // 0x0 - 0x4
 
         virtual Result TrySeek(s64 position, PositionBase base){ // 0x8

@@ -52,9 +52,9 @@ namespace ARMv6{
 /* VEC3 */
 
 VEC3* VEC3TransformAsm(VEC3* pOut, const MTX34* __restrict pM, const VEC3* __restrict pV);
-VEC3* VEC3TransformC(VEC3* pOut, const MTX34* __restrict pM, const VEC3* __restrict pV);
+inline VEC3* VEC3TransformC(VEC3* pOut, const MTX34* __restrict pM, const VEC3* __restrict pV);
 inline VEC3* VEC3Transform(VEC3* pOut, const MTX34* __restrict pM, const VEC3* __restrict pV){
-    #ifdef NN_DEBUG
+    #ifdef NN_DEBUG // Unoptimized check.
         return ARMv6::VEC3TransformC(pOut,pM,pV);
     #else
         return ARMv6::VEC3TransformAsm(pOut, pM, pV);

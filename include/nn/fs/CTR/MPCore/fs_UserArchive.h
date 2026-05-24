@@ -15,16 +15,19 @@ typedef nn::fslow::LowPath<const char*, const wchar_t*> Path;
 
 class IFile{
 public:
-    virtual Result TryRead (s32*, s64, size_t) = 0; // 0x0
-    virtual Result TryWrite (s32*, s64, size_t, bool) = 0; // 0x4
-    virtual Result TryGetSize (s64*) = 0; // 0x8
-    virtual Result TrySetSize (s64) = 0; // 0xC
-    virtual Result TryFlush () = 0; // 0x10
-    virtual Result DuplicateHandle (Handle*, s64, s64) = 0; // 0x14
-    virtual Handle GetFileHandle () const {} // 0x18
-    virtual void DetachFileHandle () {} // 0x1C
-    virtual void Close () = 0; // 0x20
-    virtual ~IFile () {}
+    virtual Result TryRead(s32* pOut, s64 offset, void* buffer, size_t size) = 0; // 0x0
+    virtual Result TryWrite(s32* pOut, s64 offset, const void* buffer, size_t size, bool flush=true) = 0; // 0x4
+    virtual Result TryGetSize(s64* pOut) const = 0; // 0x8
+    virtual Result TrySetSize(s64 size) = 0; // 0xC
+    virtual Result TryFlush() = 0; // 0x10
+    virtual Result TrySetPriority(s32 priority) = 0; // 0x14
+    virtual Result TryGetPriority(s32* pOut) const = 0; // 0x18
+    virtual Result DuplicateHandle(Handle* pOut, s64 offset, s64 length) = 0; // 0x1C
+    virtual Result OpenLinkHandle(Handle* pOut) = 0; // 0x20
+    virtual Handle GetFileHandle() { return nn::Handle(); } // 0x24
+    virtual void DetachFileHandle() { } // 0x28
+    virtual void Close() = 0; // 0x2C
+    virtual ~IFile() {} // 0x28
 };
 
 class IDirectory{
@@ -36,20 +39,20 @@ public:
 
 class IArchive{
 public:
-    virtual Result OpenFile (IFile**, const Path&, bit32) = 0;
-    virtual Result OpenDirectory (IDirectory**, const Path&) = 0;
-    virtual Result DeleteFile (const Path&) = 0;
-    virtual Result RenameFile (const Path&, const Path&) = 0;
-    virtual Result DeleteDirectory (const Path&) = 0;
-    virtual Result DeleteDirectoryRecursively (const Path&) = 0;
-    virtual Result CreateFile (const Path&) = 0;
-    virtual Result CreateDirectory (const Path&) = 0;
-    virtual Result SetArchivePriority(s32) = 0;
-    virtual Result GetArchivePriority(s32*) = 0;
-    virtual Result RenameDirectory (const Path&, const Path&) = 0;
-    virtual Result GetFreeBytes (s64* pOut) {}
-    virtual void DeleteObject() = 0;
-    virtual ~IArchive () {}
+    virtual Result OpenFile (IFile**, const Path&, bit32) = 0; // 0x0
+    virtual Result OpenDirectory (IDirectory**, const Path&) = 0; // 0x4
+    virtual Result DeleteFile (const Path&) = 0; // 0x8
+    virtual Result RenameFile (const Path&, const Path&) = 0; //0xC
+    virtual Result DeleteDirectory (const Path&) = 0; // 0x10
+    virtual Result DeleteDirectoryRecursively (const Path&) = 0; // 0x14
+    virtual Result CreateFile (const Path&) = 0; // 0x18
+    virtual Result CreateDirectory (const Path&) = 0; // 0x1C
+    virtual Result SetArchivePriority(s32) = 0; // 0x20
+    virtual Result GetArchivePriority(s32*) = 0; // 0x24
+    virtual Result RenameDirectory (const Path&, const Path&) = 0; // 0x28
+    virtual Result GetFreeBytes (s64* pOut) {} // 0x2C
+    virtual void DeleteObject() = 0; // 0x30
+    virtual ~IArchive () {} // 0x34
 };
 
 

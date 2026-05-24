@@ -9,6 +9,8 @@
 #include <nn/cfg/CTR/cfg_DetailApi.h>
 #include <nn/dbg/dbg_Break.h>
 
+#include <string.h>
+
 namespace nn{
 namespace ulcd{
 namespace CTR{
@@ -30,9 +32,9 @@ void GetLookPose(const nn::math::MTX34 *view,nn::math::VEC3 *pos,Direction *dir)
     dir->target.x = im.matrix[0][2];
     dir->target.y = im.matrix[1][2];
     dir->target.z = im.matrix[2][2];
-    /*math::ARMv6::VEC3Normalize(&dir->right,&dir->right);
+    math::ARMv6::VEC3Normalize(&dir->right,&dir->right);
     math::ARMv6::VEC3Normalize(&dir->up,&dir->up);
-    math::ARMv6::VEC3Normalize(&dir->target,&dir->target);*/
+    math::ARMv6::VEC3Normalize(&dir->target,&dir->target);
 }
 
 }
@@ -52,7 +54,10 @@ f32 StereoCamera::GetCoefficientForParallax(void) const{
 void StereoCamera::SetBaseCamera(const nn::math::MTX34 *view){
     Direction direction;
     GetLookPose(view, &this->mBaseCamera.mPosition, &direction);
-    // TODO
+    
+    memcpy(&this->mBaseCamera.mPosRight,&direction,0xc);
+    memcpy(&this->mBaseCamera.mPosUp,&direction,0xc);
+    memcpy(&this->mBaseCamera.mPosTarget,&direction,0xc);
 }
 
 void StereoCamera::SetBaseFrustum(const nn::math::MTX44 *proj){

@@ -107,7 +107,12 @@ bool DspFxManagerImpl::SetDspDelayEffect(AuxBusId id, DspFxDelayParams* param) {
 }
 
 bool DspFxManagerImpl::SetDspReverbEffect(AuxBusId id, DspFxReverbParams* param) {
-
+    if(param->ctrl & 1 != 0){
+        this->mDspFxReverbParams[id].enable = param->enable;
+    }
+    if(param->ctrl & 4 != 0){
+        
+    }
 }
 
 } // namespace CTR

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nn/types.h"
+#include "nn/Handle.h"
 #include "nn/ro/ro_RegistrationList.h"
 #include "nn/ro/ro_Module.h"
 #include "nn/ro/ro_Types.h"
@@ -10,7 +10,7 @@ namespace ro{
 
     void Initialize(uint,uint);
     void Finalize();
-    nn::ro::RegistrationList* RegisterList(void* pRr, size_t pSize);
+    void* RegisterList(void* pRr, size_t pSize);
     nn::ro::Module* FindModule(const char* pModule);
     uint GetAddress(const char* pAddress);
     void GetSizeInfo(nn::ro::SizeInfo* pSizeInfo,void* pBuffer);
