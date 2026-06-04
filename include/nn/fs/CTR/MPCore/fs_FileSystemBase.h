@@ -13,7 +13,7 @@ namespace fs{
 
     Result MountRom(char *pArchiveName,size_t pMaxFile,size_t pMaxDirectory,void *pWorkingMemory, size_t pWorkingMemorySize,bool pUseCache);
     Result MountRom(size_t pMaxFile, size_t pMaxDirectory, void* pWorkingMemory, size_t pWorkingMemorySize, bool pUseCache);
-    Result Unmount(char* pArchiveName);
+    Result Unmount(char* pArchiveName = "data:");
 
     // Memory Size 
     int GetRomRequiredMemorySize(size_t pMaxFile, size_t pMaxDirectory, bool pUseCache);

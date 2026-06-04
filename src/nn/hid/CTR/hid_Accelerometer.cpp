@@ -16,9 +16,9 @@
 namespace nn{
 namespace hid{
 namespace CTR{
-
-
-
+namespace detail{
+    short CalculateAccelerationTightlyshort (short targetValue, short currentValue, short playRadius, short sensitivity);
+}
 
 AccelerometerReader::AccelerometerReader(Accelerometer& accelerometer) : mAccelerometer(accelerometer){
     AccelerometerStatus tempStatus;
@@ -60,29 +60,28 @@ void AccelerometerReader::ConvertToAcceleration(AccelerationFloat* pAcceleration
     }
 }
 
-#ifdef NONMATCHING
-#endif
 
 void AccelerometerReader::Read(AccelerometerStatus* pBuf, s32* pReadLen, s32 bufLen){
     Accelerometer& accelerometer = this->mAccelerometer;
-    ((nn::hidlow::CTR::AccelerometerLifoRing*)accelerometer.mResourcePtr)->ReadData(pBuf,1,pReadLen,&this->mTickOfRead,&this->mIndexOfRead);
-    int readLen = *pReadLen;
-    while(readLen += -1, -1 < readLen){
+    ((nn::hidlow::CTR::AccelerometerLifoRing*)accelerometer.mResourcePtr)->ReadData(pBuf,bufLen,pReadLen,&this->mTickOfRead,&this->mIndexOfRead);
+    typedef short (*CalcFn)(short, short, short, short);
+    CalcFn calc = detail::CalculateAccelerationTightly;
+        
+    for(int i =*pReadLen - 1; i >= 0; --i){
         short newCalcAcl;
-
-        newCalcAcl = detail::CalculateAccelerationTightly(pBuf[readLen].x,this->mLatestCalculatedStatus.x,this->mPlay,this->mSensitivity);
-        pBuf[readLen].x = newCalcAcl;
+        
+        newCalcAcl = calc(pBuf[i].x,this->mLatestCalculatedStatus.x,this->mPlay,this->mSensitivity);
+        pBuf[i].x = newCalcAcl;
         this->mLatestCalculatedStatus.x = newCalcAcl;
 
-        newCalcAcl = detail::CalculateAccelerationTightly(pBuf[readLen].y,this->mLatestCalculatedStatus.y,this->mPlay,this->mSensitivity);
-        pBuf[readLen].y = newCalcAcl;
+        newCalcAcl = calc(pBuf[i].y,this->mLatestCalculatedStatus.y,this->mPlay,this->mSensitivity);
+        pBuf[i].y = newCalcAcl;
         this->mLatestCalculatedStatus.y = newCalcAcl;
 
-        newCalcAcl = detail::CalculateAccelerationTightly(pBuf[readLen].z,this->mLatestCalculatedStatus.z,this->mPlay,this->mSensitivity);
-        pBuf[readLen].z = newCalcAcl;
+        newCalcAcl = calc(pBuf[i].z,this->mLatestCalculatedStatus.z,this->mPlay,this->mSensitivity);
+        pBuf[i].z = newCalcAcl;
         this->mLatestCalculatedStatus.z = newCalcAcl;
-
-        this->Transform(pBuf + readLen);
+        this->Transform(&pBuf[i]);
     }
 }
 
@@ -151,7 +150,7 @@ AccelerometerReader::~AccelerometerReader(){
 }
 
 namespace detail{
-__asm short CalculateAccelerationTightlyshort (short targetValue, short currentValue, short playRadius, short sensitivity){
+__asm short CalculateAccelerationTightly(short targetValue, short currentValue, short playRadius, short sensitivity){
     MOV             R12, R0
     MOV             R0, R1
     PUSH            {R4}

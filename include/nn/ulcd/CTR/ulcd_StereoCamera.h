@@ -56,12 +56,14 @@ namespace{
     StereoCamera();
     ~StereoCamera();
 
+    struct cfgdata{
+        void* cfgData;
+        u8 rev[0xC];
+        float limit;
+    };
+
 }; // StereoCamera
 
-namespace{
-bool IsInitialized;
-
-}
 }
 }
 }

@@ -1,67 +1,130 @@
 cmake_minimum_required(VERSION 3.24)
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/project/ARMCC.cmake)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-if(NOT DEFINED ENV{ARMCC_PATH})
-    message(FATAL_ERROR "please set ARMCC_PATH")
-endif()
-
-find_program(ARM_ASM NAMES armasm.exe PATHS $ENV{ARMCC_PATH}/bin REQUIRED NO_DEFAULT_PATH)
-find_program(ARM_AR NAMES armar.exe PATHS $ENV{ARMCC_PATH}/bin REQUIRED NO_DEFAULT_PATH)
-find_program(ARM_CC NAMES armcc.exe PATHS $ENV{ARMCC_PATH}/bin REQUIRED NO_DEFAULT_PATH)
-find_program(ARM_LINK NAMES armlink.exe PATHS $ENV{ARMCC_PATH}/bin REQUIRED NO_DEFAULT_PATH)
-# find_program(ARM_FROMELF NAMES fromelf.exe PATHS $ENV{ARMCC_PATH}/bin REQUIRED NO_DEFAULT_PATH) # not important
-
-macro (set_compilers)
-    set(CMAKE_CXX_COMPILER_ID ARMCC)
-
-    set(CMAKE_AR ${ARM_AR})
-    set(CMAKE_C_COMPILER ${ARM_CC})
-    set(CMAKE_CXX_COMPILER ${ARM_CC})
-    set(CMAKE_ASM_COMPILER ${ARM_ASM})
-    set(CMAKE_LINKER ${ARM_LINK})
-endmacro()
-
-if (WIN32)
-    set_compilers()
-    set(CMAKE_C_COMPILER_WORKS TRUE)
-    set(CMAKE_CXX_COMPILER_WORKS TRUE)
-    set(CMAKE_ASM_COMPILER_WORKS TRUE)
-endif()
 
 project(CTRSDK C CXX ASM)
 
-if (NOT WIN32)
-    set_compilers()
-endif()
+# libnn_<LIBRARY>
 
-__compiler_armcc(C)
-__compiler_armcc(CXX)
-__compiler_armcc(ASM)
+function(nn_library TARGET_NAME MODULE_DIR)
+    file(GLOB_RECURSE MODULE_SOURCES
+        "${MODULE_DIR}/*.cpp"
+        "${MODULE_DIR}/*.c"
+        "${MODULE_DIR}/*.s"
+        "${MODULE_DIR}/*.asm"
+    )
 
-file(GLOB_RECURSE csourcefiles "src/*.cpp")
+    if(NOT MODULE_SOURCES)
+        message(STATUS "Skipping ${TARGET_NAME} (no sources)")
+        return()
+    endif()
 
-add_library(CTRSDK ${csourcefiles})
+    add_library(${TARGET_NAME} STATIC ${MODULE_SOURCES})
 
+    set_target_properties(${TARGET_NAME} PROPERTIES
+        OUTPUT_NAME "lib${TARGET_NAME}"
+        SUFFIX ".fast.a"
+    )
 
-target_compile_options(CTRSDK PRIVATE $<$<COMPILE_LANGUAGE:CXX>:
-    --apcs=//interwork --cpu=MPCore --fpmode=fast --cpp --arm
-    --signed_chars --multibyte-chars -DNN_PROCESSOR_ARM11MPCORE
-    -O3 -Otime --data-reorder --split_sections --force_new_nothrow
-    --no_debug_macros --remove_unneeded_entities --no_allow_fpreg_for_nonfpdata
-    --diag_suppress=1 --diag_suppress=177 --diag_suppress=541 --diag_suppress=1134 --diag_suppress=3017 
-    --debug_info=line_inlining_extensions --dollar
-    --no_rtti
-    >)
+    target_compile_options(${TARGET_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:
+        --apcs=//interwork --cpu=MPCore --fpmode=fast --cpp --arm
+        --signed_chars --multibyte-chars -DNN_PROCESSOR_ARM11MPCORE
+        -O3 -Otime --data-reorder --split_sections --force_new_nothrow
+        --no_debug_macros --remove_unneeded_entities --no_allow_fpreg_for_nonfpdata
+        --diag_suppress=1 --diag_suppress=177 --diag_suppress=541 --diag_suppress=1134 --diag_suppress=3017 
+        --debug_info=line_inlining_extensions --dollar
+        --no_rtti
+        >
+    )
 
-target_compile_options(CTRSDK PRIVATE $<$<COMPILE_LANGUAGE:C>:
-    --apcs=//interwork --cpu=MPCore --fpmode=fast --c99 --arm
-    --signed_chars --multibyte-chars --locale=japanese
-    -Otime --data-reorder --split_sections
-    >)
+    target_compile_options(${TARGET_NAME} PRIVATE $<$<COMPILE_LANGUAGE:C>:
+        --apcs=//interwork --cpu=MPCore --fpmode=fast --c99 --arm
+        --signed_chars --multibyte-chars --locale=japanese
+        -Otime --data-reorder --split_sections
+        >
+    )
 
+    target_include_directories(${TARGET_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
 
-target_compile_definitions(CTRSDK PUBLIC NON_MATCHING=)
+    target_compile_definitions(${TARGET_NAME} PUBLIC
+        NON_MATCHING=
+    )
+endfunction()
 
-target_include_directories(CTRSDK PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# nn libraries
+
+nn_library(nn_applet  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/applet)
+nn_library(nn_camera  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/camera)
+nn_library(nn_cfg     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/cfg)
+nn_library(nn_crt0    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/crt0)
+#nn_library(nn_crypto  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/crypto)
+nn_library(nn_dbg     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dbg)
+#nn_library(nn_dbm     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dbm)
+nn_library(nn_dev     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dev)
+nn_library(nn_dsp     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dsp)
+nn_library(nn_err     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/err)
+nn_library(nn_fnd     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/fnd)
+nn_library(nn_font    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/font)
+nn_library(nn_fs      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/fs)
+nn_library(nn_fslow   ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/fslow)
+#nn_library(nn_gx      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/gx)
+#nn_library(nn_gxlow   ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/gxlow)
+nn_library(nn_hid     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/hid)
+nn_library(nn_hidlow  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/hidlow)
+#nn_library(nn_hio     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/hio)
+nn_library(nn_init    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/init)
+nn_library(nn_ir      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ir)
+nn_library(nn_math    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/math)
+#nn_library(nn_mic     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/mic)
+nn_library(nn_ndm     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ndm)
+nn_library(nn_nstd    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/nstd)
+nn_library(nn_os      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/os)
+nn_library(nn_pl      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/pl)
+nn_library(nn_ptm     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ptm)
+nn_library(nn_ro      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ro)
+nn_library(nn_rtport      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/rtport/rvct)
+nn_library(nn_snd     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/snd)
+nn_library(nn_srv     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/srv)
+nn_library(nn_svc     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/svc)
+nn_library(nn_ulcd    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ulcd)
+
+# Aggregate target for convenience
+
+add_library(CTRSDK INTERFACE)
+
+target_link_libraries(CTRSDK INTERFACE
+    nn_applet
+    nn_camera
+    nn_cfg
+    nn_crt0
+#    nn_crypto
+    nn_dbg
+#    nn_dbm
+    nn_dev
+    nn_dsp
+    nn_err
+    nn_fnd
+    nn_font
+    nn_fs
+    nn_fslow
+#    nn_gx
+#    nn_gxlow
+    nn_hid
+    nn_hidlow
+#    nn_hio
+    nn_init
+    nn_ir
+    nn_math
+#    nn_mic
+    nn_ndm
+    nn_nstd
+    nn_os
+    nn_pl
+    nn_ptm
+    nn_ro
+    nn_rtport
+    nn_snd
+    nn_srv
+    nn_svc
+    nn_ulcd
+)

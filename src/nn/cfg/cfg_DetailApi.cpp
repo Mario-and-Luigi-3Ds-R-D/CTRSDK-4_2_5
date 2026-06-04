@@ -35,6 +35,8 @@ Result InitializeBase(Handle* pSession, const char* name){
     return res;
 }
 
+
+// nm
 Result Initialize(){
     Result res;
     if(!InitializeCount){

@@ -10,6 +10,10 @@ typedef struct _DB_LIST_T {
     _DB_LIST_T* next;       // 0x18
 } DB_LIST_T;
 
+typedef struct cl_cmdreq_param_t{
+
+} cl_cmdreq_param_t;
+
 typedef struct _CL_CMDREQ_T {
     unsigned char       id;                 // 0x0
     GLboolean   callback_enabled;   // 0x1

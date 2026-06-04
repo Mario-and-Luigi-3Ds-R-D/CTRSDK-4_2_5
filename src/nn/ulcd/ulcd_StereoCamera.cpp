@@ -4,7 +4,7 @@
 //
 // Remade by user Luigifan27
 
-#include <nn/ucld/CTR/ucld_StereoCamera.h>
+#include <nn/ulcd/CTR/ulcd_StereoCamera.h>
 #include <nn/cfg/CTR/cfg_Api.h>
 #include <nn/cfg/CTR/cfg_DetailApi.h>
 #include <nn/dbg/dbg_Break.h>
@@ -37,6 +37,14 @@ void GetLookPose(const nn::math::MTX34 *view,nn::math::VEC3 *pos,Direction *dir)
     math::ARMv6::VEC3Normalize(&dir->target,&dir->target);
 }
 
+}
+
+namespace{
+    static bool sIsInitialized;
+}
+
+namespace{
+    StereoCamera::cfgdata data;
 }
 
 f32 StereoCamera::CalculateMaxtrices(nn::math::MTX44 *projL,nn::math::MTX34 *viewL,nn::math::MTX44 *projR,nn::math::MTX34 *viewR, nn::math::MTX44 *projOriginal,nn::math::MTX34 *viewOriginal,f32 depthLevel,f32 factor,bool realSwitch){
@@ -77,23 +85,43 @@ void StereoCamera::SetBaseFrustum(const nn::math::MTX44 *proj){
 
 void StereoCamera::Initialize(){
     Result res;
-    if(IsInitialized == false){
+    if(sIsInitialized == 0){
         cfg::CTR::Initialize();
-        //res = cfg::CTR::detail::GetConfig(sCfgData,0x20,0x500005);
-        //memcpy
+        res.mResult = cfg::CTR::detail::GetConfig(&data,0x20,0x50005).IsFailure();
+        if(res.mResult != 0){
+            nndbgPanic();
+        }
+        cfg::CTR::Finalize();
+        sIsInitialized = true;
     }
+    this->mLimitParallex = data.limit;
+    this->mLevelWidth = 0.0;
+    this->mDepthLevel = 0.0;
+    this->mDistanceToNearClip = 0.0;
+    this->mDistanceToFarClip = 0.0;
+    this->mCameraInterval = 0.0;
+    this->mBaseCamera.mLeft = 0.0;
+    this->mBaseCamera.mRight = 0.0;
+    this->mBaseCamera.mBottom = 0.0;
+    this->mBaseCamera.mTop = 0.0;
+    this->mBaseCamera.mNear = 0.0;
+    this->mBaseCamera.mFar = 0.0;
+    math::VEC3 posvec(0,0,0);
+    memcpy(&this->mBaseCamera.mPosition,&posvec,0xC);
+    math::VEC3 vec(0,0,0);
+    memcpy(&this->mBaseCamera.mPosRight,&vec,0xC);
+    memcpy(&this->mBaseCamera.mPosUp,&vec,0xC);
+    memcpy(&this->mBaseCamera.mPosTarget,&vec,0xC);
 }
 
-void StereoCamera::Finalize(){
-}
+void StereoCamera::Finalize(){ }
 
 StereoCamera::StereoCamera(){
     this->mDepthLevel = 0.0;
     this->mCameraInterval = 0.0;
 }
 
-StereoCamera::~StereoCamera(){
-}
+StereoCamera::~StereoCamera(){ }
 
 }
 }

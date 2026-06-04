@@ -24,7 +24,12 @@ public:
     MTX34() {}
     MTX34(const MTX34& rhs)        { MTX34Copy(this, &rhs); }
     explicit MTX34(const f32* p)   { MTX34Copy(this, (MTX34*)p); }
-    MTX34(f32 x00, f32 x01, f32 x02, f32 x03,f32 x10, f32 x11, f32 x12, f32 x13,f32 x20, f32 x21, f32 x22, f32 x23);
+    // Sorry! No this-> call here, folks!
+    MTX34(f32 x00, f32 x01, f32 x02, f32 x03,f32 x10, f32 x11, f32 x12, f32 x13,f32 x20, f32 x21, f32 x22, f32 x23){
+        matrix[0][0] = x00; matrix[0][1] = x01; matrix[0][2] = x02; matrix[0][3] = x03;
+        matrix[1][0] = x10; matrix[1][1] = x11; matrix[1][2] = x12; matrix[1][3] = x13;
+        matrix[2][0] = x20; matrix[2][1] = x21; matrix[2][2] = x22; matrix[2][3] = x23;
+    }
 
     /* Inlines */
 

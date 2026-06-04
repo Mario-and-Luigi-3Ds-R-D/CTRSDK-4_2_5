@@ -64,7 +64,7 @@ namespace detail{
         mutable S64 mSize;
     public:
         FileBase() : mPosition(0), mSize(0) {}
-        FileBase(const wchar_t* pathName, bit32 mode);
+        FileBase(const wchar_t* pathName, bit32 mode){ Initialize(pathName, mode); }
         Result TryRead(int*, void*, size_t);
         Result TryWrite(int*, const void*, size_t, bool);
         Result TrySeek(s64, nn::fs::PositionBase);
@@ -131,10 +131,6 @@ namespace detail{
                 //NN_SLOG_("%lls\n", pathName);
                 NN_ERR_THROW_FATAL_ALL(result);
             }
-        }
-
-        FileBase::FileBase(const wchar_t* pathName, bit32 mode){
-            Initialize(pathName, mode);
         }
     };
 

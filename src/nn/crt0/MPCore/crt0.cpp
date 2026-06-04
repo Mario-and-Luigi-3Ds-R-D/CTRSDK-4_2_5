@@ -1,5 +1,6 @@
 #include <nn/svc/svc_Api.h>
 #include <nn/init/init_Default.h>
+#include <nn/init/init_StartUp.h>
 #include <nn/util/detail/util_Symbol.h>
 #include <rt_locale.h>
 #include <rt_sys.h>

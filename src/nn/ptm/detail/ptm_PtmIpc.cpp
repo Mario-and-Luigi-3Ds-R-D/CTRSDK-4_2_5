@@ -11,6 +11,8 @@ namespace ptm{
 namespace CTR{
 namespace detail{
 namespace PtmIpc{
+Handle sSession;
+
 __asm int GetStepHistory(ushort pStepCounts, s32 numHours, nn::fnd::DateTime start){
     PUSH            {R4,LR}
     MRC             p15, 0, R4,c13,c0, 3

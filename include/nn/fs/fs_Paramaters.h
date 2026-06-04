@@ -22,6 +22,11 @@ namespace fs{
     struct SdmcLog{
     };
 
+    enum OpenMode{
+        OPEN_MODE_READ    = (1u << 0),  //
+        OPEN_MODE_WRITE   = (1u << 1),  //
+        OPEN_MODE_CREATE  = (1u << 2)   //
+    };
     struct SdmcSpeedInfo{
         bool mCardHighSpeed;
         bool mSdIfMaxSpeed;

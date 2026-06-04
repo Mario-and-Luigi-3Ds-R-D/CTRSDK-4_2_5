@@ -7,10 +7,7 @@
 
 namespace nn {
 namespace srv {
-/* Notification Forward Declared */
-
 class NotificationHandler;
-
 
 struct NotificationHandler : public fnd::IntrusiveLinkedList<NotificationHandler>::Item{
     bit32 mAttachedMessage;

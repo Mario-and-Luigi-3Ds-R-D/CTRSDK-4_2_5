@@ -38,14 +38,16 @@ f32 NormalizeStick(short x, short y);
 PadReader(Pad& pad = CTR::GetPad());
 bool ReadLatest(PadStatus* status);
 
-inline void SetStickClampMode(StickClampMode mode){
-    this->mStickClamper.SetStickClampMode(ClamperClampMode(mode));
-}
-
 private:
-    static AnalogStickClamper::ClampMode  ClamperClampMode(const StickClampMode mode);
+    static AnalogStickClamper::ClampMode  ClamperClampMode(const StickClampMode mode){ return (AnalogStickClamper::ClampMode)mode; }
     static StickClampMode ReaderClampMode(const AnalogStickClamper::ClampMode mode);
+public:
+
+    inline void SetStickClampMode(StickClampMode mode){
+        this->mStickClamper.SetStickClampMode(ClamperClampMode(mode));
+    }
 };
+
 
 namespace{
     bool sIsEnableSelect;

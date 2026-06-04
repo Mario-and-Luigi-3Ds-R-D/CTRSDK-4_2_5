@@ -8,15 +8,6 @@
 namespace nn {
 namespace snd {
 namespace CTR {
-namespace{
-    static bool sInitialized;
-    static bool sIsSleep;
-    static bool sIsSleepPrepare;
-    static bool sIsWaitingForFinalize;
-    static bool sIsHeadphoneConnected;
-    static s8 sSyncState;
-    static os::LightEvent sSleepEvent; 
-}
     static const s32 NN_SND_DSP_MAXIMUM_CYCLES = 622535;
 
     Result Initialize();

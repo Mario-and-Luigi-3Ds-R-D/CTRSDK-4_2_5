@@ -57,11 +57,6 @@ struct Direction{
     math::VEC3 z;
 };
 
-namespace{
-    
-    bool isInitialized; // 0x0
-}
-
 }
 }
 }

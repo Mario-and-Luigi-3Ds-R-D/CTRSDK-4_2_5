@@ -13,6 +13,7 @@
 namespace nn{
 namespace hid{
 namespace CTR{
+    bool isInitialized;
 
 HidDevices::~HidDevices(){
     this->mSharedMemoryBlock.Finalize();

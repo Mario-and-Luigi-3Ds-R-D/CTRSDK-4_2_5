@@ -24,7 +24,7 @@ namespace fs{
             this->detail::FileBase::Seek(position, base);
         }
 
-        virtual Result TryGetPosition(s64* pOut){ // 0x10
+        virtual Result TryGetPosition(s64* pOut) const{ // 0x10
             return this->detail::FileBase::TryGetPosition(pOut);
         }
 
@@ -90,6 +90,7 @@ namespace fs{
     class FileInputStream : public nn::fs::IInputStream, public nn::fs::detail::FileBase, private nn::util::NonCopyable<FileInputStream>{
     public:
         FileInputStream(){ }
+        Result TryInitialize(const wchar_t* pathName) { return detail::FileBase::TryInitialize(pathName, OPEN_MODE_READ); }
         virtual ~FileInputStream(){ } // 0x0 / 0x4
 
         virtual Result TrySeek(s64 position, PositionBase base){ // 0x8
@@ -100,7 +101,7 @@ namespace fs{
             this->detail::FileBase::Seek(position, base);
         }
 
-        virtual Result TryGetPosition(s64* pOut){ // 0x10
+        virtual Result TryGetPosition(s64* pOut) const{ // 0x10
             return this->detail::FileBase::TryGetPosition(pOut);
         }
 

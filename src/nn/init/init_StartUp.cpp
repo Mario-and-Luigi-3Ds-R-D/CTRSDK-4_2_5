@@ -6,7 +6,7 @@
 
 #include <nn/os/os_Initialize.h>
 #include <nn/os/CTR/os_ErrorHandler.h>
-#include <nn/ndm/ndm_UserControl.h>
+#include <nn/ndm/ndm_Setup.h>
 #include <nn/applet/CTR/applet_Api.h>
 
 #define NN_SYSTEM_DEFAULT_HEAP_SIZE     0x00800000

@@ -30,8 +30,6 @@ static HandlerManager* sHandlerManager = 0;
 #endif
 
 NN_INLINE Result HandlerManager::Register(NotificationHandler* pHandler, u32 message){
-    //NotificationHandler* handler = pHandler;
-    Result res; res.mResult = message;
     #ifdef NN_DEBUG
     if(pHandler){
         nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",36,"%s(=0x%08X) is invalid pointer", "pHandler", pHandler);
