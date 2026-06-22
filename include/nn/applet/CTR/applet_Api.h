@@ -1,8 +1,10 @@
 #pragma once
 
 #include "nn/applet/CTR/applet_Paramaters.h"
+#include "nn/applet/CTR/applet_Result.h"
 #include "nn/fnd/fnd_TimeSpan.h"
 #include "nn/os/os_TransferMemoryBlock.h"
+#include "nn/os/os_Thread.h"
 
 // Mostly the detail ones, so yeah.
 
@@ -22,11 +24,23 @@ namespace{
     bool sIsDspSleeping;
 }
 
-    // Main Applet
+    /* Main Applet */
+
+    /// @param in AppletAttr appletAttr
+    ///
+    /// @brief Initializes the Application, used by init_Default
     Result Initialize(AppletAttr applerAttr);
+
+    /// @param in bool isSleepEnaled = true
+    ///
+    /// @brief Enable
     void Enable(bool isSleepEnabled = true);
 
-    bool IsRegistered(AppletId appletId); // inline
+    bool IsRegistered(AppletId appletId);
+
+    /// @param in AppletId appletId, nn::fnd::TimeSpan span
+    ///
+    /// @brief Uses a Tick Checker to Wait on a Register.
     bool WaitForRegister(AppletId appletId, nn::fnd::TimeSpan span);
 
     Result CancelLibraryApplet( bool isApplicationEnd = false ); // inline
@@ -53,6 +67,8 @@ namespace{
 
     void SleepIfShellClosed();
 
+    Result InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority);
+
     void SetActive();
 
     void ReplySleepQueryToManager(QueryReply);
@@ -72,6 +88,11 @@ namespace{
         bool isForced;
         s8 rev[3];
     };
+
+    inline void WaitBySleep(int msecs){
+        fnd::TimeSpan span = fnd::TimeSpan::FromMilliSeconds(msecs);
+        os::Thread::Sleep(span);
+    }
 }
 }
 }

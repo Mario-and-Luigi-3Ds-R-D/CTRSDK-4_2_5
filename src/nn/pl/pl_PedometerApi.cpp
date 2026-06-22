@@ -15,8 +15,7 @@ namespace CTR {
 void GetStepHistory(ushort pStepCounts, s32 numHours, nn::fnd::DateTime start){
     Result result;
 
-    result.mResult = nn::ptm::CTR::detail::PtmIpc::GetStepHistory().IsFailure();
-    if(result.mResult != 0){
+    if(nn::ptm::CTR::detail::PtmIpc::GetStepHistory().IsFailure()){
         nndbgBreak((nn::dbg::BreakReason)result.mResult);
     }
     return;

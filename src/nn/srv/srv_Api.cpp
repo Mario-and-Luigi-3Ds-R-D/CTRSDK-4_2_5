@@ -7,40 +7,47 @@
 #include <nn/srv/srv_Api.h>
 #include <nn/srv/detail/srv_Service.h>
 #include <nn/os/os_Thread.h>
+#include <nn/os/os_Semaphore.h>
 
 #include <nn/dbg/dbg_DebugString.h>
 #include <nn/dbg/dbg_Break.h>
 
+#define NN_NOTIFICATION_PRIORITY 1359598848
+
 namespace nn{
 namespace srv{
-namespace{
-void DispatcherThread(){
+    int sInitializeCount;
+    static os::CriticalSection sInitializeLock;
+    const char PORT_NAME_SERVICE[] = "srv:";
 
-}
-
-}
 namespace detail{
-Result Connect(const char*){
+static HandlerManager* sHandlerManager;
+Result Connect(const char* name){
+    Result res;
+    while(true){
+        res = svc::ConnectToPort(&Service::sSession,name);
+        if(res.GetLevel()       != Result::LEVEL_PERMANENT   ||
+           res.GetSummary()     != Result::SUMMARY_NOT_FOUND ||
+           res.GetDescription() != 1018) break;
+        os::Thread::Sleep(fnd::TimeSpan::FromNanoSeconds(500000));
 
+    }
+    if(res.IsSuccess()){
+        res = Service::RegisterClient();
+        sInitializeCount++;
+    }
+    return res;
 }
 
-static HandlerManager* sHandlerManager = 0;
 
 #ifdef NONMATCHING
 #endif
 
 NN_INLINE Result HandlerManager::Register(NotificationHandler* pHandler, u32 message){
-    #ifdef NN_DEBUG
-    if(pHandler){
-        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",36,"%s(=0x%08X) is invalid pointer", "pHandler", pHandler);
-    }
-    if(message != 0){
-        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",39,"%s","message != 0");
-    }
-    if(pHandler->mAttachedMessage == 0){
-        nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"srv_Api.cpp",42,"%s","pHandler->mAttachedMessage == 0");
-    }
-    #endif
+    NN_POINTER_TASSERT_(pHandler);
+    NN_TASSERT_(message != 0);
+    NN_TASSERT_(!pHandler->mAttachedMessage);
+    
     pHandler->mAttachedMessage = message;
     this->mHandler.PushBack(pHandler);
     return ResultSuccess();
@@ -48,9 +55,25 @@ NN_INLINE Result HandlerManager::Register(NotificationHandler* pHandler, u32 mes
 
 }
 
-int sInitializeCount = 0;
-static os::CriticalSection sInitializeLock;
-const char PORT_NAME_SERVICE[] = "srv:";
+namespace {
+os::Semaphore sNotificationSemaphore;
+os::Thread sNotificationDispatcher;
+
+void DispatcherThread(){
+    Result result;
+    while(true){
+        do{
+            sNotificationSemaphore.Acquire();
+        } while(!DispatchNotification().IsFailure());
+        NN_PANIC_IF_FAILED(result);
+    }
+}
+
+}
+
+namespace{
+    os::StackBuffer<4132> sStack;
+}
 
 Result Initialize(){
     os::CriticalSection& lock = srv::sInitializeLock;
@@ -67,7 +90,28 @@ Result Initialize(){
 }
 
 Result StartNotification(){
+    Result res = EnableNotification(&sNotificationSemaphore);
+    if(res.IsSuccess()){
+        sNotificationDispatcher.Start(DispatcherThread, sStack, NN_NOTIFICATION_PRIORITY);
+    }
+}
 
+Result EnableNotification(os::Semaphore* pOut){
+    Result res;
+    Handle h;
+    res = detail::Service::EnableNotication(&h);
+    if(res.IsSuccess())
+        pOut->SetHandle(h);
+    return res;
+}
+
+Result DispatchNotification(){
+    bit32 message;
+    Result res = detail::Service::ReceiveNotification(&message);
+    if(res.IsFailure())
+        return res;
+    detail::sHandlerManager->Find(message);
+    return ResultSuccess();
 }
 
 #ifdef NONMATCHING
@@ -86,10 +130,8 @@ Result GetServiceHandle(nn::Handle *pOut, const char *pName, s32 nameLen, bit32 
         Result res; res.mResult = 0xD9006405;
         return res;
     }
+    NN_TWARNING_(pName, "Failed to open service \"%s\"\n");
     return nn::srv::detail::Service::GetServiceHandle(pOut, pName, nameLen, flags);
-    #ifdef NN_DEBUG
-        nndbgTPrintWarning_("srv_Api.cpp",92,"Failed to open service \"%s\"\n",pName);
-    #endif
 }
 
 

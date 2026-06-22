@@ -17,14 +17,16 @@ namespace os{
         static const s32 RESETED_AUTO = 0; // 
         static const s32 RESETED_MANUAL = 1;
 
+        LightEvent(){ }
+        explicit LightEvent(bool isManuelReset){ Initialize(isManuelReset); }
+        ~LightEvent(){ };
+
         void Initialize(bool);
-        void Finalize();
+        void Finalize(){ }
         void ClearSignal();
         void Wait();
         void Signal();
         bool TryWait();
-        ~LightEvent(){
-        };
 
     }; // CriticalSection
 } // os

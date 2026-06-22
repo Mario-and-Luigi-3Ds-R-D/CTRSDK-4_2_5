@@ -2,7 +2,7 @@
 
 #include "nn/types.h"
 #include "nn/Result.h"
-#include "nn/os/os_Types.h"
+#include "nn/os/os_Synchronization.h"
 #include "nn/os/os_MemoryBlock.h"
 
 namespace nn{

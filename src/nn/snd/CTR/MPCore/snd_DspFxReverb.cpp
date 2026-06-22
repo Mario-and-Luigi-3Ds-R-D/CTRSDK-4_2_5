@@ -12,10 +12,6 @@ namespace CTR {
 
 DspFxReverb::FilterSize DspFxReverb::sDefaultFilterSize;
 
-DspFxReverb::Param::Param() {
-
-}
-
 DspFxReverb::DspFxReverb() {
 
 }

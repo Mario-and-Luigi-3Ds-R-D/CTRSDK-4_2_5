@@ -2,7 +2,7 @@
 #include <nn/applet/CTR/detail/applet_Ipc.h>
 #include <nn/srv/srv_Api.h>
 #include <nn/err/CTR/err_Api.h>
-#include <nn/gxlow/gxlow_Parameters.h>
+#include <nn/gxlow/gxlow_SystemUse.h>
 
 #include <string.h>
 
@@ -32,8 +32,9 @@ inline Result InitializePort(Handle* pSession){
     size_t nameLen;
     if(pSession->IsValid()){
         return (Result)0xE0A0CFF9;
-    } else{
-        nameLen = strlen(PORT_NAME_USER);
+    } 
+    else{
+        nameLen = strlen(sPortName);
         res = srv::GetServiceHandle(pSession,sPortName,nameLen,0);
     }
 }
@@ -43,7 +44,8 @@ inline Result FinalizePort(Handle* pSession){
     if(pSession->IsValid()){
         res.mResult = svc::CloseHandle(*pSession).mResult;
         *pSession = INVALID_HANDLE_VALUE;
-    } else{
+    } 
+    else{
         return (Result)0xe0a0cff8;
     }
     return res;
@@ -59,10 +61,6 @@ inline void Unlock(){
     if(sMutex.IsValid()){
         sMutex.Unlock();
     }
-}
-
-Result InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority){
-
 }
 
 Result Connect(){
@@ -90,17 +88,12 @@ void DisconnectAndUnlock(){
 // REVIEW
 
 void GetDisplayInfo(AppletDisplayInfo* pInfo){
-    gxlow::DisplayCaptureInfo infoTmp;
-    if(pInfo != 0){
-        pInfo->d[0].mAddr = infoTmp.surface[0].mAddr;
-        pInfo->d[0].mAddrB = infoTmp.surface[0].mAddrB;
-        pInfo->d[1].mAddr = infoTmp.surface[1].mAddr;
-        pInfo->d[1].mAddrB = infoTmp.surface[1].mAddrB;
-        pInfo->d[0].mode = (DisplayBufferMode)infoTmp.surface[0].mode;
-        pInfo->d[1].mode = (DisplayBufferMode)infoTmp.surface[1].mode;
-        pInfo->d[0].stride = infoTmp.surface[0].stride;
-        pInfo->d[1].stride = infoTmp.surface[1].stride;
+    if(!pInfo){
+        return;
     }
+    gxlow::CTR::DisplayCaptureInfo infoTmp;
+    return gxlow::CTR::ImportDisplayCaptureInfo(&infoTmp);
+
 }
 
 void InitializeMutex(nn::Handle handle){

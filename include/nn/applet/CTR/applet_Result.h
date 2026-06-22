@@ -1,0 +1,32 @@
+#pragma once
+
+#include "nn/Result.h"
+
+namespace nn {
+namespace applet {
+namespace CTR {
+
+enum ResultDescription{
+    DESCRIPTION_APPLET_NO_AREA_TO_REGISTER          = 1,     
+    DESCRIPTION_APPLET_PARAMETER_BUFFER_NOT_EMPTY   = 2,     
+    DESCRIPTION_APPLET_CALLER_NOT_FOUND             = 3,     
+    DESCRIPTION_APPLET_NOT_ALLOWED                  = 4,     
+    DESCRIPTION_APPLET_DIFFERENT_MODE               = 5,     
+    DESCRIPTION_APPLET_DIFFERENT_VERSION            = 6,     
+    DESCRIPTION_APPLET_SHUTDOWN_PROCESSING          = 7,     
+    DESCRIPTION_APPLET_TRANSITION_BUSY              = 8,     
+    DESCRIPTION_APPLET_VERSION_MUST_LAUNCH_DIRECTLY = 9 
+};
+
+NN_DEFINE_RESULT_CONST
+    (ResultBusy,
+       Result::LEVEL_STATUS, Result::SUMMARY_INVALID_STATE, Result::MODULE_NN_APPLET,  Result::DESCRIPTION_BUSY);
+NN_DEFINE_RESULT_CONST
+    (ResultNotEmpty,
+        Result::LEVEL_STATUS, Result::SUMMARY_INVALID_STATE, Result::MODULE_NN_APPLET,  DESCRIPTION_APPLET_PARAMETER_BUFFER_NOT_EMPTY );
+NN_DEFINE_RESULT_CONST
+    (ResultTransitionBusy,
+        Result::LEVEL_USAGE, Result::SUMMARY_INVALID_STATE, Result::MODULE_NN_APPLET,  DESCRIPTION_APPLET_TRANSITION_BUSY);
+}
+}
+}

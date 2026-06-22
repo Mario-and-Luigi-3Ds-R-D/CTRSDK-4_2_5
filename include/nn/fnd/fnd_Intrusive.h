@@ -52,6 +52,8 @@ protected:
 template <typename T, typename Tag>
 class IntrusiveLinkedList<T, Tag>::Item : private nn::util::NonCopyable<IntrusiveLinkedList<T, Tag>::Item> {
 public:
+    Item() : mPrevLink(0), mNextLink(0) {}
+    ~Item() { NN_TASSERT_(!mPrevLink && !mNextLink); }
 
     Item* mPrevLink;
     Item* mNextLink;
@@ -187,7 +189,7 @@ inline void IntrusiveLinkedList<T, Tag>::Insert(T* position, T* inserted){
     NN_ASSERT_WITH_RESULT(inserted, MakeResultInvalidAddress());
     Item* pNodeInserted = static_cast<Item*>(inserted);
     Item* pNodePosition = static_cast<Item*>(position);
-    NN_ASSERT_WITH_RESULT(!pNodeInserted->m_PreviousLink, MakeResultAlreadyListed());
+    NN_ASSERT_WITH_RESULT(!pNodeInserted->mPreviousLink, MakeResultAlreadyListed());
     if (pNodePosition == mHead){
         PushFront(inserted);
     }

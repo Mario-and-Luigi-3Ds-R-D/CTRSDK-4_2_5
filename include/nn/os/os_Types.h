@@ -7,14 +7,7 @@
 #include "nn/Handle.h"
 #include "nn/os/CTR/os_ErrorHandler.h"
 #include "nn/util/util_NonCopyable.h"
-
-// Svc Declartion to calm ARMCC
-namespace nn {
-namespace svc {
-    Result CloseHandle(nn::Handle);
-    Result WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long);
-}
-}
+#include "nn/os/os_Tick.h"
 
 #define NN_OS_WAIT_INFINITE -1
 
@@ -124,16 +117,10 @@ const s64 WAIT_INFINITE = NN_OS_WAIT_INFINITE;
         nn::os::MemoryState mState;
     };
 
-    struct HandleManager{
-    };
-
     struct ValueType{
         s32 mValueType; /* os_Api.h */
     };
 
-    struct Tick{
-        s64 mTick;
-    };
 
     struct RtcSwcInfo{
         s64 mBaseMilliSeconds;
@@ -142,64 +129,22 @@ const s64 WAIT_INFINITE = NN_OS_WAIT_INFINITE;
         s64 mDiffMilliSeconds;
     };
 
-    class HandleObj : util::ADLFireWall::NonCopyable<HandleObj>{
-    public:
-        Handle mHandle;
-
-    public:
-        Handle GetHandle() const{
-            return mHandle;
-        }
-        bool IsValid() const{
-            return mHandle.IsValid();
-        }
-
-        void SetHandle(nn::Handle handle);
-
-        #pragma push
-        #pragma diag_suppress 2530
-            HandleObj() {}
-        #pragma pop
-
-        ~HandleObj(){
-            Close();
-        }
-
-        void Close(){
-            if (IsValid()) {
-                nn::svc::CloseHandle(mHandle);
-                mHandle = Handle();
-            }
-        }
-
-        void Finalize(){
-                Close();
-        }
-
-        void ClearHandle(){
-            mHandle = Handle();
-        }
-    };
-    
-    inline void HandleObj::SetHandle(nn::Handle handle){
-        this->mHandle = handle;
-    }
-
-    class WaitObject : public HandleObj{
-    public:
-        inline nn::Result WaitOneImpl(s64 nanoSecondsTimeout){
-            s32 dummy;
-            Handle handle = GetHandle();
-            return nn::svc::WaitSynchronizationN(&dummy, &handle, 1, false, nanoSecondsTimeout);
-        }
-
-        inline void WaitOne(){
-            NN_OS_ERROR_IF_FAILED(WaitOneImpl(WAIT_INFINITE));
-        }
-
-    };
-
     struct NonCopyable{
     };
+
+    struct WritableSharedInfo{
+        s32 rtcValidNumber;
+        u8 targetHardware;
+        u8 msuTargetInfo;
+        u8 mcuInfoRegisters_10;
+        bit8 reversed[25];
+        RtcSwcInfo rtcSwcInfo[2];
+        bit8 wirelessInfo[16];
+        bit8 rev2[16];
+        f32 svr2Volume;
+        bool displayModeLockFlag;
+    };
+
+    inline WritableSharedInfo* GetWritableSharedInfo(){ return (WritableSharedInfo*)0x1ff81000; }
 }
 }

@@ -51,7 +51,7 @@ public:
     template <class Locker>
     struct Global {
     protected:
-        static Locker g_Mutex;
+        static Locker gMutex;
     public:
         class LockObject {
         public:
@@ -62,7 +62,7 @@ public:
 
         class ScopedLock : private Locker::ScopedLock {
         public:
-            ScopedLock(const LockObject&) : Locker::ScopedLock(g_Mutex) {}
+            ScopedLock(const LockObject&) : Locker::ScopedLock(gMutex) {}
         };
     };
 };

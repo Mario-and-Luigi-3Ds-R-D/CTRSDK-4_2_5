@@ -6,49 +6,36 @@
 
 #include <nn/os/os_CriticalSection.h>
 #include <nn/dbg/dbg_Break.h>
+#include <nn/Assert.h>
 
 namespace nn{
 namespace os{
 // Initializes Thread CriticalSection
 
 void CriticalSection::Initialize() {
-    this->mLock.nn::os::SimpleLock::Initialize();
-    this->mThreadUniqueValue = 0;
+    this->mLock.Initialize();
+    this->mThreadUniqueValue = this->GetInvalidThreadUniqueValue();
     this->mLockCount = 0;
 }
 
 // Enters Thread CriticalSection
 
 void CriticalSection::Enter(void) {
-    #ifdef NN_DEBUG
-        if(this->mLockCount < 0){
-            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_CriticalSection.cpp",23,"%s","this->mLockCount < 0");
-        }
-    #endif
+    NN_TASSERT_(this->IsInitialized());
     if(!this->LockedByCurrentThread()){
         this->mLock.Lock();
-        #ifdef NN_DEBUG
-            if(this->mLockCount == 0){
-                nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_CriticalSection.cpp",31,"%s","this->mLockCount == 0");
-            }
-        #endif
         this->OnLocked();
     }
-    this->mLockCount += 1;
+    this->mLockCount++;
 }
 
 // Leaves Thread CriticalSection
 
 void CriticalSection::Leave() {
-    s32 pCount;
-    #ifdef NN_DEBUG
-        if(this->mLockCount < 0){
-            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_CriticalSection.cpp",45,"%s","this->mLockCount < 0");
-        }
-    #endif
-    pCount = this->mLockCount - 1;
-    this->mLockCount = pCount;
-    if (pCount == 0) {
+    NN_TASSERT_(this->IsInitialized());
+    NN_TASSERTMSG_(LockedByCurrentThread() && this->mLockCount > 0, "CriticalSection is not entered on the current thread.");
+    if (--this->mLockCount == 0) {
+        NN_TASSERTMSG_(this->mLock.IsLocked(), "CriticalSection is not entered.");
         this->mThreadUniqueValue = 0;
         this->mLock.nn::os::SimpleLock::Unlock();
     }
@@ -57,24 +44,14 @@ void CriticalSection::Leave() {
 // Trys to enter Thread CriticalSection, if cant TryLock. If so, add to the count and proceed.
 
 bool CriticalSection::TryEnter(void) {
-    #ifdef NN_DEBUG
-        if(this->mLockCount < 0){
-            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_CriticalSection.cpp",61,"%s","this->mLockCount < 0");
-        }
-    #endif
-
+    NN_TASSERT_(this->IsInitialized());
     if(!this->LockedByCurrentThread() ){
         if(!this->mLock.TryLock() ){
             return false;
         }
-        #ifdef NN_DEBUG
-            if(this->mLockCount == 0){
-                nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_CriticalSection.cpp",71,"%s","this->mLockCount == 0");
-            }
-        #endif
         OnLocked();
     }
-    this->mLockCount = this->mLockCount + 1;
+    this->mLockCount++;
     return true;
 }
 

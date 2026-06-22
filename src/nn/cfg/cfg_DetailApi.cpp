@@ -1,6 +1,5 @@
 #include <nn/cfg/CTR/cfg_DetailApi.h>
 #include <nn/cfg/CTR/cfg_IpcUser.h>
-#include <nn/dbg/dbg_Printf.h>
 #include <nn/srv/srv_Api.h>
 
 #include <string.h>
@@ -36,27 +35,41 @@ Result InitializeBase(Handle* pSession, const char* name){
 }
 
 
-// nm
+// NONMATCHING
 Result Initialize(){
     Result res;
     if(!InitializeCount){
         res = InitializeBase(&IpcUser::sSession,PORT_NAME_USER);
         if(res.IsSuccess()){
             sIsInitialized = true;
-        } else{
-            return (Result)0xd92103fb;
+        } 
+        else{
+            if(res == (Result)0xd92103fb){
+                return res;
+            }
         }
     }
     ++InitializeCount;
-    return res;
+    return ResultSuccess();
 }
 
 Result InitializeProperPort(IPCPortType* pPortType){
     // TODO
 }
 
-Result FinalizeBase(nn::Handle* pSession){
-
+// NONMATCH
+Result FinalizeBase(Handle* pSession){
+    Result res;
+    if(*pSession == 0){
+        res = (Result)0xd8a103f7;
+    } else{
+        res.mResult = svc::CloseHandle(*pSession).IsFailure();
+        if((res.mResult)){
+            nndbgPanic();
+        }
+        *pSession = INVALID_HANDLE_VALUE;
+    }
+    return res;
 }
 
 void Finalize(){

@@ -5,6 +5,7 @@
 #include "nn/fnd/fnd_HeapBase.h"
 #include "nn/os/os_CriticalSection.h"
 #include "nn/os/os_LockPolicy.h"
+#include "nn/Assert.h"
 
 // 100%
 
@@ -64,7 +65,7 @@ public:
     static FrameHeapTemplate* Create(HeapBase* parent, void* addr, size_t size, bit32 option = 0, bit32 placement = HEAP_INFOPLACEMENT_HEAD);
 
     virtual ~FrameHeapTemplate() {}
-    virtual void FreeV(void*) {}
+    virtual void FreeV(void*) { NN_TASSERT_(0); }
     virtual void* GetStartAddress() const {
         ScopedLock lk(*this);
         return Base::GetStartAddress();

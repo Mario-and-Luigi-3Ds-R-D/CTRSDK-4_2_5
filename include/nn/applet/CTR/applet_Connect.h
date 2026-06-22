@@ -14,7 +14,6 @@ namespace{
     const char PORT_NAME_SYSTEM[] = "APT:S";
     const char PORT_NAME_USER[] = "APT:U";
 }
-    Result InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority);
     void InitializeMutex(Handle handle);
     Result Connect();
     void LockAndConnect();

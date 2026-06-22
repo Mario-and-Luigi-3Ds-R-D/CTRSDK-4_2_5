@@ -17,5 +17,9 @@ protected:
     virtual ~HashContextBase() {}
     virtual void ProcessBlock() {}
 };
+
+inline uint Convert32HToBE(uint he){
+    return he << 0x18 | (he >> 8 & 0xff) << 0x10 | (he >> 0x10 & 0xff) << 8 | he >> 0x18;
+}
 }
 }

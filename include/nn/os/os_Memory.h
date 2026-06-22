@@ -5,14 +5,15 @@
 
 namespace nn{
 namespace os{
-    uptr GetMemoryAddress(void); // 100%
-    uptr GetAppMemorySize(); // 100%
-    size_t GetDeviceMemorySize(void); // 100%
-    Result SetDeviceMemorySize(size_t); // ASM
-    void SetupHeapForMemoryBlock(size_t); // ASM
-    size_t GetHeapSize(void); // 100%
-    uptr GetCodeRegionAddress(); // 100%
-    size_t GetCodeRegionSize(); // 100%
+    uptr GetMemoryAddress();
+    uptr GetAppMemorySize();
+    size_t GetDeviceMemorySize();
+    Result SetDeviceMemorySize(size_t);
+    void SetupHeapForMemoryBlock(size_t);
+    size_t GetHeapSize();
+    uptr GetDeviceMemoryAddress();
+    uptr GetCodeRegionAddress();
+    size_t GetCodeRegionSize();
     size_t GetUsingMemorySize(); // ASM
 
 }

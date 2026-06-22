@@ -20,7 +20,7 @@ namespace APPLET{
     Result IsRegistered(AppletId appletId,bool *pRegistered);
     Result JumpToHomeMenu(u8 *pParam,size_t paramSize,Handle handle);
     Result NotifyToWait(AppletId id);
-    Result PrepareToCloseApplication(bool isJumpToHome); // idk if dt has this
+    Result PrepareToCloseApplication(bool isJumpToHome);
     Result PrepareToJumpToHomeMenu();
     Result PrepareToStartSystemApplet(AppletId id);
     Result ReceiveParameter(AppletId *pSenderId,AppletId receiverId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle);

@@ -5,7 +5,7 @@ namespace cfg {
 namespace CTR {
 namespace detail {
 namespace IpcUser{
-    nn::Handle sSession = 0;
+    nn::Handle sSession;
 
 __asm Result GetConfig (void* pData, size_t size, bit32 key){
     PUSH            {R4,LR}

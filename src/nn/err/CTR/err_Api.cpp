@@ -1,5 +1,6 @@
 #include <nn/err/CTR/err_Api.h>
-#include <nn/dbg/dbg_Printf.h>
+#include <nn/dbg/dbg_Break.h>
+#include <nn/dbg/dbg_DebugString.h>
 
 using namespace nn::dbg::detail;
 
@@ -9,7 +10,13 @@ namespace CTR{
 namespace{
 static FatalErrInfo sFatalErrInfo;
 
+Result InitializeFatalErrSession(){
+    Result res;
+    
+}
+
 void Throw(nn::err::CTR::FatalErrInfo* pInfo){
+    
 }
 
 }

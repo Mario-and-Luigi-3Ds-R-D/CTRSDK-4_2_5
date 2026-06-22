@@ -86,6 +86,12 @@ namespace fs{
         bool mUpdateTimeStampOld;
         bool mUpdateTimeStamp;
         s8 mDestroySignature;
+
+        WriteOption(bool flush, bool updateTimeStamp){
+            this->mFlush = flush;
+            this->mUpdateTimeStampOld = false;
+            this->mUpdateTimeStamp = updateTimeStamp;
+        }
     };
 
     struct Transaction{

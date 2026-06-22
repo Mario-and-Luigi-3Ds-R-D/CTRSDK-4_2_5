@@ -2,6 +2,8 @@
 
 #include "nn/snd/CTR/Common/snd_Bcwav.h"
 
+#include <string.h>
+
 namespace nn {
 namespace snd {
 namespace CTR {
@@ -130,6 +132,13 @@ struct OutputCapture{
     s32 mWritePos;
     bool mIsEnabled;
     u8 rev[3];
+
+    void Write(short* pData, s32 length){
+        memcpy((&this->mBufferAddess + this->mWritePos * 4), pData, length << 2);
+        this->mWritePos += length;
+        if(this->mBufferLength <= this->mWritePos)
+            this->mWritePos = 0;
+    }
 };
 
 enum SyncMode{

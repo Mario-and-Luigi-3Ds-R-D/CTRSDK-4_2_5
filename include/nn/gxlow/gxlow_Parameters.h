@@ -4,6 +4,7 @@
 
 namespace nn{
 namespace gxlow{
+namespace CTR{
     enum DisplayBufferMode{
         FORMAT_R8G8B8A8 = 0,
         FORMAT_R8G8B8 = 1,
@@ -12,14 +13,15 @@ namespace gxlow{
         FORMAT_R4G4B4A4 = 4,
         FORMAT_UNIMPORTABLE = 0xFFFFFFFFF
     };
-    struct DisplayInfoParams{
-        uptr mAddr;
-        uptr mAddrB;
-        DisplayBufferMode mode;
-        u32 stride;
-    };
     struct DisplayCaptureInfo{
+        union DisplayInfoParams{
+            uptr mAddr;
+            uptr mAddrB;
+            DisplayBufferMode mode;
+            u32 stride;
+        };
         DisplayInfoParams surface[2];
     };
+}
 }
 }

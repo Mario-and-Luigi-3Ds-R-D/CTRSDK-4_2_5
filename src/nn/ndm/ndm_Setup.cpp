@@ -4,15 +4,14 @@
 #include <nn/applet/CTR/applet_Info.h>
 #include <nn/applet/CTR/applet_Api.h>
 
-#include <nn/dbg/dbg_Printf.h>
+#include <nn/dbg/dbg_DebugString.h>
 namespace nn{
 namespace ndm{
 
 void SetupDaemonsDefault(){
-    if(nn::applet::CTR::IsInitialized() && !nn::applet::CTR::GetAppletType()){
+    if(applet::CTR::IsInitialized() && !applet::CTR::GetAppletType()){
         Result canInit; 
-        canInit.mResult = nn::ndm::Initialize().IsFailure();
-        if(canInit.mResult != 0){
+        if(ndm::Initialize().IsFailure()){
             nndbgPanic();
         }
         canInit = nn::ndm::CTR::detail::Interface::OverrideDefaultDaemons(0xfu);

@@ -4,7 +4,7 @@
 //
 // Remade by user Luigifan27
 
-#include <nn/hid/CTR/hid_Pad.h>
+#include <nn/hid/CTR/hid_PadReader.h>
 #include <nn/hid/CTR/hid_ExtraPad.h>
 #include <nn/hidlow/CTR/hidlow_PadLifoRing.h>
 #include <nn/hidlow/hidlow_Api.h>
@@ -32,10 +32,8 @@ bool PadReader::ReadLatest(PadStatus* pBuf){
     s32 index = -1;
     s32 readLen;
     uint newHold;
-    bool isAppletInitialized;
 
-    bool IsSampling = nn::hid::CTR::ExtraPad::IsSampling();
-    if(!IsSampling){
+    if(!ExtraPad::IsSampling()){
         this->mStickClamper.ClampValueOfClamp();
         hidlow::CTR::PadLifoRing* ring = (hidlow::CTR::PadLifoRing*)this->mPad.GetResource();
         ring->hidlow::CTR::PadLifoRing::ReadData(pBuf, 1, &readLen, &tick, &index);
@@ -50,13 +48,8 @@ bool PadReader::ReadLatest(PadStatus* pBuf){
             uint mLatestHold = this->mLatestHold;
             pBuf->trigger = (newHold ^ mLatestHold) & ~mLatestHold;
             pBuf->release = this->mLatestHold & ~newHold;
-            isAppletInitialized = applet::CTR::IsInitialized();
-            if((isAppletInitialized) && (isAppletInitialized = applet::CTR::detail::IsActive(), !isAppletInitialized)){
-                pBuf->hold = 0;
-                pBuf->release = 0;
-                pBuf->trigger = 0;
-                pBuf->stick.x = 0;
-                pBuf->stick.y = 0;
+            if((applet::CTR::IsInitialized()) && (!applet::CTR::detail::IsActive())){
+                this->HideKeyInfo(pBuf);
             }
             this->mLatestHold = pBuf->hold;
             if(sIsEnableSelect == false){
@@ -67,6 +60,19 @@ bool PadReader::ReadLatest(PadStatus* pBuf){
     }
     return false;
 }
+
+/*void PadReader::Read(PadStatus* pBufs, s32* pReadLen, s32 bufLen){
+    NN_TASSERT_(NULL != pBufs);
+    this->mStickClamper.ClampValueOfClamp();
+    hidlow::CTR::PadLifoRing* ring = (hidlow::CTR::PadLifoRing*)this->mPad.GetResource();
+    ring->hidlow::CTR::PadLifoRing::ReadData(pBufs, 1, pReadLen, &this->mTickOfRead, &this->mIndexOfRead);
+
+    if(!ExtraPad::IsSampling){
+        for(int i = 0; i < *pReadLen; i++){
+
+        }
+    }
+}*/
 
 f32 PadReader::NormalizeStick(short x, short y){
     return this->mStickClamper.NormalizeStick(x,y);

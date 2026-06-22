@@ -8,22 +8,24 @@
 #include <nn/os/os_CriticalSection.h>
 #include <nn/fnd/fnd_Intrusive.h>
 #include <nn/dbg/dbg_Break.h>
+#include <nn/Assert.h>
 
 namespace nn{
 namespace os{
+
+void AddressSpaceManager::Initialize(uptr begin, size_t size){
+    if (this->mSpaceBegin == 0 && this->mSpaceEnd == 0){
+        this->mLock.Initialize();
+        this->mSpaceBegin = begin;
+        this->mSpaceEnd = begin + size;
+    }
+}
+
 uptr AddressSpaceManager::Allocate(MemoryBlockBase* pBlock, size_t size, size_t skipSize){
-    #ifdef NN_DEBUG
-        if(pBlock == 0){
-            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_AddressSpaceManager.cpp",16,"%s must not be NULL","pBlock");
-        }
-        if((size & 0xfff) != 0){
-            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_AddressSpaceManager.cpp",19,"%s(=0x%08x) must be %d byte aligned","size",size,0x1000);
-        }
-        if((skipSize & 0xfff) != 0){
-            nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"os_AddressSpaceManager.cpp",22,"%s(=0x%08x) must be %d byte aligned","skipSize",skipSize,0x1000);
-        }
-    #endif
-    Lock::ScopedLock scopedLock(mLock);
+    NN_NULL_TASSERT_(pBlock);
+    NN_ALIGN_TASSERT_(size, NN_OS_MEMORY_PAGE_SIZE);
+    NN_ALIGN_TASSERT_(skipSize, NN_OS_MEMORY_PAGE_SIZE);
+    Lock::ScopedLock scopedLock(this->mLock);
 
     MemoryBlockBase* pPrev = FindSpace(size, skipSize);
     uptr allocatedAddress;
@@ -67,49 +69,38 @@ uptr AddressSpaceManager::Allocate(MemoryBlockBase* pBlock, size_t size, size_t 
     return allocatedAddress;
 }
 
+void AddressSpaceManager::Free(MemoryBlockBase *pBlock){
+    Lock::ScopedLock scopedLock(this->mLock);
+    this->mBlockList.Erase(pBlock);
+    pBlock->SetAddressAndSize(NULL, 0);
+}
+
+void AddressSpaceManager::Switch(MemoryBlockBase *pTo,MemoryBlockBase *pFrom){
+    Lock::ScopedLock scopedLock(this->mLock);
+
+    pTo->SetAddressAndSize(pFrom->GetAddress(), pFrom->GetSize());
+    this->mBlockList.Insert(pFrom, pTo);
+
+    pFrom->SetAddressAndSize(NULL, 0);
+    this->mBlockList.Erase(pFrom);
+}
 
 MemoryBlockBase* AddressSpaceManager::FindSpace(size_t size, size_t skipSize){
-    MemoryBlockBase* pItem = mBlockList.GetBack();
+    MemoryBlockBase* pItem = this->mBlockList.GetBack();
     uptr end = mSpaceEnd;
 
     while(pItem != NULL){
         const uptr nextBegin = pItem->GetAddress();
-        const uptr nextEnd   = nextBegin + pItem->GetSize();
+        const uptr nextEnd = nextBegin + pItem->GetSize();
         const size_t spaceSize = end - nextEnd;
         if(spaceSize >= size + skipSize){
             return pItem;
         }
 
         end = nextBegin - skipSize;
-        pItem = mBlockList.GetPrevious(pItem);
+        pItem = this->mBlockList.GetPrevious(pItem);
     }
     return NULL;
-}
-
-void AddressSpaceManager::Free(MemoryBlockBase *pBlock){
-    Lock::ScopedLock scopedLock(mLock);
-
-    mBlockList.Erase(pBlock);
-    pBlock->SetAddressAndSize(NULL, 0);
-}
-
-void AddressSpaceManager::Switch(MemoryBlockBase *pTo,MemoryBlockBase *pFrom){
-    Lock::ScopedLock scopedLock(mLock);
-
-    pTo->SetAddressAndSize(pFrom->GetAddress(), pFrom->GetSize());
-    mBlockList.Insert(pFrom, pTo);
-
-    pFrom->SetAddressAndSize(NULL, 0);
-    mBlockList.Erase(pFrom);
-}
-
-void AddressSpaceManager::Initialize(uptr begin, size_t size){
-    if (mSpaceBegin == 0 && mSpaceEnd == 0){
-        mLock.Initialize();
-        
-        mSpaceBegin = begin;
-        mSpaceEnd   = begin + size;
-    }
 }
 
 }

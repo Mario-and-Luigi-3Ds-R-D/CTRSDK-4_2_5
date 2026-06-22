@@ -4,11 +4,11 @@
 
 namespace nn{
 namespace os{
-    class Semaphore : public nn::os::InterruptEvent{
+    class Semaphore : public InterruptEvent{
     public:
-        ~Semaphore(){
-            this->Close();
-        }
+        Semaphore(){ }
+        ~Semaphore(){ }
+        void Acquire() { this->WaitOne(); }
     };
 }
 }

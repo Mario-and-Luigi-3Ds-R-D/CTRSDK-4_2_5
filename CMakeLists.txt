@@ -28,17 +28,17 @@ function(nn_library TARGET_NAME MODULE_DIR)
         --apcs=//interwork --cpu=MPCore --fpmode=fast --cpp --arm
         --signed_chars --multibyte-chars -DNN_PROCESSOR_ARM11MPCORE
         -O3 -Otime --data-reorder --split_sections --force_new_nothrow
-        --no_debug_macros --remove_unneeded_entities --no_allow_fpreg_for_nonfpdata
-        --diag_suppress=1 --diag_suppress=177 --diag_suppress=541 --diag_suppress=1134 --diag_suppress=3017 
+        --no_debug_macros --remove_unneeded_entities
+        --diag_suppress=3017,940,997,177,541,1,1134,550,83,427,2525,117,284,174,111,1441,161
         --debug_info=line_inlining_extensions --dollar
-        --no_rtti
+        --no_rtti --no_allow_fpreg_for_nonfpdata
         >
     )
 
     target_compile_options(${TARGET_NAME} PRIVATE $<$<COMPILE_LANGUAGE:C>:
         --apcs=//interwork --cpu=MPCore --fpmode=fast --c99 --arm
-        --signed_chars --multibyte-chars --locale=japanese
-        -Otime --data-reorder --split_sections
+        --signed_chars --multibyte-chars --locale=japanese -O3
+        -Otime --data-reorder --split_sections --no_allow_fpreg_for_nonfpdata
         >
     )
 
@@ -57,7 +57,7 @@ nn_library(nn_applet  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/applet)
 nn_library(nn_camera  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/camera)
 nn_library(nn_cfg     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/cfg)
 nn_library(nn_crt0    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/crt0)
-#nn_library(nn_crypto  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/crypto)
+nn_library(nn_crypto  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/crypto)
 nn_library(nn_dbg     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dbg)
 #nn_library(nn_dbm     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dbm)
 nn_library(nn_dev     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dev)
@@ -67,7 +67,7 @@ nn_library(nn_fnd     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/fnd)
 nn_library(nn_font    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/font)
 nn_library(nn_fs      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/fs)
 nn_library(nn_fslow   ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/fslow)
-#nn_library(nn_gx      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/gx)
+nn_library(nn_gx      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/gx)
 #nn_library(nn_gxlow   ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/gxlow)
 nn_library(nn_hid     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/hid)
 nn_library(nn_hidlow  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/hidlow)
@@ -82,7 +82,7 @@ nn_library(nn_os      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/os)
 nn_library(nn_pl      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/pl)
 nn_library(nn_ptm     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ptm)
 nn_library(nn_ro      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ro)
-nn_library(nn_rtport      ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/rtport/rvct)
+nn_library(nn_rtport  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/rtport/rvct)
 nn_library(nn_snd     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/snd)
 nn_library(nn_srv     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/srv)
 nn_library(nn_svc     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/svc)
@@ -91,13 +91,24 @@ nn_library(nn_ulcd    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ulcd)
 # Aggregate target for convenience
 
 add_library(CTRSDK INTERFACE)
+add_library(gles2 STATIC IMPORTED GLOBAL)
+add_library(gxlow STATIC IMPORTED GLOBAL)
+
+set_target_properties(gles2 PROPERTIES
+    IMPORTED_LOCATION
+        "${CMAKE_CURRENT_SOURCE_DIR}/build/libgles2.fast.a"
+)
+set_target_properties(gxlow PROPERTIES
+    IMPORTED_LOCATION
+        "${CMAKE_CURRENT_SOURCE_DIR}/build/libnn_gxlow.fast.a"
+)
 
 target_link_libraries(CTRSDK INTERFACE
     nn_applet
     nn_camera
     nn_cfg
     nn_crt0
-#    nn_crypto
+    nn_crypto
     nn_dbg
 #    nn_dbm
     nn_dev
@@ -127,4 +138,7 @@ target_link_libraries(CTRSDK INTERFACE
     nn_srv
     nn_svc
     nn_ulcd
+
+    gxlow
+    gles2
 )

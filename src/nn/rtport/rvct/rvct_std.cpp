@@ -16,8 +16,6 @@
 #include <typeinfo>
 #include <cstring>
 
-#define NN_UNUSED_VAR(x) ((void)(x))
-
 
 typedef int FILEHANDLE;
 

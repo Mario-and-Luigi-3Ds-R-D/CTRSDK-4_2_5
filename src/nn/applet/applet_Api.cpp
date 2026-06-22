@@ -9,6 +9,12 @@
 #include <nn/srv/srv_Api.h>
 #include <nn/os/os_Thread.h>
 #include <nn/err/CTR/err_Api.h>
+#include <nn/gxlow/gxlow_SystemUse.h>
+#include <nn/dsp/CTR/MPCore/dsp_Api.h>
+
+#include <nn/dbg/dbg_DebugString.h>
+
+#include <nn/gx/CTR/gx_CTR.h>
 
 // Legitimate Clusterfuck.
 
@@ -29,6 +35,22 @@ inline bool IsRegistered(AppletId id){
     return isRegistered;
 }
 
+#ifdef NONMATCHING
+#endif
+
+inline AppletId GetHomeMenuAppletId(){
+    Result res;
+    AppletPos pos;
+    AppletId id1; 
+    AppletId id2; 
+    AppletId id3; 
+    LockAndConnect();
+    res = APPLET::GetAppletManInfo(POS_NONE, &pos, &id1, &id2, &id3);
+    NN_ERR_THROW_FATAL(res);
+    DisconnectAndUnlock();
+    return id2;
+}
+
 inline Result CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize){
     return CallUtility(utilityId, pInParam, inParamSize, 0,0,0);
 }
@@ -44,24 +66,40 @@ inline Result FinalizePort(Handle* pSession){
     return res;
 }
 
-#ifdef NONMATCHING
-#endif
-
-inline AppletId GetHomeMenuAppletId(){
-    Result res; AppletId id2; AppletId id3; AppletId id1; AppletPos pos;
-
-    LockAndConnect();
-    res = APPLET::GetAppletManInfo(POS_NONE,&pos,&id1,&id2,&id3);
-    NN_ERR_THROW_FATAL(res);
-    DisconnectAndUnlock();
-    return id2;
+inline bool IsRetryRequired(Result result){
+    bool ret = true;
+    if(result == nn::applet::CTR::ResultBusy())
+        return ret;
+    if(result == nn::applet::CTR::ResultTransitionBusy())
+        return ret;
+    if(result == nn::applet::CTR::ResultNotEmpty())
+        return ret;
+    return false;
 }
 
-inline void WaitBySleep(int msecs){
-    fnd::TimeSpan span = fnd::TimeSpan::FromMilliSeconds(msecs);
-    os::Thread::Sleep(span);
+bool DisableSleepForTransition(){
+    bool isSleep = CTR::IsEnableSleep();
+    if(isSleep) DisableSleep(true);
+    return isSleep;
+}
+bool EnableSleepForTransition(){
+    bool isSleep = CTR::IsEnableSleep();
+    if(!isSleep) EnableSleep(true);
+    return isSleep;
 }
 
+void RestoreSleepForTransition(bool e){
+    if(e)
+        EnableSleepForTransition();
+    else
+        DisableSleepForTransition();
+}
+
+
+inline Result SaveVramSysArea(){
+    sIsVramSaved = true;
+    return gxlow::CTR::SaveVramSysArea();
+}
 
 } // detail
 } // CTR
@@ -136,8 +174,36 @@ bool WaitForRegister(AppletId appletId,nn::fnd::TimeSpan span){
 
 /* CancelLibraryAppletIfRegistered */
 
-Result CancelLibraryAppletIfRegistered(bool isApplicationEnd, nn::applet::CTR::AppletWakeupState *pWakeupState){
-    // TODO
+inline Result CancelLibraryApplet(bool isApplicationEnd){
+    Result res;
+    SetTransitionType(TRANSITION_CANCEL_APPLIB);
+    while(true){
+        LockAndConnect();
+        res = APPLET::CancelLibraryApplet(isApplicationEnd);
+        DisconnectAndUnlock();
+        if(!IsRetryRequired(res)) break;
+        WaitBySleep(10);
+    }
+    return res;
+}
+
+Result CancelLibraryAppletIfRegistered(bool isApplicationEnd, AppletWakeupState* pWakeupState){
+    Result res = ResultSuccess();
+    if(pWakeupState){
+        *pWakeupState = WAKEUP_SKIP;
+    }
+    if((!IsApplication() || IsRegistered(0x400)) &&
+       (!IsSystemApplet() || IsRegistered(0x200))){
+        res = CancelLibraryApplet(isApplicationEnd);
+        if(res == ResultSuccess()){
+            AppletWakeupState wakeup;
+            wakeup = WaitForStarting(NULL,NULL,0,NULL,NULL,CTR::WAIT_INFINITE);
+            if(pWakeupState)
+                *pWakeupState = wakeup;
+            
+        }
+    }
+    return res;
 }
 
 /* NotifyToWait */
@@ -160,8 +226,39 @@ Result CallUtility(u32 utilityId, u8* pInParam, size_t inParamSize, u8* pOutPara
 
 /* CloseApplication */
 
-Result CloseApplication(u8 *pParam,size_t paramSize,nn::Handle handle){
-    // TODO
+inline Result PrepareToCloseApplication(bool isCancelPreload){
+    CancelLibraryAppletIfRegistered(false);
+    SetTransitionType(TRANSITION_CLOSE_APP);
+    Result res;
+    while(true){
+        LockAndConnect();
+        res = APPLET::PrepareToCloseApplication(!isCancelPreload);
+        DisconnectAndUnlock();
+        if(!IsRetryRequired(res)) break;
+        WaitBySleep(10);
+    }
+    NN_ERR_THROW_FATAL(res);
+    return res;
+}
+
+Result CloseApplication(u8* pParam, size_t paramSize, Handle handle){
+    if(GetTransitionType() != TRANSITION_CLOSE_APP){
+        PrepareToCloseApplication(false);
+    }
+    CloseAppletHook();
+    AssignGpuRight(false);
+    Result res;
+    while(true){
+        LockAndConnect();
+        res = APPLET::CloseApplication(pParam, paramSize, handle);
+        DisconnectAndUnlock();
+        if(!IsRetryRequired(res)) break;
+        WaitBySleep(10);
+    }
+    NN_ERR_THROW_FATAL(res);
+    SetInactive();
+    svc::ExitProcess();
+    return res;
 }
 
 /* #AppletRightsMatter */
@@ -169,48 +266,128 @@ Result CloseApplication(u8 *pParam,size_t paramSize,nn::Handle handle){
 /* AssignGpuRight */
 
 void AssignGpuRight(bool flag){
-    // TODO
+    Result res;
+    if(flag){
+        sIsGpuRightGiven = true;
+        res = gxlow::CTR::AcquireGpuRight();
+        NN_ERR_THROW_FATAL(res);
+    }
+    else if(sIsGpuRightGiven){
+        sIsGpuRightGiven = false;
+        res = gxlow::CTR::ReleaseGpuRight();
+        if(res == Result(0xd8a02a05)){
+            if(res == Result(0xd9001bf7)){
+                NN_TLOG_("applet_API: Warning: Release GPU right despite no gx init.\n");
+            }
+            else{
+                NN_ERR_THROW_FATAL(res);
+            }
+        }
+    }
 }
 
 /* PrepareToStartSystemApplet */
 
 Result PrepareToStartSystemApplet(AppletId id){
-    // TODO
+    Result res;
+    nngxGetIsRunning();
+    CancelLibraryAppletIfRegistered(false);
+    SetTransitionType(TRANSITION_START_SYS);
+    bool sleep = DisableSleepForTransition();
+    while(true){
+        LockAndConnect();
+        res = APPLET::PrepareToStartSystemApplet(id);
+        DisconnectAndUnlock();
+        if(!IsRetryRequired(res)) break;
+        WaitBySleep(10);
+    }
+    RestoreSleepForTransition(sleep);
+    if(IsApplication()){
+        if(res == Result(0xc8a0cffc)){
+            res = ResultSuccess();
+        }
+    }
+    return res;
 }
 
 /* StartSystemApplet */
 
-Result StartSystemApplet(AppletId id, u8* pParam, size_t size, nn::Handle handle){
-    // TODO
+Result StartSystemApplet(AppletId id,u8* pParam,size_t paramSize,Handle h){
+    Result res;
+
+    if (!IsApplication() && !IsSystemApplet())
+        return Result(0xC8A0CC04);
+
+    if (IsSystemApplet()){
+        AssignGpuRight(false);
+    }
+    else if (IsApplication()){
+        SaveVramSysArea();
+
+        AssignDspRight(false);
+        AssignGpuRight(false);
+        AssignCameraRight(false);
+    }
+
+    bool sleepEnabled = IsEnableSleep();
+
+    if (sleepEnabled)
+        DisableSleep(true);
+
+    while (true){
+        LockAndConnect();
+        res = APPLET::StartSystemApplet(id,pParam,paramSize,h);
+        DisconnectAndUnlock();
+        if (!IsRetryRequired(res)) break;
+        WaitBySleep(10);
+    }
+
+    if (sleepEnabled){
+        if (!IsEnableSleep())
+            EnableSleep(true);
+    }
+    else{
+        if (IsEnableSleep())
+            DisableSleep(true);
+    }
+
+    NN_ERR_THROW_FATAL_ALL(res);
+    SetInactive();
+    if (IsApplication())
+        res = CaptureScreenForSystemApplet(id);
+
+    if (IsSystemApplet())
+        svc::ExitProcess();
+
+    return res;
 }
 
 /* AssignDspRight */
 
 void AssignDspRight(bool flag){
-/*
-    if(flag){
-        if(isDspSleeping != false){
+    /*if(flag){
+        if(sIsDspSleeping){
             dsp::CTR::WakeUp();
-            isDspSleeping = false;
+            sIsDspSleeping = false;
         }
     }
     else{
         if(dsp::CTR::IsComponentLoaded()){
             dsp::CTR::Sleep();
-            isDspSleeping = true;
+            sIsDspSleeping = true;
         }
-    }
-*/
+    }*/
 }
 
 /* AssignCameraRight */
-/* Finished */
 
 void AssignCameraRight(bool flag){
-    if(flag == 0){
+    if(flag){
         camera::CTR::detail::LeaveApplication();
     }
-    camera::CTR::detail::ArriveApplication();
+    else{
+        camera::CTR::detail::ArriveApplication();
+    }
 }
 
 /* CancelParamater */
@@ -221,63 +398,51 @@ bool CancelParameter(bool isSenderCheck, nn::applet::CTR::AppletId senderId, boo
     Result res = APPLET::CancelParamater(isSenderCheck, senderId, isReceiverCheck, receiverId, &isCanceled);
     NN_ERR_THROW_FATAL(res);
     DisconnectAndUnlock();
-    return (s8)isCanceled;
+    return isCanceled;
 }
 
 /* JumpToHomeMenu */
-/* Not Finished */
 
-Result JumpToHomeMenu(u8 *pParam,size_t paramSize,Handle handle){
-    /*AppletId appletId; AppletId homemenuId; 
+Result JumpToHomeMenu(u8* pParam, size_t paramSize, Handle handle){
+    AppletId appletId; AppletId homemenuId; 
     Result res; 
     Handle hand_local;
-    appletId = GetHomeMenuAppletId();
-    bool appletCheck = IsApplication();
-    if(appletCheck){
+    appletId = CTR::detail::GetHomeMenuAppletId();
+    if(IsApplication()){
         while(!IsRegistered(appletId)){
             WaitBySleep(10);
         }
-        sIsVramSaved = true;
-        gxlow::CTR::SaveVramSysArea();
+        SaveVramSysArea();
         res = CaptureScreenForSystemApplet(appletId);
     }
-    if(dsp::CTR::IsComponentLoaded()){
-        dsp::CTR::Sleep();
-        sIsDspSleeping = true;
-    }
+    AssignDspRight(false);
     AssignGpuRight(false);
-    camera::CTR::LeaveApplication();
+    AssignCameraRight(false);
     LockAndConnect();
     res = APPLET::JumpToHomeMenu(pParam, paramSize, handle);
     NN_ERR_THROW_FATAL(res);
     DisconnectAndUnlock();
     SetInactive();
-    return res;*/
+    return res;
 }
 
 /* PrepareToJumpToHomeMenu*/
-/* Finished */
 
 Result PrepareToJumpToHomeMenu(){
     SetTransitionType(TRANSITION_JUMP_HOME);
-        
-    const Result ERROR_A(0xc8a0cff0);
-    const Result ERROR_B(0xe0a0cc08);
-    const Result ERROR_C(0xc8a0cc02);
         
     Result res;
     while(true){
         LockAndConnect();
         res = APPLET::PrepareToJumpToHomeMenu();
         DisconnectAndUnlock();
-        if (res != ERROR_A && res != ERROR_B && res != ERROR_C) break;
+        if (!IsRetryRequired(res)) break;
             WaitBySleep(10);
     }
     return res;
 }
 
 /* GetAppletManInfo */
-/* Finished */
 
 void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pRequestedId,AppletId *pHomeMenuId,AppletId *pCurrentId){
     AppletPos currentPos; AppletId requestedId; AppletId homeMenuId; AppletId currentId; Result result;
@@ -297,33 +462,35 @@ Result Glance(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 
     // TODO
 }
 
-/* --Transitions-- */
-
 /* UnlockTransition */
 
+
+
 void UnlockTransition(u32 action){
-    // TODO
+
 }
 
 /* LockTransition */
 
 void LockTransition(u32 action,bool isForced){
-    // TODO
+
 }
 
-// I love this hack
-
 /* SleepIfShellClosed */
-/* Finished */
+
 #pragma O2
+
 void SleepIfShellClosed() {
     u32 flags = 0;
     u32 callId = 4;
     CallUtility(callId, (u8*)flags, flags, (u8*)flags, flags, (s32*)flags);
 }
+
 #pragma O3
 
-/* -- SLEEPMANAGERS -- */
+Result InitializeConnect(AppletId appletId, AppletAttr attr, s32 threadPriority){
+    // TODO
+}
 
 /* ReplyToSleepQueryToManager */
 

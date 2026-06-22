@@ -20,7 +20,7 @@ Result Initialize(){
     size_t nameLen;
     Result result;
 
-    if (sInitializedCount == 0){
+    if (!sInitializedCount){
         nn::srv::Initialize();
         nameLen = strlen(PORT_NAME_USER);
         result = nn::srv::GetServiceHandle(&CTR::detail::Interface::sSession, PORT_NAME_USER, nameLen, 0);
@@ -29,21 +29,9 @@ Result Initialize(){
     ++sInitializedCount;
     return ResultSuccess();
 }
-// Suspends the current Daemons.
-__asm Result SuspendDaemons(bit32 mask){
-    NOP
-    PUSH            {R4,LR}
-    MRC             p15, 0, R4,c13,c0, 3
-    LDR             R1, =0x60040
-    STR             R1, [R4,#0x80]!
-    STR             R0, [R4,#4]
-    LDR             R0, =__cpp(&CTR::detail::Interface::sSession)
-    LDR             R0, [R0]
-    SVC             0x32
-    AND             R1, R0, #0x80000000
-    CMP             R1, #0
-    LDRGE           R0, [R4,#4]
-    POP             {R4,PC}
+
+Result SuspendDaemons(bit32 mask){
+    return CTR::detail::Interface::SuspendDaemons(mask);
 }
 
 }

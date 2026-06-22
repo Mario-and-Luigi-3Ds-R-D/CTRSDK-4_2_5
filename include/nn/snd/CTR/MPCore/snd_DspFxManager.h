@@ -26,14 +26,17 @@ public:
     void Initialize();
     DspFxManagerImpl* Finalize();
     static DspFxManager* GetInstance();
-    bool Detach(s32, s8);
-    bool Attach(s8, s8, s8);
+    bool Detach(DspEffectType type,AuxBusId id);
+    bool Attach(DspEffectType,AuxBusId);
     s32 GetDspCycles();
+    bool SetDspDelayEffect(AuxBusId id, DspFxDelayParams* param);
+    bool SetDspReverbEffect(AuxBusId id, DspFxReverbParams* param);
 
     inline s32 GetChannelNum(DspEffectType type, AuxBusId id){
         if(this->mIsEnabled[type][id]){
             return this->mChannelNum[type][id];
-        } else{
+        } 
+        else{
             return 0;
         }
     }

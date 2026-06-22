@@ -4,10 +4,18 @@
 #include <nn/applet/CTR/applet_ClientThread.h>
 #include <nn/applet/CTR/applet_Api.h>
 #include <nn/os/os_CriticalSection.h>
+#include <nn/dsp/CTR/MPCore/dsp_Api.h>
+
+#include <nn/gx.h>
 
 namespace nn{
 namespace applet{
 namespace CTR{
+namespace detail{
+    inline bool CheckGraphicsProcessingRun(){
+        return nngxGetIsRunning() != 0;
+    }
+}
 namespace{
     bool sleepEnable;
     SysSleepAcceptedCallbackInfo* spHead;
@@ -50,13 +58,10 @@ namespace{
     static os::CriticalSection sSleepAcceptedCriticalSection;
 }
 
+bool IsExpectedToCloseApplication();
+
 /* Inlines */
 
-inline void ProcessShutdownCommand(){
-    if(shutdownCallback != 0){
-        reinterpret_cast<void(*)(int)>(shutdownCallback)(shutdownCallbackArg);
-    }
-}
 
 inline bool ProcessHomeButtonCommand(){
     AppletHomeButtonState state;
@@ -76,6 +81,55 @@ inline bool ProcessHomeButtonCommand(){
     }
     return false;
 }
+
+inline void ProcessShutdownCommand(){
+    if(shutdownCallback != 0){
+        reinterpret_cast<void(*)(int)>(shutdownCallback)(shutdownCallbackArg);
+    }
+}
+
+inline void ProcessSleepQueryCommand(){
+    AppletQueryReply Callback;
+    if(!IsExpectedToCloseApplication()){
+            if(sleepQueryCallback != 0)
+                Callback = reinterpret_cast<AppletQueryReply(*)(int)>(sleepQueryCallback)(sleepQueryCallbackArg);
+            if(!IsEnableSleep() && detail::IsActive())
+                Callback = REPLY_REJECT;
+    }
+    ReplySleepQuery(Callback);
+}
+
+inline void ProcessSleepCanceledCommand(){
+    if(sleepCanceledCallback){
+        if(!IsExpectedToCloseApplication())
+            reinterpret_cast<void(*)(int)>(sleepCanceledCallback)(sleepCanceledCallbackArg);
+    }
+}
+
+inline void ProcessSleepAcceptedCommand(){
+    SetSleepNotificationState(NOTIFY_SLEEP_ACCEPTED);
+    if(sleepAcceptedCallback != 0){
+        reinterpret_cast<void(*)(int)>(sleepAcceptedCallback)(sleepAcceptedCallbackArg);
+    }
+    SysSleepAcceptedCallbackInfo::CallCallbacks();
+    detail::ReplySleepNotificationCompleteToManager();
+}
+
+inline void ProcessAwakeCommand(){
+    dsp::CTR::Awake();
+    if(awakeCallback != 0){
+        reinterpret_cast<void(*)(int)>(awakeCallback)(awakeCallbackArg);
+    }
+    SetSleepNotificationState(NOTIFY_AWAKE);
+}
+
+inline void ProcessCloseCommand(){
+    if (closeCallback != 0){
+        reinterpret_cast<void(*)(int)>(closeCallback)(closeCallbackArg);
+    }
+}
+
+/* Applet Wrapper Functions */
 
 void InitializeWrapper(){
     detail::SetReceiveCallback(ReceiveCallbackForCommands,0);
@@ -115,7 +169,7 @@ void ClearHomeButtonState(void) {
     nn::applet::CTR::detail::SleepIfShellClosed();
 }
 
-void SetSleepQueryCallback(nn::applet::CTR::AppletSleepQueryCallback callback,uptr arg){
+void SetSleepQueryCallback(AppletSleepQueryCallback callback,uptr arg){
     *(AppletSleepQueryCallback*)sleepQueryCallback = callback;
     sleepQueryCallbackArg = arg;
 }
@@ -130,11 +184,63 @@ bool ProcessPowerButton(){
 }
 
 bool ReceiveCallbackForCommands(uptr callback){
-    // TODO
+    /*AppletHomeButtonState hbState;
+    AppletSleepSysState sleepState;
+
+    hbState = detail::GetAbsoluteHomeButtonState();
+    if(sIsToCallShutdownCallback){
+        ProcessShutdownCommand();
+        ClearShutdownCallbackFlag();
+    }
+
+    if(detail::GetOrderToCloseState()){
+        ProcessCloseCommand();
+        return true;
+    }
+    else if(hbState == HOME_BUTTON_SINGLE_PRESSED || hbState == HOME_BUTTON_DOUBLE_PRESSED){
+        return ProcessHomeButtonCommand();
+    }
+    else if(detail::GetSleepSysState()){
+        sleepState = detail::GetSleepSysState();
+        switch(sleepState){
+        case SLEEP_SYS_STATE_QUERY:
+            ProcessSleepQueryCommand();
+            break;
+        case SLEEP_SYS_STATE_ACCEPTED:
+            ProcessSleepAcceptedCommand();
+            break;
+        case SLEEP_SYS_STATE_AWAKE:
+            ProcessAwakeCommand();
+            break;
+        case SLEEP_SYS_STATE_CANCELED:
+            ProcessSleepCanceledCommand();
+            break;
+        }
+        detail::ClearSleepSysState();
+        return false;
+    }
+    else if(IsToCallPowerButtonCallback()){
+        ProcessPowerButton();
+        ClearPowerButtonCallbackFlag();
+    }
+    else{
+        s32 *pReadLena;
+        s32 *pReadLen;
+        Handle h;
+        s32 readLen;
+        u32 command;
+        nn::applet::CTR::AppletId senderId;
+
+        Result res = detail::Glance(&senderId,&command, paramBuffer, 0x1000u, &readLen, &h);
+        NN_ERR_THROW_FATAL(res);
+        switch command{
+            case 2:
+        }
+    }*/
 }
 
 bool ProcessHomeButton(){
-    // TODO
+    NN_TASSERT_(detail::CheckGraphicsProcessingRun());
 }
 
 void DisableSleep(bool isReplyReject){
@@ -169,7 +275,8 @@ void ReplySleepQuery(QueryReply reply) {
     SleepNotificationState state;
     if (reply == REPLY_REJECT) {
         state = NOTIFY_SLEEP_REJECT;
-    } else {
+    } 
+    else {
         if (reply != REPLY_ACCEPT) {
             if (reply != REPLY_LATER)
                 return;
@@ -184,6 +291,10 @@ void ReplySleepQuery(QueryReply reply) {
 
 inline Result TryReceive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle,fnd::TimeSpan timeout){
     // TODO
+}
+
+bool IsExpectedToCloseApplication(){
+    return nn::applet::CTR::detail::GetOrderToCloseState() || nn::applet::CTR::IsReceivedWakeupByCancel();
 }
 
 Result Receive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle,fnd::TimeSpan timeout){
@@ -215,18 +326,49 @@ void CloseAppletHook(){
 //
 
 void SysSleepAcceptedCallbackInfo::Unregister(){
-    // TODO
+    nn::os::CriticalSection::ScopedLock lock(sSleepAcceptedCriticalSection);
+    SysSleepAcceptedCallbackInfo* p = spHead;
+    while (p){
+        if (p == this){
+            SysSleepAcceptedCallbackInfo* prev = p->mPrev;
+            SysSleepAcceptedCallbackInfo* next = p->mNext;
+
+            if (!prev)
+                spHead = next;
+            else
+                prev->mNext = next;
+            if (!next)
+                spTail = prev;
+            else
+                next->mPrev = prev;
+
+            p->mPrev = NULL;
+            p->mNext = NULL;
+            return;
+        }
+        p = p->mNext;
+    }
 }
 
 void SysSleepAcceptedCallbackInfo::Register(){
-    // TODO
+
+}
+
+inline void SysSleepAcceptedCallbackInfo::CallCallbacks(){
+    os::CriticalSection::ScopedLock locker(sSleepAcceptedCriticalSection);
+    for(SysSleepAcceptedCallbackInfo* p = spHead; p; p = p->GetNext()){
+        p->Call();
+    }
 }
 
 namespace detail{
 AppletWakeupState WaitForStarting(AppletId* pSenderId,  u8* pParam, size_t paramSize, s32* pReadLen, Handle* pHandle, fnd::TimeSpan timeout){
-    // TODO
+
 }
 
+Result CaptureScreenForSystemApplet(AppletId id){
+
+}
 }
 }
 }

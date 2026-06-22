@@ -9,6 +9,9 @@ namespace CTR {
                 CFG_SOUND_OUTPUT_MODE_SURROUND = 2,
         };
 
+        struct SoundSettingCfgData{
+                u8 soundOutputMode;
+        };
 }
 }
 }

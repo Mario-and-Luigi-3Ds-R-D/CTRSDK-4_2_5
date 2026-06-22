@@ -13,6 +13,7 @@ namespace Interface{
 extern nn::Handle sSession;
 
 Result OverrideDefaultDaemons(uint);
+Result SuspendDaemons(bit32 mask);
 }
 }
 }

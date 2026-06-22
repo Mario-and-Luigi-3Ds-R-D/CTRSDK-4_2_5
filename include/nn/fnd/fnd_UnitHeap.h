@@ -22,11 +22,7 @@ public:
     void Invalidate();
     void Finalize(){
         if(this->mFreeNode != 0){
-            #ifdef NN_DEBUG
-                if(this->mCount != 0){
-                    nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"fnd_UnitHeapBase.h",26,"%s","this->mCount != 0");
-                }
-            #endif
+            NN_TASSERT_(mCount == 0);
             this->mFreeNode = 0;
         }
     }

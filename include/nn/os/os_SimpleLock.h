@@ -22,6 +22,9 @@ namespace os{
         void LockImpl(void);
         bool TryLock(void);
         void Unlock(void);
+        bool IsLocked() const{
+            return (*this->mCounter < 0);
+        }
     };
 }
 };

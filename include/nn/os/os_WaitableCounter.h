@@ -15,7 +15,6 @@ namespace os{
 
         static nnHandle sHandle;
     public:
-
         static void Initialize();
         ValueType&       operator* () {return mValue; }
         const ValueType& operator* () const { return mValue; }

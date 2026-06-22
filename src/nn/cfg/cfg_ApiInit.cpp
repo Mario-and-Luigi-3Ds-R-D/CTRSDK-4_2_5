@@ -3,7 +3,6 @@
 #include <nn/cfg/CTR/cfg_IpcInit.h>
 #include <nn/cfg/CTR/cfg_IpcUser.h>
 #include <nn/cfg/CTR/cfg_IpcSys.h>
-#include <nn/dbg/dbg_Printf.h>
 #include <nn/srv/srv_Api.h>
 
 #include <string.h>
@@ -42,7 +41,7 @@ void FinalizeInit(){
     }
     Result res = FinalizeBase(&IpcInit::sSession);
     if(res.IsSuccess()){
-        IpcSys::sSession = INVALID_HANDLE_VALUE; // nn::
+        IpcSys::sSession = INVALID_HANDLE_VALUE;
         IpcUser::sSession = INVALID_HANDLE_VALUE;
     }
 }

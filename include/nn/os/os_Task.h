@@ -13,11 +13,11 @@ namespace os{
     public:
     };
 
-    class IWaitTaskInvoker : public nn::os::ITaskInvoker{
+    class IWaitTaskInvoker : public ITaskInvoker{
     public:
     };
 
-    class QueueableTask : public nn::os::ITask, public nn::fnd::IntrusiveQueue::Item{
+    class QueueableTask : public ITask, public fnd::IntrusiveQueue::Item{
     public:
     };
 }

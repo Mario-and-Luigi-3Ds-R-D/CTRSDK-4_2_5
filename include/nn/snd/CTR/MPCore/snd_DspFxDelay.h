@@ -2,6 +2,7 @@
 
 #include "nn/snd/CTR/Common/snd_Types.h"
 #include "nn/util/util_NonCopyable.h"
+#include "nn/util/util_SizedEnum.h"
 
 namespace nn {
 namespace snd {
@@ -28,23 +29,19 @@ public:
     void Detach();
     bool SetParam(const DspFxDelay::Param& param);
     bool Enable(bool enable = true);
-    bool Disable()   {
-        return Enable(false); 
-    }
-    bool IsEnabled() {
-        return mIsEnabled; 
-    }
+    bool Disable(){return Enable(false); }
+    bool IsEnabled() { return mIsEnabled;  }
     bool IsBufferInUse();
 private:
     bool AssignWorkBuffer(uptr buffer, size_t size);
-    void ReleaseWorkBuffer();
+    void ReleaseWorkBuffer(){ this->mBuffer = 0; this->mBufferPhysical = 0; this->mBufferSize = 0; }
     
 protected:
     uptr mBuffer;
     uptr mBufferPhysical;
     size_t mBufferSize;
     bool mIsInitialized;
-    s8 mAuxBusId;
+    util::SizedEnum1<AuxBusId> mAuxBusId;
     bool mIsEnabled;
     s8 mProcessCount;
 };

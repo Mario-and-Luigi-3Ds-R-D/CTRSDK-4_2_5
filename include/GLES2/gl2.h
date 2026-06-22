@@ -2,11 +2,6 @@
 
 #include "GLES2/gl2CTR.h"
 
-typedef struct {
-    cl_list_t    *bound_cmdlist;      // offset 0x00 - you can see this accessed
-    // ... other fields
-} sys_manager_t;
-
 typedef void            GLvoid;
 typedef unsigned int    GLenum;
 typedef unsigned char   GLboolean;
@@ -376,6 +371,10 @@ typedef int             GLsizeiptr;
 
 #define GL_INVALID_FRAMEBUFFER_OPERATION  0x0506
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 GL_APICALL void         GL_APIENTRY glActiveTexture (GLenum texture);
 GL_APICALL void         GL_APIENTRY glAttachShader (GLuint program, GLuint shader);
 GL_APICALL void         GL_APIENTRY glBindAttribLocation (GLuint program, GLuint index, const char* name);
@@ -516,3 +515,7 @@ GL_APICALL void         GL_APIENTRY glVertexAttrib4f (GLuint indx, GLfloat x, GL
 GL_APICALL void         GL_APIENTRY glVertexAttrib4fv (GLuint indx, const GLfloat* values);
 GL_APICALL void         GL_APIENTRY glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr);
 GL_APICALL void         GL_APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
+
+#ifdef __cplusplus
+}
+#endif

@@ -51,11 +51,7 @@ public:
     void Invalidate(); // 100%
     void Finalize(){
         void* ptr;
-        #ifdef NN_DEBUG
-            if(this->mAllocCount == 0){
-                nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"fnd_ExpHeap.h",54,"%s","this->mAllocCount != 0");
-            }
-        #endif
+        NN_TASSERT_(this->mAllocCount);
         if (this->mExpHeapImpl.signature != 0) {
             nn::fnd::detail::RemoveListObject((detail::NNSFndList*)&this->mExpHeapImpl, ptr);
             this->mExpHeapImpl.signature = 0;
@@ -191,6 +187,7 @@ public:
     Allocator() : mHeap(0) {}
 
     void Initialize(ExpHeapTemplate<LockPolicy>& heap, bit8 groupId = 0, AllocationMode mode = ExpHeapBase::ALLOCATION_MODE_FIRST_FIT, bool reuse = false) {
+        NN_TASSERT_(!this->mHeap);
         this->mHeap = &heap;
         this->mGroupId = groupId;
         this->mAllocationMode = mode;

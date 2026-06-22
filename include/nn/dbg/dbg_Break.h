@@ -9,13 +9,8 @@ enum nndbgBreakReason{
     NN_DBG_BREAK_REASON_MAX_BIT = 1073741824,
 };
 
-
 namespace nn{
 namespace dbg{
-namespace detail{
-    Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size);
-
-}
     enum BreakReason{
         BREAK_REASON_PANIC = 0,
         BREAK_REASON_ASSERT = 1,
@@ -25,25 +20,31 @@ namespace detail{
         BREAK_REASON_MAX_BIT = 0x80000000,
     };
 
-    Result Break(nn::dbg::BreakReason pReason);
+    Result Break(BreakReason reason);
     void Panic();
 
     typedef void (*BreakHandler)(BreakReason reason, Result* pResult, const char* filename, int lineno, const char* fmt, std::va_list args);
+namespace detail{
+    Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size);
 
+}
 }
 }
 
 /* Panic() and Break() */
 
 /* Use these! */
-
 extern "C"{
-    Result nndbgBreak(nn::dbg::BreakReason pReason);
-    void nndbgPanic();
+
+Result nndbgBreak(nn::dbg::BreakReason reason);
+
+void nndbgPanic(void);
+
+
+void nndbgBreakWithMessage_ (nndbgBreakReason reason, const char* filename, int lineno, const char* fmt, ...);
+void nndbgBreakWithTMessage_(nndbgBreakReason reason, const char* filename, int lineno, const char* fmt, ...);
+
+void nndbgBreakWithResultMessage_ (nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
+void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
+
 }
-
-/* Debug messages makers */
-
-    void nndbgBreakWithTMessage_(nndbgBreakReason reason,const char *filename,int lineno,const char *fmt,...); 
-    void nndbgBreakWithResultMessage_ (nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);
-    void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, const char* filename, int lineno, const char* fmt, ...);

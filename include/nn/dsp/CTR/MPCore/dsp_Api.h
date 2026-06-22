@@ -7,7 +7,7 @@ namespace nn {
 namespace dsp {
 namespace CTR {
 namespace detail {
-    Result InitializeBase(nn::Handle* pSession, const char* name){ }
+    inline Result InitializeBase(nn::Handle* pSession, const char* name){ }
     inline Result FinalizeBase(nn::Handle* pSession){ Result res = svc::CloseHandle(pSession->mHandle); }
 }
 namespace {
@@ -39,6 +39,10 @@ namespace {
 
     Result FlushDataCache(uptr addr, size_t size);
     Result InvalidateDataCache(uptr addr, size_t size);
+
+    Result GetSemaphoreEventHandle(Handle* pHandle);
+    Result SetSemaphoreEventMask(bit16 mask);
+    Result SetSemaphore(ushort);
 
     bool IsComponentLoaded();
     bool Sleep();

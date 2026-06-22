@@ -54,6 +54,8 @@ typedef u32 uptr;
 #define nullptr NULL
 #endif
 
+#define NN_UNUSED_VAR(x) ((void)(x))
+
 #define splits(S) __attribute__((section("i." #S))) S
 
 /* Defines */
@@ -61,6 +63,6 @@ typedef u32 uptr;
 #define NN_INLINE inline
 #define NN_NOINLINE __attribute__((noinline))
 
-#ifdef NN_DEBUG
+#ifdef NN_NOT_OPTIMIZED
     #pragma O0
 #endif

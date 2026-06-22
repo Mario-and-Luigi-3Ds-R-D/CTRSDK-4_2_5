@@ -8,7 +8,7 @@ Some of the functions I rewrited in ASM, or Asmebly code (Mispell). *Why?*
 
 I'm lazy to be simple, but the rules for that are stated down below;
 
-The only library which is already complied for you at my request, is CTR-GLES2.
+The only library which is already complied for you at my request, is CTR-GLES2. Cry about it.
 
 
 # Rewrite rules:

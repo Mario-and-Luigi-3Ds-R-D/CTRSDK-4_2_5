@@ -26,7 +26,7 @@ void ClampStickMinimum(s16 *pOutX,s16 *pOutY,s32 x,s32 y,s32 min,s32 max){
 }
 
 
-void nn::hidlow::GatherStartAndSelect(hid::CTR::PadStatus* pButton){
+void GatherStartAndSelect(hid::CTR::PadStatus* pButton){
     GatherStartAndSelect(&pButton->hold,&pButton->trigger,&pButton->release);
 }
 

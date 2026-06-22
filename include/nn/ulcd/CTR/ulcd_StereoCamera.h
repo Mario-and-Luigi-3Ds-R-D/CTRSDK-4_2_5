@@ -58,7 +58,9 @@ namespace{
 
     struct cfgdata{
         void* cfgData;
-        u8 rev[0xC];
+        f32 far;
+        f32 near;
+        f32 level;
         float limit;
     };
 

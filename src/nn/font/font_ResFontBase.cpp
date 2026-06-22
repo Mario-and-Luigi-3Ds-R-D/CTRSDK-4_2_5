@@ -100,7 +100,7 @@ int ResFontBase::GetCellWidth() const{
 }
 
 void ResFontBase::EnableLinearFilter(bool atSmall,bool atLarge){
-
+    // TODO
 }
 
 bool ResFontBase::IsLinearFilterEnableAtSmall() const{

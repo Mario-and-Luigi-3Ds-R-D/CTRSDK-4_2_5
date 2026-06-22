@@ -28,12 +28,15 @@ namespace svc{
     Result DuplicateHandle(nn::Handle*);
     Result GetProcessId(uint*, nn::Handle);
     Result GetResourceLimit(nn::Handle*);
-    Result GetSystemTick();
+    s64 GetSystemTick();
     Result GetThreadId(uint*,nn::Handle);
     Result WaitSynchronizationN(int*, const nn::Handle*, int,bool,long long);
     Result MapMemoryBlock(nn::Handle,uptr,bit32,uint);
     Result UnmapMemoryBlock(nn::Handle,uptr);
     Result OutputDebugString(const char* text, s32 length);
     Result ReleaseMutex(nn::Handle);
+    Result SignalEvent(nn::Handle);
+    Result ClearEvent(nn::Handle);
+    Result SendSyncRequest(nn::Handle);
 };
 }

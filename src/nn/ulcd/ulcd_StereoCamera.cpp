@@ -7,7 +7,9 @@
 #include <nn/ulcd/CTR/ulcd_StereoCamera.h>
 #include <nn/cfg/CTR/cfg_Api.h>
 #include <nn/cfg/CTR/cfg_DetailApi.h>
+#include <nn/math/math_Arithmetic.h>
 #include <nn/dbg/dbg_Break.h>
+#include <nn/os/os_Types.h>
 
 #include <string.h>
 
@@ -16,10 +18,35 @@ namespace ulcd{
 namespace CTR{
 namespace{
 
+void GetProjectionParameters(MTX44 *proj,f32 *left,f32 *right,f32 *bottom,f32 *top,f32 *near,f32 *far){
+    f32 pos;
+    *near = proj->matrix[2][3] / proj->matrix[2][2];
+    *far = proj->matrix[2][3] / proj->matrix[2][2] - 1.0f;
+    pos = proj->matrix[2][3] / proj->matrix[0][0] * proj->matrix[2][2];
+
+    *left = (proj->matrix[0][2] - 1.0f) * pos;
+    *right = (proj->matrix[0][2] + 1.0f) * pos;
+
+    pos = proj->matrix[2][3] / proj->matrix[1][1] * proj->matrix[2][2];
+
+    *top = (proj->matrix[1][2] + 1.0f) * pos;
+    *top = (proj->matrix[1][2] - 1.0f) * pos;
+}
+
+float GetSliderVolume(){
+    os::WritableSharedInfo* sharedInfo = os::GetWritableSharedInfo();
+
+    if (sharedInfo->displayModeLockFlag){
+        return 0.0f;
+    }
+
+    return sharedInfo->svr2Volume;
+}
+
 void GetLookPose(const nn::math::MTX34 *view,nn::math::VEC3 *pos,Direction *dir){
     MTX34 im;
 
-    math::ARMv6::MTX34Inverse(&im,view);
+    math::MTX34Inverse(&im,view);
     pos->x = im.matrix[0][3];
     pos->y = im.matrix[1][3];
     pos->z = im.matrix[2][3];
@@ -32,9 +59,9 @@ void GetLookPose(const nn::math::MTX34 *view,nn::math::VEC3 *pos,Direction *dir)
     dir->target.x = im.matrix[0][2];
     dir->target.y = im.matrix[1][2];
     dir->target.z = im.matrix[2][2];
-    math::ARMv6::VEC3Normalize(&dir->right,&dir->right);
-    math::ARMv6::VEC3Normalize(&dir->up,&dir->up);
-    math::ARMv6::VEC3Normalize(&dir->target,&dir->target);
+    math::VEC3Normalize(&dir->right,&dir->right);
+    math::VEC3Normalize(&dir->up,&dir->up);
+    math::VEC3Normalize(&dir->target,&dir->target);
 }
 
 }
@@ -48,7 +75,33 @@ namespace{
 }
 
 f32 StereoCamera::CalculateMaxtrices(nn::math::MTX44 *projL,nn::math::MTX34 *viewL,nn::math::MTX44 *projR,nn::math::MTX34 *viewR, nn::math::MTX44 *projOriginal,nn::math::MTX34 *viewOriginal,f32 depthLevel,f32 factor,bool realSwitch){
+    NN_ASSERT_(sIsInitialized);
+    NN_ASSERT_(projL);
+    NN_ASSERT_(viewL);
+    NN_ASSERT_(projR);
+    NN_ASSERT_(viewR);
+    NN_ASSERT_(projOriginal);
+    NN_ASSERT_(viewOriginal);
+    bool update3DVolume;
+    if((factor < 0.0f != (factor)) || (1.0f < factor)) NN_TPANIC_("factor must be [0,1].");
+    CameraInfo infoL;
+    CameraInfo infoR;
+    this->mDepthLevel = depthLevel;
+    f32 lParallex = this->mLimitParallex;
+    f32 fabs = math::FAbs(this->mBaseCamera.mTop - this->mBaseCamera.mBottom);
+    if(this->mBaseCamera.mFar == this->mDepthLevel || this->mBaseCamera.mFar < this->mDepthLevel != (this->mBaseCamera.mFar) || (this->mDepthLevel)){
+        this->mCameraInterval = 0.0f;
+    }
+    else{
+        ((this->mCameraInterval = this->mBaseCamera.mFar / this->mBaseCamera.mFar - this->mDepthLevel) * fabs * this->mDepthLevel /
+        (this->mBaseCamera.mNear * data.level) * lParallex);
+    }
+    this->mCameraInterval *= factor;
+    this->mCameraInterval =(GetSliderVolume() * 0.5f * this->mCameraInterval);
 
+    infoL.mLeft = (this->mCameraInterval * this->mBaseCamera.mNear) / this->mDepthLevel + this->mBaseCamera.mLeft;
+    infoL.mRight = (this->mCameraInterval * this->mBaseCamera.mNear) / this->mDepthLevel + this->mBaseCamera.mRight;
+    // TODO
 }
 
 f32 StereoCamera::CalculateMatricesReal(nn::math::MTX44* projL, nn::math::MTX34* viewL,nn::math::MTX44* projR, nn::math::MTX34* viewR, const f32 depthLevel, const f32 factor, const nn::math::PivotDirection pivot){
@@ -87,8 +140,7 @@ void StereoCamera::Initialize(){
     Result res;
     if(sIsInitialized == 0){
         cfg::CTR::Initialize();
-        res.mResult = cfg::CTR::detail::GetConfig(&data,0x20,0x50005).IsFailure();
-        if(res.mResult != 0){
+        if(cfg::CTR::detail::GetConfig(&data,0x20,0x50005).IsFailure()){
             nndbgPanic();
         }
         cfg::CTR::Finalize();

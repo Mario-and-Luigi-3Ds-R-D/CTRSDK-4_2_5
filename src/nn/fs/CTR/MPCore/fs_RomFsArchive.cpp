@@ -107,7 +107,8 @@ Result RomFsArchive::File::DuplicateHandle(Handle* pOut, s64 head, s64 tail) {
 }
 
 void RomFsArchive::File::Close() {
-    // TODO
+    this->TrySetSize(NULL);
+    this->mParent->mFileHeap.Free(this);
 }
 
 
@@ -117,13 +118,16 @@ void RomFsArchive::File::Close() {
 
 
 int* ContentRomFsArchive::AllocateBuffer() {
+    /*os::CriticalSection::ScopedLock(gMountLock)
+        static fnd::
 
+    */
 }
 
 ContentRomFsArchive::ContentRomFsArchive() { }
 
 void ContentRomFsArchive::DeleteObject() {
-    this->~ContentRomFsArchive();
+    //this->mFileHeap.
     //sArchiveHeap.Free();
 }
 

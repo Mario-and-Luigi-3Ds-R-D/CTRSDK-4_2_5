@@ -8,6 +8,7 @@
 namespace nn {
 namespace snd {
 namespace CTR {
+
     static const s32 NN_SND_DSP_MAXIMUM_CYCLES = 622535;
 
     Result Initialize();
@@ -18,6 +19,11 @@ namespace CTR {
     void WakeUp();
     void OrderToWaitForFinalize();
     bool GetHeadphoneStatus();
+    void SetOutputBufferCount(s32 outputBufferCount);
+    bool SetSurroundDepth(f32 depth);
+    void SetSurroundSpeakerPosition(SurroundSpeakerPosition pos);
+    f32 GetSystemMasterVolume();
+    void SetMasterVolume(f32 fVolume);
  
 } // namespace CTR
 } // namespace snd

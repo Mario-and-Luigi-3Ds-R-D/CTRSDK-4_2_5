@@ -6,14 +6,6 @@
 
 #include <nn/svc/svc_Api.h>
 
-/*
-
-CTRSDK-4_2_5/src/nn/svc_Api.cpp
-
-This is used for memory control concerning software interrtuption. Written in ASM.
-
-*/
-
 namespace nn{
 namespace svc{
     // ControlMemory
@@ -96,7 +88,7 @@ namespace svc{
     }
 
     // CreateEvent - Create / Load New Memory event
-    __asm Result CreateEvent(nn::Handle*, void (*)(uint), uint, uint, int, int){
+    __asm Result CreateEvent(nn::Handle*,nn::os::ResetType){
         push {r0}
         swi 0x17
         ldr r2,[sp,#4]
@@ -178,7 +170,7 @@ namespace svc{
     }
 
     // GetSystemTick - Gets current Tisk
-    __asm Result GetSystemTick(){
+    __asm s64 GetSystemTick(){
         swi 0x28
         bx lr
     }
@@ -203,6 +195,11 @@ namespace svc{
         str r1,[r2,#0]
         add sp,sp,#4
         ldr r4,[sp],#4
+        bx lr
+    }
+
+    __asm Result SignalEvent(nn::Handle){
+        swi 0x18
         bx lr
     }
 
@@ -233,11 +230,20 @@ namespace svc{
         bx lr
     }
 
-#ifdef NN_DEBUG
+//#ifdef NN_DEBUG
     __asm Result OutputDebugString(const char* text, s32 length){
         swi 0x3d
         bx lr
     }
-#endif
+//#endif
+    __asm Result ClearEvent(nn::Handle){
+        swi 0x19
+        bx lr
+    }
+
+    __asm Result SendSyncRequest(nn::Handle){
+        swi 0x32
+        bx lr
+    }
 } // svc
 }; // nn

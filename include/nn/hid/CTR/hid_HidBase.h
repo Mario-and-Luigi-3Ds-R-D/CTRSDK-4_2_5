@@ -1,61 +1,30 @@
 #pragma once
 
-#include "nn/Handle.h"
-#include "nn/Result.h"
-#include "nn/math/math_Vec3.h"
-#include "nn/os/os_Event.h"
-#include "nn/os/os_SharedMemory.h"
+#include <nn/Handle.h>
+#include <nn/Result.h>
+#include <nn/types.h>
+#include <nn/fnd/fnd_Timespan.h>
+#include <nn/os/os_Synchronization.h>
+#include <nn/os/os_Event.h>
 
 namespace nn{
 namespace hid{
 namespace CTR{
 
 class HidBase : public nn::os::EventBase{
+protected:
+    HidBase() : nn::os::EventBase() {}
+    ~HidBase() {}
 public:
     uptr mResourcePtr;
 
-    /* Inlines */
-    inline uptr HidBase::GetResource(){
-        return mResourcePtr;
-    }
+    uptr GetResource();
+    void SetResource();
 };
 
-class Pad : public HidBase{
-};
-
-class TouchPanel : public HidBase{
-};
-
-class Accelerometer : public HidBase{
-};
-
-class Gyroscope : public HidBase{
-public:
-    virtual ~Gyroscope();
-};
-
-class DebugPad : public HidBase{
-};
-
-class HidDevices{
-public:
-    Pad pad;
-    TouchPanel touchPanel;
-    Accelerometer accelerometer;
-    Gyroscope gyroscope;
-    DebugPad debugPad;
-    nn::os::SharedMemoryBlock mSharedMemoryBlock;
-    
-    void Finalize();
-    Result Initialize(const char* portName);
-    ~HidDevices();
-};
-
-struct Direction{
-    math::VEC3 x;
-    math::VEC3 y;
-    math::VEC3 z;
-};
+inline uptr HidBase::GetResource(){
+    return mResourcePtr;
+}
 
 }
 }

@@ -131,6 +131,11 @@ namespace CTR{
         DspsndDmaTransInfo src_inf;
     };
 
+    struct SndCommand{
+        ushort command;
+        ushort hole;
+    };
+
 }
 }
 }

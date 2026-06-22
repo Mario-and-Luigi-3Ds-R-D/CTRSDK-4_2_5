@@ -1,7 +1,7 @@
 #pragma once
 
 #include "nn/types.h"
-// This is literally it, no joke.
+
 namespace nn{
 namespace fnd{
 
@@ -43,15 +43,12 @@ public:
 
     /* Macros Needed elsewhere, and makes it easier for DateTime. */
 
-    static TimeSpan FromNanoSeconds(s64 nanoSeconds) { 
-        TimeSpan ret; ret.mNanoSeconds = nanoSeconds; 
-        return ret; 
-    }
-
-    static TimeSpan FromMilliSeconds(s64 milliSeconds) {
-        return FromNanoSeconds(milliSeconds * 1000 * 1000); 
-    }
-struct ZeroOnlyTag{
+    static TimeSpan FromNanoSeconds(s64 nanoSeconds) { TimeSpan ret; ret.mNanoSeconds = nanoSeconds; return ret; }
+    static TimeSpan FromMicroSeconds(s64 microSeconds) { return FromNanoSeconds(microSeconds * 1000); }
+    static TimeSpan FromMilliSeconds(s64 milliSeconds) { return FromNanoSeconds(milliSeconds * 1000 * 1000); }
+    friend bool operator==(const TimeSpan& lhs, const TimeSpan& rhs) { return lhs.mNanoSeconds == rhs.mNanoSeconds; }
+    friend bool operator< (const TimeSpan& lhs, const TimeSpan& rhs) { return lhs.mNanoSeconds <  rhs.mNanoSeconds; }
+    struct ZeroOnlyTag{
 
 };
 };

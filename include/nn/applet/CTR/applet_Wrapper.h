@@ -1,6 +1,7 @@
 #pragma once
 
 #include "nn/Result.h"
+#include "nn/err/CTR/err_Api.h"
 #include "nn/applet/CTR/applet_Paramaters.h"
 #include "nn/os/os_CriticalSection.h"
 #include "nn/fnd/fnd_TimeSpan.h"
@@ -26,6 +27,8 @@ namespace CTR {
     SleepNotificationState IsExpectedToReplySleepQuery();
 
     void CloseAppletHook();
+    
+    bool IsEnableSleep();
 
 
     class SysSleepAcceptedCallbackInfo{
@@ -38,6 +41,16 @@ namespace CTR {
 
         void Register();
         void Unregister();
+        static void CallCallbacks();
+        void Call(){
+            if(this->mCallback)
+                this->mCallback(this->mParamater);
+        }
+
+        void SetNext(SysSleepAcceptedCallbackInfo* p){ this->mNext = p;  return; }
+        void SetPrev(SysSleepAcceptedCallbackInfo* p){ this->mPrev = p;  return; }
+        SysSleepAcceptedCallbackInfo* GetNext(){ return this->mNext; }
+        SysSleepAcceptedCallbackInfo* GetPrev(){ return this->mPrev; }
     };
 
 namespace detail{
@@ -48,8 +61,6 @@ namespace detail{
     bool ReceiveCallbackForCommands(uptr ptr);
 
     AppletWakeupState WaitForStarting(AppletId* pSenderId,  u8* pParam, size_t paramSize, s32* pReadLen, Handle* pHandle, fnd::TimeSpan timeout);
-
-    bool IsEnableSleep();
 
 }
 }

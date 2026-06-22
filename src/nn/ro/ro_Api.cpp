@@ -26,7 +26,7 @@ void Finalize(){
 
 /*void* RegisterList(void* pRr, size_t pSize){
     Result res = detail::DynamicLoader::RegisterList(PSEUDO_HANDLE_CURRENT_PROCESS,(uint)pRr,pSize);
-    if(res.IsFailure() != 0){
+    if(res.IsFailure()){
         return 0;
     }
     spListNode = pRr;

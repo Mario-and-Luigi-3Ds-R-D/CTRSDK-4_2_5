@@ -16,7 +16,6 @@ namespace detail{
 
 void SetInternalErrorHandlingMode(bool preferFatal){
     nn::os::CTR::detail::sPreferFatal = preferFatal;
-    return;
 }
 
 void HandleInternalError(Result result){

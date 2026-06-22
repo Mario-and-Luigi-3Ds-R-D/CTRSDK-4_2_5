@@ -7,12 +7,21 @@
 
 namespace nn{
 namespace math{
+class VEC3;
+class MTX33;
+class MTX34;
+
+inline MTX33* MTX33Copy(MTX33* pOut, const MTX33* p);
+//inline MTX34* MTX33ToMTX34(MTX34* pOut, const MTX33* pM);
+//inline MTX33* MTX34ToMTX33(MTX33* pOut, const MTX34* pM);
 
 class MTX33{
-protected:
+public:
     float matrix[3][3];
 public:
     MTX33() {}
+    explicit MTX33(const f32* p) { MTX33Copy(this, reinterpret_cast<const MTX33*>(p)); }
+    //explicit MTX33(const MTX34& rhs) { MTX34ToMTX33(this, &rhs); }
     MTX33(f32 x00, f32 x01, f32 x02,f32 x10, f32 x11, f32 x12,f32 x20, f32 x21, f32 x22){ }
     static const int ROW_COUNT = 3;
     static const int COLUMN_COUNT = 3;
@@ -22,6 +31,49 @@ public:
         return identity;
     }
 };
+namespace ARMv6{
+
+MTX33* MTX33CopyC(MTX33* pOut, const MTX33* p);
+MTX33* MTX33CopyAsm(MTX33* pOut, const MTX33* p);
+
+template<typename TMatrix>
+TMatrix* MTX33MultC(TMatrix* pOut, const TMatrix* p1, const TMatrix* p2);
+
+template<typename TMatrix>
+TMatrix* MTX33MultAsm(TMatrix* pOut, const TMatrix* p1, const TMatrix* p2);
+
+VEC3* VEC3TransformAsm(VEC3* pOut, const MTX33* pM, const VEC3* pV);
+VEC3* VEC3TransformC(VEC3* pOut, const MTX33* pM, const VEC3* pV);
+
+}
+
+inline VEC3* VEC3Transform(VEC3* pOut, const MTX33* __restrict pM, const VEC3* __restrict pV){
+    #ifdef NN_DEBUG // Unoptimized check.
+        return ARMv6::VEC3TransformC(pOut,pM,pV);
+    #else
+        return ARMv6::VEC3TransformAsm(pOut, pM, pV);
+    #endif
+}
+
+inline MTX33* MTX33Copy(MTX33* pOut, const MTX33* p){
+    #ifdef NN_DEBUG
+        return ARMv6::MTX33CopyC(pOut,p);
+    #else
+        return ARMv6::MTX33CopyAsm(pOut,p);
+    #endif
+}
+
+template<typename TMatrix>
+inline TMatrix* MTX33Mult(TMatrix* pOut, const TMatrix* p1, const TMatrix* p2){
+    #ifdef NN_DEBUG
+        return ARMv6::MTX33MultC(pOut,p1,p2);
+    #else
+        return ARMv6::MTX33MultAsm(pOut,p1,p2);
+    #endif
+}
+
+template<typename TMatrix>
+inline TMatrix* MTX33Mult(TMatrix* pOut, const TMatrix& m1, const TMatrix& m2) { return MTX33Mult( pOut, &m1, &m2 ); }
 
 }
 }

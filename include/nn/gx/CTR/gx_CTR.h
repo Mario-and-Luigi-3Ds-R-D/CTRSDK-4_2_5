@@ -2,6 +2,10 @@
 
 #include <GLES2/gl2.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(WIN32) || defined(__VC32__)
 #   if defined(NNGX_EXPORTS)
 #       define NNGX_APICALL __declspec(dllexport)
@@ -21,6 +25,7 @@
 #endif
 
 #define NNGX_APIENTRY
+#define NNGX_APICALL
 
 // Memory areas
 #define NN_GX_MEM_FCRAM             0x00010000
@@ -145,8 +150,6 @@
 #define NN_GX_PROFILING_RESULT_BUFSIZE_FRAGMENT         1
 #define NN_GX_PROFILING_RESULT_BUFSIZE_MEMORY_ACCESS    18
 
-extern "C" {
-
 // Initialize
 NNGX_APICALL GLboolean  NNGX_APIENTRY nngxInitialize(GLvoid* (*allocator)(GLenum, GLenum, GLuint, GLsizei), void (*deallocator)(GLenum, GLenum, GLuint, GLvoid*));
 NNGX_APICALL void       NNGX_APIENTRY nngxFinalize();
@@ -232,4 +235,6 @@ NNGX_APICALL void       NNGX_APIENTRY nngxGetProfilingResult(GLenum item, GLuint
 NNGX_APICALL void       NNGX_APIENTRY nngxSetProfilingParameter(GLenum pname, GLuint param);
 NNGX_APICALL void       NNGX_APIENTRY nngxGetProfilingParameter(GLenum pname, GLuint* param);
 
-} // extern "C"
+#ifdef __cplusplus
+}
+#endif

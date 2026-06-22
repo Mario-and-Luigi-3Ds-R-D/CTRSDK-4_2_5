@@ -80,10 +80,6 @@ namespace CTR{
         CMD_FINALIZE = 0x10000,
     };
 
-    // Will this get used..? 
-    //
-    // Speaking of DataManagementScene
-
     enum DataManagementScene{
         DATA_TOP = 0,
         DATA_STREETPASS = 1,
@@ -218,6 +214,7 @@ namespace CTR{
     typedef bool (*AppletReceiveCallback)(uptr);
     typedef Notification AppletNotification;
     typedef QueryReply AppletQueryReply;
+    typedef SleepSysState AppletSleepSysState;
     typedef HomeButtonState AppletHomeButtonState;
     typedef bit32 AppletAttr;
     typedef bit32 AppletId;

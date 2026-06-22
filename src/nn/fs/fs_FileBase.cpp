@@ -8,31 +8,24 @@ namespace nn{
 namespace fs{
 namespace detail{
 
-Result FileBase::TryRead(s32* pOut, void* buffer, size_t size){
-    Result res; 
+Result FileBase::TryRead(s32* pOut, void* buffer, size_t size) {
+    Result res;
     u32 n = 0;
-    if (size == 0)
-        goto done;
-    while (true) {
-        s32 bytesRead;
-        #ifdef NONMATCHING
-        #endif
-        // LSRS R0, R0 0x1f is supposed to be LSRS R1, R0 0x1f
-        res.mResult = FileBaseImpl::TryReadFile(&bytesRead,this->mPosition, buffer, size).IsFailure();
-        
-        if (res.mResult)
-            return res;  // pOut NOT written on failure
-        
-        n += bytesRead;
-        this->mPosition += bytesRead;
-        
-        if (bytesRead == size || bytesRead == 0)
-            break;
-        
-        buffer = (void*)((int)buffer + bytesRead);
-        size -= bytesRead;
+    if (size != 0) {
+        while (true) {
+            s32 bytesRead;
+            NN_UTIL_RETURN_IF_FAILED(FileBaseImpl::TryReadFile(&bytesRead, this->mPosition, buffer, size));
+
+            n += bytesRead;
+            this->mPosition += bytesRead;
+
+            if (bytesRead == size || bytesRead == 0)
+                break;
+
+            buffer = (void*)((int)buffer + bytesRead);
+            size -= bytesRead;
+        }
     }
-done:
     *pOut = n;
     return ResultSuccess();
 }
@@ -156,7 +149,8 @@ Result FileBase::TryGetSize(s64* pOut) const{
     if(res.IsSuccess()){
         this->mSize = ret;
         *pOut = ret;
-    } else{
+    }
+    else{
         this->mSize = 0;
     }
     return res;

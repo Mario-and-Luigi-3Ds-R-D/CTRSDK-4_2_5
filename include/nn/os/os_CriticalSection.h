@@ -41,8 +41,13 @@ namespace os {
         static uptr GetInvalidThreadUniqueValue(){
             return static_cast<uptr>(-1);
         }
+        bool IsInitialized() const{
+            return this->mLockCount >= 0;
+        }
     };
     
     NN_UTIL_DETAIL_DEFINE_SCOPED_LOCK(CriticalSection, Enter(), Leave());
+
+    typedef CriticalSection InterCoreCriticalSection; // used in snd_Voice.h
 }
 };

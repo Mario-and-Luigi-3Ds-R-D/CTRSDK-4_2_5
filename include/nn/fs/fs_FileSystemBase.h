@@ -1,6 +1,7 @@
 #include <nn/Handle.h>
 #include <nn/fs/CTR/MPCore/fs_UserFileSystem.h>
 #include <nn/dbg/dbg_Break.h>
+#include "nn/Assert.h"
 
 namespace nn{
 namespace fs{
@@ -15,11 +16,7 @@ protected:
     FileSystemBaseImpl* mpImpl;
 public:
     void Initialize(FileSystemBaseImpl* impl){
-        #ifdef NN_DEBUG
-            if(!this->mpImpl){
-                nndbgBreakWithTMessage_(NN_DBG_BREAK_REASON_ASSERT,"fs_FileSystemBase.h",19,"%s","!this->mpImpl");
-            }
-        #endif
+        NN_TASSERT_(!mpImpl);
         this->mpImpl = impl;
     }
 };

@@ -1,4 +1,5 @@
 #include <nn/dsp/CTR/MPCore/dsp_Api.h>
+#include <nn/dsp/CTR/dsp_Result.h>
 #include <nn/applet/CTR/applet_Wrapper.h>
 #include <nn/err/CTR/err_Api.h>
 
@@ -26,23 +27,53 @@ namespace{
     static applet::CTR::SysSleepAcceptedCallbackInfo sSleepAcceptedCallbackInfo;
 }
 
+
 namespace{
-    static uint sSleepCallback[8];
-}
-namespace{
-    static uint sWakeUpCallback[8];
-}
-namespace{
-    static uint sFinalizeCallback[8];
+void (*sSleepCallback[8])(void);
+void (*sWakeUpCallback[8])(void);
+void (*sFinalizeCallback[8])(void);
 }
 
 
-Result Initialize(){
-    // TODO
-}
+/*Result Initialize(){
+    if (spDspSession != NULL)
+        return ResultSuccess();
+
+    NN_UTIL_RETURN_IF_FAILED(nn::srv::Initialize());
+
+    NN_UTIL_RETURN_IF_FAILED(InitializeIpc(&sDspSessionHandle));
+
+    spDspSession = &sDspSessionObject;
+    sDspSessionObject = DSP(sDspSessionHandle);
+
+    for (int i = 0; i < 8; i++){
+        sFinalizeCallback[i] = NULL;
+        sWakeUpCallback[i]   = NULL;
+        sSleepCallback[i]    = NULL;
+    }
+
+    sIsComponentLoaded       = false;
+    sRegisteredComponent     = NULL;
+    sRegisteredComponentSize = 0;
+    sRegisteredProgMask      = 0;
+    sRegisteredDataMask      = 0;
+    sIsSleeping              = false;
+
+    sSleepAcceptedCallbackInfo.applet::CTR::SysSleepAcceptedCallbackInfo::Register();
+
+    return ResultSuccess();
+}*/
 
 void Finalize(){
-    // TODO
+    if (spDspSession == NULL)
+        return;
+
+    sSleepAcceptedCallbackInfo.Unregister();
+
+    svc::CloseHandle(sDspSessionHandle);
+
+    spDspSession = NULL;
+    sDspSessionHandle = nn::Handle(); // invalid handle value
 }
 
 inline Result LoadComponent(const u8* pComponent, size_t size, bit16 maskPram, bit16 maskDram){
@@ -56,7 +87,7 @@ inline Result LoadComponent(const u8* pComponent, size_t size, bit16 maskPram, b
 inline Result LoadComponentCore(const u8* pComponent, size_t size, bit16 maskPram, bit16 maskDram){
     Result res;
     if((spDspSession == 0) || (sIsComponentLoaded)){
-        return *(Result*)0xc8a0a7fc;
+        return ResultNotInitialized();
     }
     else{
         spDspSession->LoadComponent(pComponent,size,maskPram,maskDram,&sIsComponentLoaded);
@@ -86,27 +117,31 @@ Result RegisterInterruptEvents(nn::Handle handle, s32 type, s32 port){
 }
 
 Result RecvData(u16 regNo, u16* pValue){
-    // TODO
-}
-
-Result SendData(u16 regNo, u16 value){
-    // TODO
+    Result res;
+    ResultNotInitialized();
+    if(spDspSession){
+        res = spDspSession->RecvData(regNo,pValue);
+    }
+    return res;
 }
 
 Result RecvDataIsReady(u16 regNo, bool* pStatus){
-    // TODO
-}
-
-Result SendDataIsEmpty(u16 regNo, bool* pStatus){
-    // TODO
+    Result res;
+    ResultNotInitialized();
+    if(spDspSession){
+        res = spDspSession->RecvDataIsReady(regNo,pStatus);
+    }
+    return res;
 }
 
 Result ConvertProcessAddressFromDspDram(uptr addressOnDsp, uptr* pAddressOnHost){
+    Result res;
+    ResultNotInitialized();
     *pAddressOnHost = 0xffffffff;
-    if(spDspSession != 0){
-        //spDspSession->DSP::ConvertProcessAddressFromDspDram(addressOnDsp,pAddressOnHost);
+    if(spDspSession){
+        spDspSession->ConvertProcessAddressFromDspDram(addressOnDsp,pAddressOnHost);
     }
-    return (Result)0xc8a0a7f8;
+    return res;
 }
 
 Result ReadPipeIfPossible(int port, void* buffer, u16 length, u16* pLengthRead){
@@ -114,20 +149,22 @@ Result ReadPipeIfPossible(int port, void* buffer, u16 length, u16* pLengthRead){
 }
 
 Result WriteProcessPipe(int port, const void* buffer, u32 length){
-    // TODO
-}
-
-Result InvalidateDataCache(uptr addr, size_t size){
-    // TODO
+    Result res;
+    ResultNotInitialized();
+    if(spDspSession){
+        res = spDspSession->WriteProcessPipe(port,(u8*)buffer,length);
+    }
+    return res;
 }
 
 Result FlushDataCache(uptr addr, size_t size){
     Result res;
-    if(spDspSession != 0){
-        res; // spDspSession->FlushDataCache(addr,size);
-        return res;
+    ResultNotInitialized();
+    if(spDspSession){
+        Handle h;
+        res = spDspSession->FlushDataCache(h,addr,size);
     }
-    return (Result)0xc8a0a7f8;
+    return res;
 }
 
 bool IsComponentLoaded(){
@@ -183,9 +220,9 @@ bool RegisterSleepWakeUpCallback(void (*sleepCallback)(),void (*wakeUpCallback)(
             return false;
         if((void(*)(void))sSleepCallback[i] == sleepCallback) break;
     }
-    sSleepCallback[i] = (uint)sleepCallback;
-    sWakeUpCallback[i] = (uint)wakeUpCallback;
-    sFinalizeCallback[i] = (uint)orderToWaitForFinalizeCallback;
+    sSleepCallback[i] = sleepCallback;
+    sWakeUpCallback[i] = wakeUpCallback;
+    sFinalizeCallback[i] = orderToWaitForFinalizeCallback;
     return true;
 }
 

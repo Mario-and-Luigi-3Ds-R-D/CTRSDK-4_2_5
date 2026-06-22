@@ -17,13 +17,14 @@ public:
     virtual void GetHash(void* pOut);
     virtual size_t GetHashSize() { return HASH_SIZE; }
     virtual void InitializeWithContext(const void* pContext, u64 size);
+
 protected:
     virtual void ProcessBlock();
 private:
-    u32 m_H[8];
+    u32 mH[8];
 };
 
 void CalculateSha256(void* pOut, const void* pData, size_t size);
-    
+
 }
 }

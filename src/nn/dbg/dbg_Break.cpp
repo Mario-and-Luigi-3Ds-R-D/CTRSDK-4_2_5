@@ -1,5 +1,5 @@
 #include <nn/dbg/dbg_Break.h>
-#include <nn/dbg/dbg_Printf.h>
+#include <nn/dbg/dbg_DebugString.h>
 #include <nn/svc/svc_Api.h>
 #include <cstdarg>
 
@@ -151,8 +151,8 @@ void nndbgPanic(){
     nn::dbg::Panic();
 }
 
-Result nndbgBreak(nn::dbg::BreakReason pReason){
-    nn::dbg::Break(pReason);
+Result nndbgBreak(nn::dbg::BreakReason reason){
+    nn::dbg::Break(reason);
 }
 
 }

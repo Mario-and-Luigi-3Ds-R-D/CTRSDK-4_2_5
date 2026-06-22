@@ -45,7 +45,7 @@ void Switch(nnosMemoryBlockBase* pTo, nnosMemoryBlockBase* pFrom){
 }
 
 void nnosMemoryBlockAllocate(nnosMemoryBlock* p, size_t size){
-    
+
 }
 
 uptr nnosMemoryBlockGetAddress(nnosMemoryBlock* p){

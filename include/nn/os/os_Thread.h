@@ -1,7 +1,7 @@
 #pragma once
 
 #include "nn/types.h"
-#include "nn/os/os_Types.h"
+#include "nn/os/os_Synchronization.h"
 #include "nn/os/os_AutoStackManager.h"
 #include "nn/os/CTR/os_ErrorHandler.h"
 #include "nn/fnd/fnd_TimeSpan.h"
@@ -62,6 +62,7 @@ public:
     Thread() : mCanFinalize(true) {}
     ~Thread();
     void FinalizeImpl();
+    void Join();
     
     /* Paramaters */
     typedef AutoStackManager AutoStackManager;
@@ -186,6 +187,11 @@ public:
 /* Inlines */
 inline Thread::~Thread(){ 
     this->FinalizeImpl();
+}
+
+inline void Thread::Join(){
+    this->WaitOne();
+    this->mCanFinalize = true;
 }
 
 /* AutoStacks */
