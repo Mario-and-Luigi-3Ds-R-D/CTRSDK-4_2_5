@@ -1,9 +1,7 @@
 #include <nn/dbg/dbg_Break.h>
 #include <nn/dbg/dbg_DebugString.h>
-#include <nn/svc/svc_Api.h>
+#include <nn/svc.h>
 #include <cstdarg>
-
-#ifdef NN_DEBUG
 
 using namespace nn::dbg;
 
@@ -19,7 +17,6 @@ namespace{
     }
 }
 
-#endif
 
 namespace{
 static nn::dbg::BreakHandler s_pBreakHandler = NULL;
@@ -80,7 +77,7 @@ Result NotifyDllLoadedToDebugger(const void* pDllInfo, size_t size){
 }
 }
 
-#ifdef NN_DEBUG
+extern "C" {
 
 void nndbgBreakWithMessage_ (nndbgBreakReason reason, const char* filename, int lineno, const char* fmt, ...){
     va_list arg;
@@ -143,9 +140,6 @@ void nndbgBreakWithResultTMessage_(nndbgBreakReason reason, nnResult result, con
 
     Break(static_cast<BreakReason>(reason));
 }
-
-#endif
-extern "C" {
 
 void nndbgPanic(){
     nn::dbg::Panic();

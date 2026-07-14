@@ -1,11 +1,25 @@
-#include <nn/svc/svc_Api.h>
+// Filename: [MPCORE] crt0.cpp
+//
+// Project: Horizon CTRSDK
+
+#include <nn/svc.h>
 #include <nn/init/init_Default.h>
 #include <nn/init/init_StartUp.h>
+#include <nn/module.h>
+#include <nn/version.h>
 #include <nn/util/detail/util_Symbol.h>
 #include <rt_locale.h>
 #include <rt_sys.h>
 
 extern "C" __weak void __cpp_initialize__aeabi_(void);
+
+namespace{
+#if defined(NN_DEBUG)
+    NN_MAKE_MODULE_SDK(sDebugIndicator, "DEBUG");
+#endif
+    NN_MAKE_MODULE_SDK(sSdkVersion, NN_CURRENT_SDK_VERSION);
+    NN_MAKE_MODULE_SDK(sFirmwareVersion, NN_CURRENT_FIRMWARE_VERSION);
+}
 
 extern "C"{
     void nninitRegion(); // native
@@ -24,7 +38,6 @@ extern "C"{
 
 #pragma arm
 __asm void __ctr_start(){
-    PRESERVE8
     bl __cpp(nninitRegion) // Region
     bl __cpp(nninitLocale) // Locale
     bl __cpp(nninitSystem) // System
@@ -36,9 +49,21 @@ __asm void __ctr_start(){
     b __cpp(nn::svc::ExitProcess) // Exit Process if needed
 }
 
+void nninitLocale(){
+#if defined(NN_DEBUG)
+    NN_REFER_MODULE(sDebugIndicator);
+#endif
+    NN_REFER_MODULE(sSdkVersion);
+    NN_REFER_MODULE(sFirmwareVersion);
+
+    bit32* p = __rt_locale();
+    *(p + 1) = (bit32)_get_lc_ctype(0, 0) + 1;
+    *(p + 3) = (bit32)_get_lc_numeric(0, 0);
+}
+
 __asm void nninitRegion(){
-    ldr     r0,=__cpp(Image$$ZI$$ZI$$Base) ; BADGE::PARAM
-    ldr     r1,=__cpp(Image$$ZI$$ZI$$Limit) ; 
+    ldr     r0,=__cpp(Image$$ZI$$ZI$$Base)
+    ldr     r1,=__cpp(Image$$ZI$$ZI$$Limit)
     mov     r2,#0x0
 region_loop
     cmp     r0,r1
@@ -46,27 +71,5 @@ region_loop
     bcc     region_loop
     bx      lr
 };
-
-__asm void nninitLocale(){
-    LDR             R1, =0x4000000
-    MOV             R0, #0
-    PUSH            {R4,LR}
-    NOP
-    LDR             R1, =0x4000026
-    MOV             R0, #0
-    NOP
-    BL              __cpp(__rt_locale)
-    MOV             R4, R0
-    MOV             R1, #0
-    MOV             R0, R1
-    BL              __cpp(_get_lc_ctype)
-    ADD             R0, R0, #1
-    MOV             R1, #0
-    STR             R0, [R4,#4]
-    MOV             R0, R1
-    BL              __cpp(_get_lc_numeric)
-    STR             R0, [R4,#0xC]
-    POP             {R4,PC}
-}
 
 } // extern "C"

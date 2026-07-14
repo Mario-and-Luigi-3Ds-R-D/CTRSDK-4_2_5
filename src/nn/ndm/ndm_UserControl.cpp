@@ -1,7 +1,11 @@
+// Filename: ndm_UserControl.cpp
+//
+// Project: Horizon CTRSDK
+
 #include <nn/ndm/ndm_UserControl.h>
 #include <nn/ndm/ndm_Interface.h>
 #include <nn/os/os_CriticalSection.h>
-#include <nn/srv/srv_Api.h>
+#include <nn/srv/srv_API.h>
 #include <nn/util/util_Result.h>
 #include <nn/dbg/dbg_Break.h>
 #include <string.h>
@@ -17,13 +21,11 @@ namespace{
 
 Result Initialize(){
     nn::os::CriticalSection::ScopedLock locker(sCs);
-    size_t nameLen;
     Result result;
 
     if (!sInitializedCount){
         nn::srv::Initialize();
-        nameLen = strlen(PORT_NAME_USER);
-        result = nn::srv::GetServiceHandle(&CTR::detail::Interface::sSession, PORT_NAME_USER, nameLen, 0);
+        result = nn::srv::GetServiceHandle(&CTR::detail::Interface::sSession, PORT_NAME_USER);
         NN_UTIL_RETURN_IF_FAILED(result);
     }
     ++sInitializedCount;

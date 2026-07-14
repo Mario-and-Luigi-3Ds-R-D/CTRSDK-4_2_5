@@ -1,8 +1,6 @@
 // Filename: os_CriticalSection.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon Decompilation
 
 #include <nn/os/os_CriticalSection.h>
 #include <nn/dbg/dbg_Break.h>
@@ -10,15 +8,12 @@
 
 namespace nn{
 namespace os{
-// Initializes Thread CriticalSection
 
 void CriticalSection::Initialize() {
     this->mLock.Initialize();
     this->mThreadUniqueValue = this->GetInvalidThreadUniqueValue();
     this->mLockCount = 0;
 }
-
-// Enters Thread CriticalSection
 
 void CriticalSection::Enter(void) {
     NN_TASSERT_(this->IsInitialized());
@@ -29,8 +24,6 @@ void CriticalSection::Enter(void) {
     this->mLockCount++;
 }
 
-// Leaves Thread CriticalSection
-
 void CriticalSection::Leave() {
     NN_TASSERT_(this->IsInitialized());
     NN_TASSERTMSG_(LockedByCurrentThread() && this->mLockCount > 0, "CriticalSection is not entered on the current thread.");
@@ -40,8 +33,6 @@ void CriticalSection::Leave() {
         this->mLock.nn::os::SimpleLock::Unlock();
     }
 }
-
-// Trys to enter Thread CriticalSection, if cant TryLock. If so, add to the count and proceed.
 
 bool CriticalSection::TryEnter(void) {
     NN_TASSERT_(this->IsInitialized());

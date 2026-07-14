@@ -201,6 +201,10 @@ inline MTX34* MTX34Mult(MTX34* pOut, const MTX34* p1, const MTX34* p2){
     #endif
 }
 
+inline MTX34* MTX34Mult(MTX34* pOut, const MTX34 p1, const MTX34 p2){
+    return MTX34Mult(pOut, &p1, &p2);
+}
+
 inline u32 MTX34Inverse(MTX34* pOut, const MTX34* p){
     #ifdef NN_DEBUG
         return ARMv6::MTX34InverseC(pOut,p);
@@ -280,7 +284,7 @@ inline MTX34* MTX34RotXYZRad(MTX34* pOut, f32 fRadX, f32 fRadY, f32 fRadZ){
 inline MTX34* MTX34Scale(MTX34* pOut, const VEC3* pS){
     #ifdef NN_DEBUG
         return ARMv6::MTX34ScaleC(pOut,pS);
-    #elifdef NN_DEVELOPER
+    #elif NN_DEVELOPER
         return ARMv6::MTX34ScaleC_FAST(pOut,pS);
     #else
         return ARMv6::MTX34ScaleAsm(pOut,pS);

@@ -1,11 +1,9 @@
 // Filename: os_SimpleLock.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon Decompilation
 
 #include <nn/os/os_SimpleLock.h>
-#include <nn/svc/svc_Api.h>
+#include <nn/svc.h>
 
 namespace nn{
 namespace os{

@@ -1,16 +1,18 @@
 // Filename: os_Thread.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon Decompilation
 
 #include <nn/os/os_Thread.h>
-#include <nn/os/os_ThreadLocal.h>
+#include <nn/os/os_ThreadLocalStorage.h>
+#include <nn/os/CTR/os_ThreadLocalRegion.h>
 #include <nn/os/CTR/os_CppException.h>
 #include <nn/os/CTR/os_ErrorHandler.h>
 #include <nn/os/ARM/os_SpinWait.h>
-#include <nn/svc/svc_Api.h>
+#include <nn/svc.h>
 #include <nn/util/util_Result.h>
+#include <rt_fp.h>
+
+extern "C" void _fp_init();
 
 extern "C" nn::os::AutoStackManager* spAutoStackManager;
 
@@ -176,13 +178,16 @@ s32 ConvertLibraryToSvcPriority(s32 lib){
 }
 
 
-__asm void SaveThreadLocalRegionAddress(){
-    MRC             p15, 0, R0,c13,c0, 3
-    LDR             R1, =__cpp(&os::spTlr)
-    STR             R0, [R1,#4]
-    BX              LR
+void SaveThreadLocalRegionAddress(){
+    NN_TASSERT_(spTlr == NULL);
+    spTlr = CTR::GetThreadLocalRegion();
 }
 
+void InitializeThreadEnvrionment(){
+    os::ThreadLocalStorage::ClearAllSlots();
+    os::CTR::SetupThreadCppExceptionEnvironment();
+    _fp_init();
+}
 
 }
 }

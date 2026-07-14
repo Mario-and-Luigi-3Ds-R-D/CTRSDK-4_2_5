@@ -5,13 +5,14 @@
 // Remade by user Luigifan27
 
 #include <nn/os/os_StackMemory.h>
+#include <nn/os/os_AddressSpaceManager.h>
 #include <nn/os/os_MemoryBlock.h>
 #include <nn/os/os_Memory.h>
 #include <nn/os/CTR/os_ErrorHandler.h>
 
 namespace nn{
 namespace os{
-
+extern nnosAddressSpaceManager sSpaceManager;
 
 namespace detail{
 

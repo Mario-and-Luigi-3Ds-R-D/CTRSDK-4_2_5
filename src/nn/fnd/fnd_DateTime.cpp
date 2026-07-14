@@ -17,11 +17,6 @@ namespace fnd{
 
 const DateTime DateTime::MIN_DATETIME = *(nn::fnd::DateTime*)0;
 
-DateTime& DateTime::operator+=(const TimeSpan& rhs){
-    this->mMilliSeconds += rhs.GetMilliSeconds(); 
-    return *this; 
-}
-
 s32 DateTime::IsLeapYear(s32 year){
     if (year % 400 == 0){
         return 1;

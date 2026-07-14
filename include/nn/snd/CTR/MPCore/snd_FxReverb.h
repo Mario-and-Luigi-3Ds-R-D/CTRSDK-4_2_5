@@ -1,6 +1,7 @@
 #pragma once
 
 #include "nn/types.h"
+#include <nn/snd/CTR/Common/snd_Types.h>
 #include "nn/snd/CTR/Common/snd_Const.h"
 
 namespace nn{
@@ -27,7 +28,7 @@ public:
         f32 mFusedGain;
         bool mUseHpfDamping;
     };
-    void UpdateBuffer( uptr data );
+    void UpdateBuffer(AuxBusData* data);
 private:
     struct WorkBuffer{
         s32* mEarlyReflection[4];

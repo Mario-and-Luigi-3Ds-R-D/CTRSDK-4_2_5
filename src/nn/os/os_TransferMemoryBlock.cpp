@@ -1,14 +1,12 @@
 // Filename: os_TransferMemoryBlock.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon Decompilation
 
 #include <nn/os/os_TransferMemoryBlock.h>
 #include <nn/os/os_SharedMemory.h>
-#include <nn/os/CTR/os_ErrorHandler.h>
+#include <nn/os/os_ErrorHandlerSelect.h>
 #include <nn/os/os_Result.h>
-#include <nn/svc/svc_Api.h>
+#include <nn/svc.h>
 
 namespace nn{
 namespace os{
@@ -36,16 +34,10 @@ Result TransferMemoryBlock::TryInitialize(void* p,size_t size,bit32 myPermission
 
 void TransferMemoryBlock::Finalize(){
     if (this->IsValid()){
-        Unmap();
+        this->Unmap();
         this->Close();
     }
 }
-
-TransferMemoryBlock::~TransferMemoryBlock(){
-    this->Finalize();
-}
-
-/* Privates */
 
 void TransferMemoryBlock::Unmap(){
     if (GetAddress() != NULL){

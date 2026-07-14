@@ -1,22 +1,47 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/font/font_CharTypes.h"
+#include <nn/font/font_CharStrmReader.h>
+#include <nn/font/font_ResourceFormat.h>
+
 #include <climits>
 
 namespace nn{
 namespace font{
+    class Font;
+    typedef ushort TexFmt;
+
+    union TextureSize{
+        struct{
+            u16 height;
+            u16 width;
+        } HW;
+        u32 size;
+    };
+
+namespace internal{
+    void LoadTexture(u16 texWidth,u16 texHeight,TexFmt texFormat,const void* pImage,bool isSmallLinearFilter,bool isLargeLinearFilter);
+    class TextureObject{
+    public:
+        TextureObject();
+        void Set(u32 name,const Font* pFont,const void* pImage,TexFmt format,u16 width,u16 height);
+        u32 GetName() const{return this->mName;}
+        void SetName(u32 texName){this->mName = texName;}
+        const Font* GetFont() const{return this->mpFont;}
+        uptr GetImage() const{return this->mpImage;}
+        u8 GetFormat() const{return this->mFormat;}
+        const TextureSize GetSize() const{return this->mSize;}
+        u32 GetWrapFilter() const;
+
+    private:
+        u32 mName;
+        const Font* mpFont;
+        uptr mpImage;
+        TextureSize mSize;
+        u8 mFormat;
+    };
+}
 
 typedef ushort CharCode;
-typedef ushort TexFmt;
-
-union TextureSize{
-    struct{
-        u16 height;
-        u16 width;
-    } HW;
-    u32 size;
-};
 
 enum Type{
     TYPE_NULL,
@@ -36,13 +61,19 @@ struct Glyph{
     u8 isSheetUpdated;
     s8 rev;
     TexFmt texFormat;
-    //const internal::TextureObject* pTextureObject;
+    const internal::TextureObject* pTextureObject;
     Glyph();
 };
 
 class Font{
 public:
-    //static const CharCode INVALID_CHARACTER_CODE = INVALID_CHAR_CODE;
+    enum Type{
+        TYPE_NULL,
+        TYPE_ROM,
+        TYPE_RESOURCE,
+        TYPE_PAIR
+    };
+    static const CharCode INVALID_CHARACTER_CODE = INVALID_CHAR_CODE;
 
     Font()  {}
     virtual ~Font();

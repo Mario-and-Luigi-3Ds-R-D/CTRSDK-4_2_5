@@ -1,7 +1,8 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/cfg/CTR/cfg_LanguageCode.h"
+#include <nn/types.h>
+#include <nn/cfg/CTR/cfg_LanguageCode.h>
+#include <nn/cfg/CTR/cfg_UserInfo.h>
 
 namespace nn {
 namespace cfg {
@@ -12,10 +13,8 @@ namespace CTR {
     
     void Initialize();
     void Finalize();
+    void GetBirthday(Birthday* pBirthday);
     CfgLanguageCode GetLanguage();
-    
-    u8 GetFsLatencyEmulationParam();
-    bool IsDebugMode();
 
     struct LanguageCfgData{
         u8 code;

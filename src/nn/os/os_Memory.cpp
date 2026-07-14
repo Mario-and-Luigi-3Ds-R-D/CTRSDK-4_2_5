@@ -1,14 +1,12 @@
 // Filename: os_Memory.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon Decompilation
 
 #include <nn/os/os_Memory.h>
 #include <nn/os/os_MemoryBlock.h>
 #include <nn/os/os_Default.h>
 #include <nn/os/CTR/os_ErrorHandler.h>
-#include <nn/svc/svc_Api.h>
+#include <nn/svc.h>
 
 extern "C" bit8 Load$$LR$$TEXT_SECTION$$Base[];
 extern "C" bit8 Load$$LR$$TEXT_SECTION$$Length[];
@@ -19,23 +17,22 @@ namespace {
     uptr sDeviceMemoryAddress = 0;
     size_t sDeviceMemorySize = 0;
     size_t sDeviceHeapSize = 0;
-
 }
 
-uptr GetMemoryAddress(){
-    return os::sDeviceMemoryAddress;
+uptr GetDeviceMemoryAddress(){
+    NN_TASSERTMSG_(sDeviceMemoryAddress != NULL, "Device Memory is NOT Initialized.");
+    return sDeviceMemoryAddress;
 }
 
 uptr GetAppMemorySize(){
-    return os::sDeviceMemorySize;
+    return sDeviceMemorySize;
 }
 
 size_t GetDeviceMemorySize(){
-    return os::sDeviceMemorySize;
+    return sDeviceMemorySize;
 }
-// Sets/Initializes CTR Memory Size
 
-Result SetDeviceMemorySize(size_t pSize){
+Result SetDeviceMemorySize(size_t size){
     // TODO
 }
 
@@ -45,7 +42,7 @@ void SetupHeapForMemoryBlock(size_t heapSize){
 }
 
 size_t GetHeapSize(){
-    return os::sDeviceHeapSize;
+    return sDeviceHeapSize;
 }
 
 uptr GetCodeRegionAddress(){
@@ -58,27 +55,8 @@ size_t GetCodeRegionSize(){
     return 0x53cb98;
 }
 
-__asm size_t GetUsingMemorySize(){
-    PUSH            {LR}
-    SUB             SP, SP, #0x14
-    MOV             R0, #0
-    STR             R0, [SP,#0x8]
-    LDR             R0, =__cpp(0x0069A448)
-    LDR             R1, [R0,#8]
-    STR             R1, [SP,#0xC]
-    LDR             R1, [R0]
-    ADD             R0, SP, #0x8
-    BL              __cpp(nn::svc::GetResourceLimit)
-    LDR             R1, [SP,#0x8]
-    MOV             R3, #1
-    ADD             R2, SP, #0xC
-    MOV             R0, SP
-    SVC             0x3A ; ':'
-    LDR             R0, [SP,#0x8]
-    SVC             0x23 ; '#'
-    LDR             R0, [SP,#0x0]
-    ADD             SP, SP, #0x14
-    POP             {PC}
+size_t GetUsingMemorySize(){
+
 }
 
 }

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/fnd/fnd_HeapBase.h"
-#include "nn/fnd/fnd_Allocator.h"
-#include "nn/os/os_LockPolicy.h"
-#include "nn/os/os_CriticalSection.h"
+#include <nn/types.h>
+#include <nn/fnd/fnd_HeapBase.h>
+#include <nn/fnd/fnd_Allocator.h>
+#include <nn/os/os_LockPolicy.h>
+#include <nn/os/os_CriticalSection.h>
 
 // Things that are needed are done here.
 
@@ -26,15 +26,30 @@ public:
             this->mFreeNode = 0;
         }
     }
-    void* Allocate();
-    void Free(void* p);
+    void* Allocate(){
+        void* ret = reinterpret_cast<void*&>(mFreeNode);
+        if (ret){
+            mFreeNode = mFreeNode->next;
+            ++mCount;
 
-    virtual ~UnitHeapBase();
-    virtual void FreeV(void* p);
-    virtual void* GetStartAddress() const ;
-    virtual size_t GetTotalSize() const ;
+            DebugFillMemory(reinterpret_cast<uptr>(ret), this->mUnit, HEAP_FILL_TYPE_ALLOC);
+            FillMemoryZero(reinterpret_cast<uptr>(ret), this->mUnit);
+        }
+
+        return ret;
+    }
+    void Free(void* p){
+        p = this->mFreeNode;
+        mFreeNode = reinterpret_cast<Node*>(p);
+        mCount--;
+    }
+
+    virtual ~UnitHeapBase(){ this->Finalize(); }
+    virtual void FreeV(void* p){ this->Free(p); }
+    virtual void* GetStartAddress() const{ return reinterpret_cast<void*>(this->mAddr); }
+    virtual size_t GetTotalSize() const{ return mSize; }
     virtual void Dump() const ;
-    virtual bool HasAddress(const void* addr) const ;
+    virtual bool HasAddress(const void* addr) const{ return mAddr <= reinterpret_cast<uptr>(addr) && reinterpret_cast<uptr>(addr) < (mAddr + mSize);}
 
 protected:
     bool IsFreeNode(uptr addr) const;
@@ -123,9 +138,11 @@ public:
     virtual bool HasAddress(const void* addr) const {
         return Base::HasAddress(addr); 
     }
-
-    typedef UnitHeapTemplate<nn::os::LockPolicy::NoLock> UnitHeap;
 };
+
+typedef UnitHeapTemplate<nn::os::LockPolicy::NoLock> UnitHeap;
+
+typedef UnitHeapTemplate<nn::os::LockPolicy::Object<nn::os::CriticalSection> > ThreadSafeUnitHeap;
 
 }
 }

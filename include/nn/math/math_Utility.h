@@ -25,12 +25,16 @@ inline T Min(T a, T b){
     return (a <= b) ? a: b;
 }
 
-
+inline int Min(int a, int b){
+    return (a <= b) ? a: b;
+}
 
 template <typename T>
 inline T RoundUp(T x, u32 base){
     return static_cast<T>( (x + (base - 1)) & ~(base - 1) );
 }
+
+
 
 }
 }

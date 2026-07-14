@@ -1,8 +1,6 @@
 // Filename: ro_RegistrationList.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon CTRSDK
 
 #include <nn/ro/ro_RegistrationList.h>
 

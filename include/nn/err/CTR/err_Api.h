@@ -1,5 +1,4 @@
-#ifndef NN_ERR_CTR_ERR_API_H_
-#define NN_ERR_CTR_ERR_API_H_
+#pragma once
 
 #include "nn/types.h"
 #include "nn/Result.h"
@@ -52,15 +51,15 @@ namespace{
 
     class FatalErr{
     public:
-        Result Throw();
+        Handle mSession;
+        
+        FatalErr(Handle h){ this->mSession = h; }
+        Result Throw(err::CTR::FatalErrInfo& info);
     };
 
     void ThrowFatalErr(Result result, uptr pc);
-//    void ThrowFatalErr(Result result, nnerrFatalErrType type, uptr pc);
+    void ThrowFatalErr(Result result, nnerrFatalErrType type, uptr pc);
     void ThrowFatalErrAll(Result, uptr pc);
-namespace{
-    void Throw(nn::err::CTR::FatalErrInfo* pInfo);
-}
 namespace detail{
     template <bool(*IsTarget)(Result), void(*TargetFunc)(Result, uptr)>
     inline void CallIf(Result r, uptr pc){
@@ -131,8 +130,6 @@ namespace detail{
     #define NN_ERR_THROW_FATAL(result)                  ((void)(result))
     #define NN_ERR_THROW_FATAL_ALL(result)              ((void)(result))
     #define NN_ERR_LOG_AND_PANIC_IF_FAILED(result)      ((void)(result))
-
-#endif
 
 #endif
 

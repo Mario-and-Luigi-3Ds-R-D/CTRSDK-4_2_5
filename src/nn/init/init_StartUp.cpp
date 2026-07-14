@@ -1,13 +1,11 @@
 // Filename: init_StartUp.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon CTRSDK
 
 #include <nn/os/os_Initialize.h>
 #include <nn/os/CTR/os_ErrorHandler.h>
 #include <nn/ndm/ndm_Setup.h>
-#include <nn/applet/CTR/applet_Api.h>
+#include <nn/applet/CTR/applet_API.h>
 
 #define NN_SYSTEM_DEFAULT_HEAP_SIZE     0x00800000
 

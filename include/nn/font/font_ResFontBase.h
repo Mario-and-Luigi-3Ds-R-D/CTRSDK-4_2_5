@@ -1,22 +1,35 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/font/font_Font.h"
-#include "nn/font/font_Types.h"
+#include <nn/font/font_Font.h>
+#include <nn/font/font_Types.h>
 
 namespace nn{
 namespace font{
+namespace internal{
+    inline u32 GetCellsInASheet(const FontTextureGlyph& tg){
+        return static_cast<u32>(tg.sheetRow * tg.sheetLine);
+    }
+
+}
 class ResFontBase : public Font{
 protected:
+    typedef ushort GlyphIndex;
+    static const GlyphIndex GLYPH_INDEX_NOT_FOUND = 0;
 
-typedef ushort GlyphIndex;
-
-    void* mResource;
-    FontInformation* mFontInfo;
-    internal::TextureObject* mTexObjs;
+    void* mpResource;
+    FontInformation* mpFontInfo;
+    internal::TextureObject* mpTexObjs;
     u32 mWrapFilter;
     mutable CharCode mLastCharCode;
     mutable GlyphIndex mLastGlyphIndex;
+
+    bool IsManaging(const void* ptr) const { return mpResource == ptr; }
+
+    internal::TextureObject* GetTextureObjectsBufferPtr() {return mpTexObjs;}
+    void SetTextureObjectsBufferPtr(void* buffer){mpTexObjs = static_cast<internal::TextureObject*>(buffer);}
+
+    const internal::TextureObject*GetTextureObjectsBufferPtr() const{return mpTexObjs;}
+    const internal::TextureObject* GetTextureObject(int index) const{return &GetTextureObjectsBufferPtr()[index];}
 public:
     ResFontBase();
     virtual ~ResFontBase();
@@ -44,8 +57,21 @@ public:
     virtual bool IsLinearFilterEnableAtSmall() const;
     virtual bool IsLinearFilterEnableAtLarge() const;
     virtual u32 GetTextureWrapFilterValue() const;
+    virtual int GetActiveSheetNum() const;
 
-    uint FindGlyphIndex(CharCode code) const;
+    GlyphIndex FindGlyphIndex(CharCode code) const;
+    GlyphIndex FindGlyphIndex(const FontCodeMap* pMap,CharCode c) const;
+
+    void GenTextureNames();
+    void SetResourceBuffer(void* pUserBuffer,FontInformation* pFontInfo);
+    static void SetGlyphMember(Glyph* glyph,GlyphIndex index,const FontTextureGlyph& tg);
+    void* RemoveResourceBuffer();
+    GlyphIndex GetGlyphIndex(CharCode c) const;
+    void GetGlyphFromIndex(Glyph* glyph,GlyphIndex index) const;
+    void DeleteTextureNames();
+
+    const CharWidths& GetCharWidthsFromIndex(GlyphIndex index) const;
+    const CharWidths& GetCharWidthsFromIndex(const FontWidth* pWidth,GlyphIndex index) const;
 };
 
 }

@@ -67,6 +67,15 @@ struct FillReq {
     bit16 ctrl1;
 };
 
+enum CmdReqId{
+    REQ_ID_DMA,
+    REQ_ID_3D_CMD,
+    REQ_ID_MEM_FILL,
+    REQ_ID_DISP_COPY = 3,
+    REQ_ID_DISP_COPY_2 = 4,
+    REQ_ID_CACHE_FLUSH
+};
+
 union CmdReqParam {
     union cmdData {
         bit32 d[7];
@@ -78,15 +87,6 @@ union CmdReqParam {
     PpfReq pf;
     PpfTcReq ctx;
     CfReq cf;
-};
-
-enum CmdReqId{
-    REQ_ID_DMA,
-    REQ_ID_3D_CMD,
-    REQ_ID_MEM_FILL,
-    REQ_ID_DISP_COPY = 3,
-    REQ_ID_DISP_COPY_2 = 4,
-    REQ_ID_CACHE_FLUSH
 };
 
 struct CmdReq {
@@ -116,8 +116,8 @@ public:
     QueueBody* mpBody;
 
     void Initialize(void* pQueueBody){
-        NN_TASSERT_(!pQueueBody);
-        this->mpBody = (QueueBody*)pQueueBody;
+        NN_TASSERT_(pQueueBody != 0);
+        this->mpBody = reinterpret_cast<QueueBody*>(pQueueBody);
     }
 
     void Finalize(){

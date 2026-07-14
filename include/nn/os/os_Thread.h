@@ -1,11 +1,10 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/os/os_Synchronization.h"
-#include "nn/os/os_AutoStackManager.h"
-#include "nn/os/CTR/os_ErrorHandler.h"
-#include "nn/fnd/fnd_TimeSpan.h"
-#include "nn/util/util_TypeTraits.h"
+#include <nn/os/os_Synchronization.h>
+#include <nn/os/os_AutoStackManager.h>
+#include <nn/os/os_ErrorHandlerSelect.h>
+#include <nn/fnd/fnd_TimeSpan.h>
+#include <nn/util/util_TypeTraits.h>
 
 #define NN_OS_CORE_NO_ALL                   (-1)
 #define NN_OS_CORE_NO_USE_PROCESS_VALUE     (-2)
@@ -24,8 +23,9 @@ const s32 THREAD_PRIORITY_RANGE_SIZE = NN_OS_THREAD_PRIORITY_RANGE_SIZE;
 namespace nn{
 namespace os{
 namespace detail{
-void SaveThreadLocalRegionAddress();
+    void SaveThreadLocalRegionAddress();
     s32 ConvertLibraryToSvcPriority(s32 lib);
+    void InitializeThreadEnvrionment();
 } // detail
 
 template <size_t Size>
@@ -62,6 +62,7 @@ public:
     Thread() : mCanFinalize(true) {}
     ~Thread();
     void FinalizeImpl();
+    void Finalize();
     void Join();
     
     /* Paramaters */
@@ -187,6 +188,11 @@ public:
 /* Inlines */
 inline Thread::~Thread(){ 
     this->FinalizeImpl();
+}
+
+inline void Thread::Finalize(){
+    FinalizeImpl();
+    this->WaitObject::Finalize();
 }
 
 inline void Thread::Join(){

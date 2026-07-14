@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nn/fnd/fnd_InterlockedVariable.h"
+#include <nn/fnd/fnd_InterlockedVariable.h>
 
 namespace nn{
 namespace hidlow{

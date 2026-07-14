@@ -15,8 +15,8 @@ namespace CTR{
     };
     struct DisplayCaptureInfo{
         union DisplayInfoParams{
-            uptr mAddr;
-            uptr mAddrB;
+            uptr addr;
+            uptr addrB;
             DisplayBufferMode mode;
             u32 stride;
         };

@@ -3,6 +3,7 @@
 #include <nn/Handle.h>
 #include <nn/Result.h>
 #include <nn/types.h>
+#include <nn/math/math_Matrix34.h>
 #include <nn/hid/CTR/hid_Api.h>
 #include <nn/hid/CTR/hid_Gyroscope.h>
 #include <nn/hid/CTR/hid_AccelerometerReader.h>
@@ -84,23 +85,22 @@ public:
     void Read(GyroscopeStatus* pBufs, s32* pReadLen, s32 bufLen);
     bool ReadLatest(GyroscopeStatus* pBuf);
 
-    // Enable / Disable
     void EnableZeroDrift(); 
     void EnableAccRevise();
     void EnableZeroPlay();
-    //void EnableAccRevi(bool isEnable);
+
     void DisableAccRevise();
     void DisableZeroDrift();
     void DisableZeroPlay();
 
-    // Calibration
     void CalculateDirection();
     void InitializeCalibrationData();
 
-    // Reset
     void ResetZeroDriftMode();
     void ResetAxisRotationMatrix();
     f32 ReviseDirection_Acceleration(Direction& rev_dir, const nn::math::VEC3& acc);
+
+    void SetAxisRotationMatrix(const math::MTX34& axis);
 
     // Zero Modes
     void SetZeroPlayParam(f32& radius);

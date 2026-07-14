@@ -18,10 +18,10 @@ bool TouchPanelReader::ReadLatest(TouchPanelStatus *pBuf){
     s32 readLen;
     s64 tick = -1LL;
     s32 index = -1;
+    Result res;
     
     NN_TASSERT_(NULL != pBuf);
-    nn::hidlow::CTR::TouchPanelLifoRing* ring = (nn::hidlow::CTR::TouchPanelLifoRing*)this->mTouchPanel.mResourcePtr;
-    ring->ReadData(pBuf, 1, &readLen, &tick, &index);
+    reinterpret_cast<nn::hidlow::CTR::TouchPanelLifoRing*>(this->mTouchPanel.GetResource())->ReadData(pBuf, 1, &readLen, &tick, &index);
     if((applet::CTR::IsInitialized()) && (!applet::CTR::detail::IsActive())){
         pBuf->x = 0;
         pBuf->y = 0;
@@ -32,13 +32,12 @@ bool TouchPanelReader::ReadLatest(TouchPanelStatus *pBuf){
 
 void TouchPanelReader::Read(TouchPanelStatus* pBufs, s32* pReadLen, s32 bufLen){
     NN_TASSERT_(NULL != pBufs);
-    nn::hidlow::CTR::TouchPanelLifoRing* ring = (nn::hidlow::CTR::TouchPanelLifoRing*)this->mTouchPanel.mResourcePtr;
-    ring->ReadData(pBufs, 1, pReadLen, &this->mTickOfRead, &this->mIndexOfRead);
+    reinterpret_cast<nn::hidlow::CTR::TouchPanelLifoRing*>(this->mTouchPanel.GetResource())->ReadData(pBufs, bufLen, pReadLen, &this->mTickOfRead, &this->mIndexOfRead);
     for(int i = 0; i < *pReadLen; i++){
         if((applet::CTR::IsInitialized()) && (!applet::CTR::detail::IsActive())){
-            pBufs[*pReadLen].x = 0;
-            pBufs[*pReadLen].y = 0;
-            pBufs[*pReadLen].touch = 0;
+            pBufs[i].x = 0;
+            pBufs[i].y = 0;
+            pBufs[i].touch = 0;
         }
     }
 }

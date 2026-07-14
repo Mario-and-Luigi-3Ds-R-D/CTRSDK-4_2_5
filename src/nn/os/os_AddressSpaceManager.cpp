@@ -1,8 +1,6 @@
 // Filename: os_AddressSpaceManager.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon Decompilation
 
 #include <nn/os/os_AddressSpaceManager.h>
 #include <nn/os/os_CriticalSection.h>

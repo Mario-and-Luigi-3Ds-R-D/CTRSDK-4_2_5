@@ -71,7 +71,7 @@ template <typename T, typename Tag>
 inline void IntrusiveLinkedList<T, Tag>::Erase(T* p){
     NN_ASSERT_WITH_RESULT(p, MakeResultInvalidAddress());
     Item* pNode = static_cast<Item*>(p);
-    NN_ASSERT_WITH_RESULT(pNode->m_PreviousLink, MakeResultInvalidNode());
+    NN_ASSERT_WITH_RESULT(pNode->mPrevLink, MakeResultInvalidNode());
     if (pNode == pNode->mPrevLink){
         this->mHead = 0;
     }
@@ -91,7 +91,7 @@ template <typename T, typename Tag>
 inline T* IntrusiveLinkedList<T, Tag>::GetNext(T* p) const{
     NN_ASSERT_WITH_RESULT(p, MakeResultInvalidAddress());
     Item* pNode = static_cast<Item*>(p);
-    NN_ASSERT_WITH_RESULT(pNode->m_PreviousLink, MakeResultInvalidNode());
+    NN_ASSERT_WITH_RESULT(pNode->mPrevLink, MakeResultInvalidNode());
     if (p == this->GetBack()){
         return 0;
     }
@@ -165,7 +165,7 @@ template <typename T, typename Tag>
 inline T* IntrusiveLinkedList<T, Tag>::GetPrevious(T* p) const{
     NN_ASSERT_WITH_RESULT(p, MakeResultInvalidAddress());
     Item* pNode = static_cast<Item*>(p);
-    NN_ASSERT_WITH_RESULT(pNode->m_PreviousLink, MakeResultInvalidNode());
+    NN_ASSERT_WITH_RESULT(pNode->mPrevLink, MakeResultInvalidNode());
     if (p == this->GetFront()){
         return 0;
     }
@@ -189,12 +189,12 @@ inline void IntrusiveLinkedList<T, Tag>::Insert(T* position, T* inserted){
     NN_ASSERT_WITH_RESULT(inserted, MakeResultInvalidAddress());
     Item* pNodeInserted = static_cast<Item*>(inserted);
     Item* pNodePosition = static_cast<Item*>(position);
-    NN_ASSERT_WITH_RESULT(!pNodeInserted->mPreviousLink, MakeResultAlreadyListed());
+    NN_ASSERT_WITH_RESULT(!pNodeInserted->mPrevLink, MakeResultAlreadyListed());
     if (pNodePosition == mHead){
         PushFront(inserted);
     }
     else if (pNodePosition){
-        NN_ASSERT_WITH_RESULT(pNodePosition->m_PreviousLink, MakeResultInvalidNode());
+        NN_ASSERT_WITH_RESULT(pNodePosition->mPrevLink, MakeResultInvalidNode());
         InsertBefore(pNodePosition, pNodeInserted);
     }
     else{

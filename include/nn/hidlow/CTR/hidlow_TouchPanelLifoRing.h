@@ -1,7 +1,7 @@
 #pragma once
 
-#include "nn/hid/CTR/hid_TouchPanel.h"
-#include "nn/hidlow/hidlow_LifoRing.h"
+#include <nn/hid/CTR/hid_TouchPanel.h>
+#include <nn/hidlow/hidlow_LifoRing.h>
 
 namespace nn{
 namespace hidlow{

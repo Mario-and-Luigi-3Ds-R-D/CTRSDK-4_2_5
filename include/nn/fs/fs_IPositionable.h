@@ -1,7 +1,7 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/fs/fs_Paramaters.h"
+#include <nn/Result.h>
+#include <nn/fs/fs_Parameters.h>
 
 namespace nn{
 namespace fs{

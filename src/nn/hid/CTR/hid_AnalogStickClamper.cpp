@@ -5,7 +5,8 @@
 // Remade by user Luigifan27
 
 #include <nn/hid/CTR/hid_AnalogStickClamper.h>
-#include <nn/hidlow/hidlow_Api.h>
+#include <nn/hidlow/hidlow_Utils.h>
+#include <nn/math.h>
 
 namespace nn{
 namespace hid{
@@ -20,12 +21,12 @@ AnalogStickClamper::AnalogStickClamper() :
     mMaxOfStickClampMinimum(LIMIT_OF_STICK_CLAMP_MAX),
     mStickClampMode(STICK_CLAMP_MODE_CIRCLE){
         
-    this->mThreshold = DEFAULT_THRESHOLD_OF_NORMALIZE_STICK;
-    this->mStrokeVelocity = 0.0f;
-    this->mLastLength = 0.0f;
-    this->mLastDiff = 0.0f;
-    this->mScale = DEFAULT_SCALE_OF_NORMALIZE_STICK;
-    this->mStroke = 141.0f;
+    mThreshold = DEFAULT_THRESHOLD_OF_NORMALIZE_STICK;
+    mStrokeVelocity = 0.0f;
+    mLastLength = 0.0f;
+    mLastDiff = 0.0f;
+    mScale = DEFAULT_SCALE_OF_NORMALIZE_STICK;
+    mStroke = 141.0f;
 }
 
 void AnalogStickClamper::SetStickClampFree(s16 min, s16 max){
@@ -33,14 +34,22 @@ void AnalogStickClamper::SetStickClampFree(s16 min, s16 max){
         this->mMinOfStickClampCircle = min;
         this->mMaxOfStickClampCircle = max;
     }
+
     else if(this->mStickClampMode == STICK_CLAMP_MODE_CROSS){
         this->mMinOfStickClampCross = min;
         this->mMaxOfStickClampCross = max;
     }
+
     else{
         this->mMaxOfStickClampMinimum = max;
         this->mMinOfStickClampMinimum = min;
     }
+}
+
+void AnalogStickClamper::SetNormalizeStickScaleSettings(f32 scale, s16 threshold){
+    if(LIMIT_OF_STICK_CLAMP_MAX < threshold) threshold = LIMIT_OF_STICK_CLAMP_MAX;
+    mScale = scale;
+    mThreshold = threshold;
 }
 
 void AnalogStickClamper::ClampCore(short* pOutX, short* pOutY, s32 x, s32 y){
@@ -74,22 +83,53 @@ void AnalogStickClamper::ClampValueOfClamp() {
     this->mMaxOfStickClampMinimum = 145;
 }
 
-f32 AnalogStickClamper::NormalizeStick(short x, short y) {
-    if (y > 0x91) y = 0x91;
+f32 AnalogStickClamper::NormalizeStick(s16 x){
+    f32 fx = (f32)x;
+    s16 threshold;
+
+    switch (mStickClampMode){
+    case STICK_CLAMP_MODE_CIRCLE:
+        threshold = mMaxOfStickClampCircle - mMinOfStickClampCircle;
+        break;
+
+    case STICK_CLAMP_MODE_CROSS:
+        threshold = mMaxOfStickClampCross - mMinOfStickClampCross;
+        break;
+
+    case STICK_CLAMP_MODE_MINIMUM:
+        threshold = 0x69;
+        break;
+    }
+
+    if (0 == x)
+        return 0.0f;
+    else if(threshold <= x)
+        return 1.0f;
+
+    return fx / threshold;
+}
+
+
+void AnalogStickClamper::SetStickClamp(short min, short max) {
+    NN_TASSERT_(0 <= min);
+    NN_TASSERT_(min < max);
+    if (max > LIMIT_OF_STICK_CLAMP_MAX) max = LIMIT_OF_STICK_CLAMP_MAX;
 
     if (this->mStickClampMode == STICK_CLAMP_MODE_CIRCLE) {
-        if (x < 0x28) x = 0x28;
-        this->mMinOfStickClampCircle = x;
-        this->mMaxOfStickClampCircle = y;
+        if (min < MIN_OF_STICK_CLAMP_MODE_CIRCLE) min = MIN_OF_STICK_CLAMP_MODE_CIRCLE;
+        this->mMinOfStickClampCircle = min;
+        this->mMaxOfStickClampCircle = max;
         return;
     }
+    
     if (this->mStickClampMode != STICK_CLAMP_MODE_CROSS) {
-        this->mMaxOfStickClampMinimum = y;
+        this->mMaxOfStickClampMinimum = max;
         return;
     }
-    if (x < 0x24) x = 0x24;
-    this->mMinOfStickClampCross = x;
-    this->mMaxOfStickClampCross = y;
+
+    if (min < MIN_OF_STICK_CLAMP_MODE_CIRCLE) min = MIN_OF_STICK_CLAMP_MODE_CIRCLE;
+    this->mMinOfStickClampCross = min;
+    this->mMaxOfStickClampCross = max;
 }
 
 }

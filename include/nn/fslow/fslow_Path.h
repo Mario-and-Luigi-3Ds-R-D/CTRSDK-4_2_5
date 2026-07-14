@@ -23,26 +23,28 @@ public:
 //        this->mBinarySize = 2 * (wcslen (path) + 1);
     }
 
-    const wchar_t* GetWStringRaw (){
+    const wchar_t* GetWStringRaw() const{
         if (GetPathType () == 4) {
-            return (wchar_t*)this->mData;
+            return static_cast<const wchar_t*>(mData);
         }
         return NULL;
     }
-    bit32       GetPathType () { return this->mPathType; }
-    const void* GetDataBuffer () { return this->mData; }
-    size_t      GetDataSize () { return this->mBinarySize; }
+    bit32       GetPathType () const { return this->mPathType; }
+    const bit8* GetDataBuffer () const { return static_cast<const bit8*>(this->mData); }
+    size_t      GetDataSize () const { return this->mBinarySize; }
 
-    static LowPath Make (const T* p){
-        LowPath ret;
-        ret.SetBinary (p);
-        return ret;
-    }
-
+    template <typename T>
     void SetBinary (const T* p){
         this->mPathType   = 2;
         this->mData       = p;
         this->mBinarySize = sizeof (T);
+    }
+
+    template <typename T>
+    static LowPath Make(const T* p){
+        LowPath ret;
+        ret.SetBinary(p);
+        return ret;
     }
 };
 

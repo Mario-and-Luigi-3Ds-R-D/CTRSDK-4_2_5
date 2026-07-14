@@ -13,6 +13,10 @@ namespace CTR{
 class ExtraPad{
 public:
     static bool IsSampling();
+
+    static uptr GetResource();
+public:
+    uptr mResourcePtr;
 };
 
 }

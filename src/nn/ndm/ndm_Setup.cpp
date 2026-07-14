@@ -1,3 +1,7 @@
+// Filename: ndm_Setup.cpp
+//
+// Project: Horizon CTRSDK
+
 #include <nn/ndm/ndm_Setup.h>
 #include <nn/ndm/ndm_UserControl.h>
 #include <nn/ndm/ndm_Interface.h>
@@ -10,24 +14,20 @@ namespace ndm{
 
 void SetupDaemonsDefault(){
     if(applet::CTR::IsInitialized() && !applet::CTR::GetAppletType()){
-        Result canInit; 
-        if(ndm::Initialize().IsFailure()){
-            nndbgPanic();
+        Result result = nn::ndm::Initialize();
+        NN_UTIL_PANIC_IF_FAILED(result);
+
+        result = nn::ndm::CTR::detail::Interface::OverrideDefaultDaemons(0xfu);
+        if(result.IsFailure()){
+            NN_TLOG_("Failed to override default daemons. (SDK version mismatch?)\n");
+            NN_DBG_PRINT_RESULT(result);
         }
-        canInit = nn::ndm::CTR::detail::Interface::OverrideDefaultDaemons(0xfu);
-        #ifdef NN_DEBUG
-            if(canInit.IsFailure()){
-                dbg::detail::TPrintf("Failed to override default daemons. (SDK version mismatch?)\n");
-                dbg::detail::PrintResult(canInit);
-            }
-        #endif
-        canInit = nn::ndm::SuspendDaemons(6u);
-        #ifdef NN_DEBUG
-            if(canInit.IsFailure()){
-                dbg::detail::TPrintf("Failed to suspend boss daemon.\n");
-                dbg::detail::PrintResult(canInit);
-            }
-        #endif
+
+        result = nn::ndm::SuspendDaemons(6u);
+        if(result.IsFailure()){
+            NN_TLOG_("Failed to suspend boss daemon.\n");
+            NN_DBG_PRINT_RESULT(result);
+        }
     }
 }
 

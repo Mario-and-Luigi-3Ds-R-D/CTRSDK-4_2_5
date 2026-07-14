@@ -35,5 +35,7 @@ struct SinCosSample{
 
     inline void SinCosRad(f32* s, f32* c, f32 rad) { SinCosFIdx(s, c, NN_MATH_RAD_TO_FIDX(rad)); }
 
+    inline f32 TanDeg(f32 deg){ return TanFIdx(deg * 0.7111111); }
+
 }
 }

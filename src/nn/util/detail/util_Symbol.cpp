@@ -4,12 +4,14 @@
 //
 // Remade by user Luigifan27
 
-#include "nn/util/detail/util_Symbol.h"
+#include <nn/util/detail/util_Symbol.h>
 
-/* The RO System Uses this. Refers a func symbol for "nn::ro" */
 
-void nnutilReferSymbol_(const char* sym){
+extern "C" {
 
+__asm void nnutilReferSymbol_(const void* sym __attribute__((unused)), ...){
+    bx lr
 }
 
-/* This one makes 0 Sense, so I didn't do it. */
+
+}

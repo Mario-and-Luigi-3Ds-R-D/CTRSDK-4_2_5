@@ -7,7 +7,7 @@
 #include <nn/hid/CTR/hid_PadReader.h>
 #include <nn/hid/CTR/hid_ExtraPad.h>
 #include <nn/hidlow/CTR/hidlow_PadLifoRing.h>
-#include <nn/hidlow/hidlow_Api.h>
+#include <nn/hidlow/hidlow_Utils.h>
 #include <nn/applet/CTR/applet_Api.h>
 #include <nn/applet/CTR/applet_Info.h>
 
@@ -24,58 +24,77 @@ PadReader::PadReader(Pad& pad) :
     mTickOfRead(-1){
 }
 
-#ifdef NONMATCHING
-#endif
-// the part is that ring-> and that ADD 2 early
 bool PadReader::ReadLatest(PadStatus* pBuf){
     s64 tick = -1LL;
     s32 index = -1;
     s32 readLen;
     uint newHold;
 
-    if(!ExtraPad::IsSampling()){
-        this->mStickClamper.ClampValueOfClamp();
-        hidlow::CTR::PadLifoRing* ring = (hidlow::CTR::PadLifoRing*)this->mPad.GetResource();
-        ring->hidlow::CTR::PadLifoRing::ReadData(pBuf, 1, &readLen, &tick, &index);
-        if(0 < readLen){
-            this->mStickClamper.ClampCore(&pBuf->stick.x,&pBuf->stick.y,pBuf->stick.x,pBuf->stick.y);
-            if(this->mIsReadLatestFirst != false){
-                this->mLatestHold = pBuf->hold;
-                this->mIsReadLatestFirst = false;
-            }
-            newHold = pBuf->hold & 0xffffdfff;
-            pBuf->hold = newHold;
-            uint mLatestHold = this->mLatestHold;
-            pBuf->trigger = (newHold ^ mLatestHold) & ~mLatestHold;
-            pBuf->release = this->mLatestHold & ~newHold;
-            if((applet::CTR::IsInitialized()) && (!applet::CTR::detail::IsActive())){
-                this->HideKeyInfo(pBuf);
-            }
+    if(ExtraPad::IsSampling())
+        return false;
+    
+    this->mStickClamper.ClampValueOfClamp();
+    reinterpret_cast<nn::hidlow::CTR::PadLifoRing*>(mPad.GetResource())->ReadData(pBuf, 1, &readLen, &tick, &index);
+    if(0 < readLen){
+        this->mStickClamper.ClampCore(&pBuf->stick.x,&pBuf->stick.y,pBuf->stick.x,pBuf->stick.y);
+        if(this->mIsReadLatestFirst != false){
             this->mLatestHold = pBuf->hold;
-            if(sIsEnableSelect == false){
-                hidlow::GatherStartAndSelect(pBuf);
-            }
-            return true;
+            this->mIsReadLatestFirst = false;
         }
+        newHold = pBuf->hold & 0xffffdfff;
+        pBuf->hold = newHold;
+        uint mLatestHold = this->mLatestHold;
+        pBuf->trigger = (newHold ^ mLatestHold) & ~mLatestHold;
+        pBuf->release = this->mLatestHold & ~newHold;
+        if((applet::CTR::IsInitialized()) && (!applet::CTR::detail::IsActive())){
+            this->HideKeyInfo(pBuf);
+        }
+        this->mLatestHold = pBuf->hold;
+        if(sIsEnableSelect == false){
+            hidlow::GatherStartAndSelect(pBuf);
+        }
+        return true;
     }
     return false;
 }
 
-/*void PadReader::Read(PadStatus* pBufs, s32* pReadLen, s32 bufLen){
+void PadReader::Read(PadStatus* pBufs, s32* pReadLen, s32 bufLen){
     NN_TASSERT_(NULL != pBufs);
     this->mStickClamper.ClampValueOfClamp();
-    hidlow::CTR::PadLifoRing* ring = (hidlow::CTR::PadLifoRing*)this->mPad.GetResource();
-    ring->hidlow::CTR::PadLifoRing::ReadData(pBufs, 1, pReadLen, &this->mTickOfRead, &this->mIndexOfRead);
+    reinterpret_cast<nn::hidlow::CTR::PadLifoRing*>(this->mPad.GetResource())->ReadData(pBufs, bufLen, pReadLen, &this->mTickOfRead, &this->mIndexOfRead);
 
-    if(!ExtraPad::IsSampling){
+    if(ExtraPad::IsSampling()){
         for(int i = 0; i < *pReadLen; i++){
-
+            this->HideKeyInfo(&pBufs[i]);
         }
+        *pReadLen = 0;
+        return;
     }
-}*/
+    for(int i = 0; i < *pReadLen; i++){
+        pBufs[i].hold &= 0xFFFFDFFF;
+        pBufs[i].trigger &= 0xFFFFDFFF;
+        pBufs[i].release &= 0xFFFFDFFF;
+        if((applet::CTR::IsInitialized()) && (!applet::CTR::detail::IsActive())){
+            this->HideKeyInfo(&pBufs[i]);
+        }
+        
+        if(!sIsEnableSelect){
+               hidlow::GatherStartAndSelect(&pBufs[i]);
+        }
+        this->mStickClamper.ClampCore(&pBufs[i].stick.x, &pBufs[i].stick.y, pBufs[i].stick.x, pBufs[i].stick.y);
+    }
+}
 
-f32 PadReader::NormalizeStick(short x, short y){
-    return this->mStickClamper.NormalizeStick(x,y);
+void PadReader::SetNormalizeStickScaleSettings(f32 scale, s16 threshold){
+    return this->mStickClamper.SetNormalizeStickScaleSettings(scale,threshold);
+}
+
+void PadReader::SetStickClamp(short min, short max){
+    return this->mStickClamper.SetStickClamp(min,max);
+}
+
+f32 PadReader::NormalizeStick(short pos){
+    return this->mStickClamper.NormalizeStick(pos);
 }
 
 }

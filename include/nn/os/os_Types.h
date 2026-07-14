@@ -1,19 +1,20 @@
 #pragma once
 
-// Rename 2 os_Types.h
-
-#include "nn/types.h"
-#include "nn/Result.h"
-#include "nn/Handle.h"
-#include "nn/os/CTR/os_ErrorHandler.h"
-#include "nn/util/util_NonCopyable.h"
-#include "nn/os/os_Tick.h"
+#include <nn/Result.h>
+#include <nn/Handle.h>
+#include <nn/os/CTR/os_ErrorHandler.h>
+#include <nn/util/util_NonCopyable.h>
+#include <nn/os/CTR/MPCore/os_MemoryMap.h>
+#include <nn/util/util_SizedEnum.h>
+#include <nn/os/os_SharedInfo.h>
 
 #define NN_OS_WAIT_INFINITE -1
 
 namespace nn{
 namespace os{
+
 const s64 WAIT_INFINITE = NN_OS_WAIT_INFINITE;
+
     enum ArbitrationType{
         ARBITRATION_TYPE_SIGNAL = 0,
         ARBITRATION_TYPE_WAIT_IF_LESS_THAN = 1,
@@ -114,37 +115,13 @@ const s64 WAIT_INFINITE = NN_OS_WAIT_INFINITE;
         uptr mBaseAddress;
         size_t mSize;
         bit32 mPermission;
-        nn::os::MemoryState mState;
+        MemoryState mState;
     };
 
     struct ValueType{
-        s32 mValueType; /* os_Api.h */
+        s32 mValueType;
     };
 
-
-    struct RtcSwcInfo{
-        s64 mBaseMilliSeconds;
-        nn::os::Tick mOsTick;
-        s64 mTicksPerSecond;
-        s64 mDiffMilliSeconds;
-    };
-
-    struct NonCopyable{
-    };
-
-    struct WritableSharedInfo{
-        s32 rtcValidNumber;
-        u8 targetHardware;
-        u8 msuTargetInfo;
-        u8 mcuInfoRegisters_10;
-        bit8 reversed[25];
-        RtcSwcInfo rtcSwcInfo[2];
-        bit8 wirelessInfo[16];
-        bit8 rev2[16];
-        f32 svr2Volume;
-        bool displayModeLockFlag;
-    };
-
-    inline WritableSharedInfo* GetWritableSharedInfo(){ return (WritableSharedInfo*)0x1ff81000; }
+    struct NonCopyable{};
 }
 }

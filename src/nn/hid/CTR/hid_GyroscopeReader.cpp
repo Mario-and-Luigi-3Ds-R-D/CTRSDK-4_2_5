@@ -5,6 +5,8 @@
 // Remade by user Luigifan27
 
 #include <nn/hid/CTR/hid_GyroscopeReader.h>
+#include <nn/hid/CTR/hid_IpcClient.h>
+#include <nn/module.h>
 
 namespace nn{
 namespace hid{
@@ -13,14 +15,29 @@ namespace{
     int sNumOfInstance;
     int rev;
     int sTickOfStart;
+
+    NN_MAKE_MODULE_SDK(sDetectableString, "Gyroscope");
 }
 
-GyroscopeReader::GyroscopeReader(AccelerometerReader* pAccelerometerReader,Gyroscope& gyroscope) : mGyroscope(gyroscope){
-    // TODO 
+GyroscopeReader::GyroscopeReader(AccelerometerReader* pAccelerometerReader,Gyroscope& gyroscope) :   
+    mIsFirstRead(true),
+    mDefaultAccelerometerReader(),
+    mGyroscope(gyroscope),
+    mIndexOfRead(-1),
+    mTickOfRead(-1){
+    NN_REFER_MODULE(sDetectableString);
+    detail::Ipc::EnableGyroscopeLow();
+    if (pAccelerometerReader)
+        mpAccelerometerReader = pAccelerometerReader;
+    else
+        mpAccelerometerReader = &mDefaultAccelerometerReader;
+    // TODO
+
 }
 
 GyroscopeReader::~GyroscopeReader(){
-    // TODO
+    detail::Ipc::DisableGyroscopeLow();
+    sNumOfInstance--;
 }
 
 void GyroscopeReader::EnableZeroDrift(){
@@ -63,11 +80,13 @@ void GyroscopeReader::ResetZeroDriftMode(){
 }
 
 void GyroscopeReader::ResetAxisRotationMatrix(){
-    // TODO
+    math::MTX34::Identity();
+    //this->SetAxis
+    this->mpAccelerometerReader->ResetAxisRotationMatrix();
 }
 
 f32 GyroscopeReader::ReviseDirection_Acceleration(Direction& rev_dir, const nn::math::VEC3& acc){
-    // TODO
+    
 }
 
 void GyroscopeReader::SetZeroPlayParam(f32& radius){
@@ -75,7 +94,7 @@ void GyroscopeReader::SetZeroPlayParam(f32& radius){
 }
 
 void GyroscopeReader::SetZeroDriftMode(const ZeroDriftMode& mode){
-    // TODO
+    this->mZeroDriftMode = mode;
 }
 
 

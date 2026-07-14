@@ -23,8 +23,8 @@ typedef signed short       s16;
 typedef signed int         s32;
 typedef signed long long   s64;
 
-typedef u32 uptr;
-typedef s32 ptr;
+typedef uintptr_t uptr;
+typedef intptr_t ptr;
 
 typedef float              f32;
 typedef double             f64;
@@ -50,8 +50,14 @@ typedef unsigned long long int  bit64;
 typedef s32 sptr;
 typedef u32 uptr;
 
+typedef bit64 ProgramId;
+
 #ifndef nullptr
 #define nullptr NULL
+#endif
+
+#ifndef NN_UNUSED
+#define NN_UNUSED __attribute__ ((unused))
 #endif
 
 #define NN_UNUSED_VAR(x) ((void)(x))
@@ -63,6 +69,6 @@ typedef u32 uptr;
 #define NN_INLINE inline
 #define NN_NOINLINE __attribute__((noinline))
 
-#ifdef NN_NOT_OPTIMIZED
+#ifdef NN_DEBUG
     #pragma O0
 #endif

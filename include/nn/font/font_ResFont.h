@@ -1,7 +1,7 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/font/font_ResFontBase.h"
+#include <nn/types.h>
+#include <nn/font/font_ResFontBase.h>
 
 namespace nn{
 namespace font{
@@ -11,8 +11,12 @@ public:
     virtual ~ResFont();
 
     void RemoveResource();
-    void* SetDrawBuffer(void*); // void-> TextureObject*
-    void* SetResource();
+    void* SetDrawBuffer(void* buffer);
+    void* SetResource(void* bfnt);
+    static u32 GetDrawBufferSize(const void* bfnt);
+    void* GetDrawBuffer(){return GetTextureObjectsBufferPtr();}
+
+    using ResFontBase::IsManaging;
 };
 
 }

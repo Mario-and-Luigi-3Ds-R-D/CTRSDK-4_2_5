@@ -8,7 +8,7 @@
 namespace nn { 
 namespace math {
 
-f32 Max(f32 a, f32 b ){ if(a < b) b = a; return b; }
+inline f32 Max(f32 a, f32 b ){ if(a < b) b = a; return b; }
 /* Inlines */
 
 inline f32 FExp(f32 x){

@@ -1,10 +1,11 @@
 #pragma once
 
-#include "nn/applet/CTR/applet_Paramaters.h"
-#include "nn/applet/CTR/applet_Result.h"
-#include "nn/fnd/fnd_TimeSpan.h"
-#include "nn/os/os_TransferMemoryBlock.h"
-#include "nn/os/os_Thread.h"
+#include <nn/applet/CTR/applet_Paramaters.h>
+#include <nn/applet/CTR/applet_Result.h>
+#include <nn/fnd/fnd_TimeSpan.h>
+#include <nn/fs.h>
+#include <nn/os/os_TransferMemoryBlock.h>
+#include <nn/os/os_Thread.h>
 
 // Mostly the detail ones, so yeah.
 
@@ -13,38 +14,26 @@ namespace applet {
 namespace CTR {
 bool IsInitialized();
 
-    extern const nn::Handle HANDLE_NONE;
+    extern nn::Handle HANDLE_NONE;
 
 namespace detail{
-namespace{
-    bool sIsApplet;
-    bool sIsVramSaved;
-    bool sIsInitialized;
-    bool sIsGpuRightGiven;
-    bool sIsDspSleeping;
-}
 
-    /* Main Applet */
-
-    /// @param in AppletAttr appletAttr
-    ///
-    /// @brief Initializes the Application, used by init_Default
     Result Initialize(AppletAttr applerAttr);
-
-    /// @param in bool isSleepEnaled = true
-    ///
-    /// @brief Enable
     void Enable(bool isSleepEnabled = true);
 
     bool IsRegistered(AppletId appletId);
+    bool WaitForRegister(AppletId appletId, nn::fnd::TimeSpan span = WAIT_INFINITE);
 
-    /// @param in AppletId appletId, nn::fnd::TimeSpan span
-    ///
-    /// @brief Uses a Tick Checker to Wait on a Register.
-    bool WaitForRegister(AppletId appletId, nn::fnd::TimeSpan span);
+    Result SendMessage(AppletId receiverId, const u8* pParam, size_t paramSize, nn::Handle handle=NN_APPLET_HANDLE_NONE, nn::fnd::TimeSpan timeout=WAIT_INFINITE);
+    Result TrySendMessage(AppletId receiverId, const u8* pParam, size_t paramSize, nn::Handle handle=NN_APPLET_HANDLE_NONE);
 
-    Result CancelLibraryApplet( bool isApplicationEnd = false ); // inline
+    Result PreloadLibraryApplet(AppletId id);
+
+    Result CancelLibraryApplet(bool isApplicationEnd = false); // inline
     Result CancelLibraryAppletIfRegistered(bool isApplicationEnd = false, AppletWakeupState *pWakeupState=NULL);
+
+    Result PrepareToStartLibraryApplet(AppletId id);
+    Result StartLibraryApplet(AppletId id, const u8* pParam=NULL, size_t paramSize=0, Handle handle=NN_APPLET_HANDLE_NONE);
 
     Result PrepareToCloseApplication(bool isCancelPreload = false);
     Result CloseApplication(u8 *pParam,size_t paramSize,nn::Handle handle);
@@ -64,6 +53,7 @@ namespace{
     bool CancelParemater(bool isSenderCheck, AppletId senderId, bool isReceiverCheck, AppletId receiverId);
 
     void GetAppletManInfo(AppletPos requestPos,AppletPos *pCurrentPos,AppletId *pRequestedId,AppletId *pHomeMenuId,AppletId *pCurrentId);
+    bool GetAppletInfo(AppletId appletId, ProgramId* pProgramId, nn::fs::MediaType* pMediaType, bool* pIsUsed, bool* pIsPreloaded, AppletAttr* pAttr);
 
     void SleepIfShellClosed();
 
@@ -71,16 +61,22 @@ namespace{
 
     void SetActive();
 
+    Result SendCaptureBufferInfo(u8* pParam, size_t paramSize);
+
+    Result TrySend(AppletId receiverId, u32 command, const u8* pParam, size_t paramSize, Handle handle);
+    Result Send(AppletId receiverId,u32 command,const u8 *pParam,size_t paramSize,Handle handle,fnd::TimeSpan timeout);
+
     void ReplySleepQueryToManager(QueryReply);
     void ReplySleepNotificationCompleteToManager();
 
     Result PrepareToStartSystemApplet(AppletId id);
     Result StartSystemApplet(AppletId id, u8* pParam, size_t size, nn::Handle handle);
-    
+
     Result Glance(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle);
 
     void NotifyToWait();
 
+    Result TryReceive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen, Handle *pHandle,bool isTry);
     Result Receive(AppletId *pSenderId,u32 *pCommand,u8 *pParam,size_t paramSize,s32 *pReadLen,Handle *pHandle,fnd::TimeSpan timeout);
 
     struct LockTransitionParam{

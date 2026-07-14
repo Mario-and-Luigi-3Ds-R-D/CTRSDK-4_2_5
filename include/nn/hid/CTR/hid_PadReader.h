@@ -25,9 +25,13 @@ public:
     ~PadReader() {};
     void Read(PadStatus* pBufs, s32* pReadLen, s32 bufLen);
     bool ReadLatest(PadStatus* pBuf);
-    f32 NormalizeStick(short x, short y);
-
+    
+    f32 NormalizeStick(short x);
     void SetNormalizeStickScaleSettings(f32 scale, s16 threshold);
+
+    void SetStickClamp(short min, short max);
+
+    StickClampMode GetStickClampMode() const;
 
     static const s8 MAX_READ_NUM = 7;
     
@@ -48,10 +52,13 @@ protected:
     s32 rev2;
     s64 mTickOfRead;
 
-private:
-    static AnalogStickClamper::ClampMode  ClamperClampMode(const StickClampMode mode){ return (AnalogStickClamper::ClampMode)mode; }
-    static StickClampMode ReaderClampMode(const AnalogStickClamper::ClampMode mode);
 public:
+    static AnalogStickClamper::ClampMode  ClamperClampMode(const StickClampMode mode){ return (AnalogStickClamper::ClampMode)mode; }
+
+    inline void PadReader::GetStickClamp(s16* pMin, s16* pMax) const{
+        this->mStickClamper.GetStickClamp(pMin,pMax);
+    }
+
     inline void SetStickClampMode(StickClampMode mode){
         this->mStickClamper.SetStickClampMode(ClamperClampMode(mode));
     }

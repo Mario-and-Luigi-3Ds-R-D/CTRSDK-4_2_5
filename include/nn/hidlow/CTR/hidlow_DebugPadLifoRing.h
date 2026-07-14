@@ -2,7 +2,7 @@
 
 #include <nn/hid/CTR/hid_DebugPad.h>
 #include <nn/hidlow/hidlow_LifoRing.h>
-#include <nn/hidlow/CTR/hidlow_DebugPadStatusRaw.h>
+#include <nn/hidlow/CTR/hidlow_DebugPadRawStatus.h>
 
 namespace nn{
 namespace hidlow{

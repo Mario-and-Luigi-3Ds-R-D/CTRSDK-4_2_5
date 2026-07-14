@@ -20,7 +20,11 @@ namespace CTR {
     bool ReceiveCallbackForCommands(uptr callback);
 
     bool ProcessPowerButton();
+    bool ProcessPowerButtonAndWait();
+
     bool ProcessHomeButton();
+    bool ProcessHomeButtonAndWait();
+    
     void ClearHomeButtonState();
     bool IsExpectedToProcessHomeButton();
     void ReplySleepQuery(QueryReply reply);
@@ -30,9 +34,16 @@ namespace CTR {
     
     bool IsEnableSleep();
 
+    void SetCommandCallback(s32 callback, uptr arg);
+
 
     class SysSleepAcceptedCallbackInfo{
     public:
+        enum {
+            MIN_PRIORITY = 0,
+            MAX_PRIORITY = 0xFFFF,
+            DEFAULT_PRIORITY = 0x8000
+        };
         SysSleepAcceptedCallbackInfo* mPrev;
         SysSleepAcceptedCallbackInfo* mNext;
         AppletSysSleepAcceptedCallback mCallback;
@@ -51,15 +62,17 @@ namespace CTR {
         void SetPrev(SysSleepAcceptedCallbackInfo* p){ this->mPrev = p;  return; }
         SysSleepAcceptedCallbackInfo* GetNext(){ return this->mNext; }
         SysSleepAcceptedCallbackInfo* GetPrev(){ return this->mPrev; }
+
+        static SysSleepAcceptedCallbackInfo* spHead;
+        static SysSleepAcceptedCallbackInfo* spTail;
     };
 
 namespace detail{
+    // TODO
     Result CaptureScreenForSystemApplet(AppletId id);
-    
     Result WaitToCaptureScreen(AppletId id, Handle* pHandle);
-
     bool ReceiveCallbackForCommands(uptr ptr);
-
+    void WaitForAppletPreloaded(AppletId id);
     AppletWakeupState WaitForStarting(AppletId* pSenderId,  u8* pParam, size_t paramSize, s32* pReadLen, Handle* pHandle, fnd::TimeSpan timeout);
 
 }

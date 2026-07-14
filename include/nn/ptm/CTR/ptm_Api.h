@@ -1,21 +1,17 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/Result.h"
-#include "nn/fnd/fnd_DateTime.h"
+#include <nn/fnd/fnd_DateTime.h>
 
 namespace nn{
 namespace ptm{
 namespace CTR{
 namespace{
-const char* PORT_NAMES[] = {
-    "ptm:s", // SYSTEM
-    "ptm:u", // USER
-    "ptm:sysm", // SYSTEM MODULE
-    "ptm:play", // PLAY
-    "ptm:gets", // GETS
-};
-
+    const char *const PORT_NAME_PTM_USER   = "ptm:u";
+    const char *const PORT_NAME_PTM_SYST   = "ptm:s";
+    const char *const PORT_NAME_PTM_SYSM   = "ptm:sysm";
+    const char *const PORT_NAME_SETSYSTIME = "ptm:sets";
+    const char *const PORT_NAME_PTM_PLAY   = "ptm:play";
+    const char *const PORT_NAME_GETSYSTIME = "ptm:gets";
 }
 Result Initialize();
 Result Finalize();

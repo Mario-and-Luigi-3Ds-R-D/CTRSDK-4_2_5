@@ -1,8 +1,8 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/Result.h"
-#include "nn/mic/CTR/mic_Types.h"
+#include <nn/types.h>
+#include <nn/Result.h>
+#include <nn/mic/CTR/mic_Types.h>
 
 namespace nn{
 namespace mic{

@@ -64,6 +64,7 @@ public:
     bool SetSurroundDepth(f32 depth);
     void UpdateDroppedSoundFrameCount();
     void SetSurroundSpeakerPosition(SurroundSpeakerPosition pos);
+    void SetIsHeadsetConnected(bool flag);
     static MasterManager* GetInstance();
 };
 
@@ -110,6 +111,7 @@ public:
     void SetSyncMode(SyncMode mode);
     void SetSystemMasterVolume(f32 volume);
     void SetSurroundSpeakerPosition(SurroundSpeakerPosition pos);
+    void SetIsHeadsetConnected(bool flag);
     static MasterManagerImpl* GetInstance();
 };
 

@@ -1,61 +1,50 @@
 #pragma once
 
-#include "nn/Result.h"
-#include "nn/Handle.h"
-#include "nn/fs/fs_Paramaters.h"
-#include "nn/fs/CTR/MPCore/fs_UserArchive.h"
-#include "nn/fnd/fnd_UnitHeap.h"
+#include <nn/Handle.h>
+#include <nn/Result.h>
+#include <nn/types.h>
+#include <nn/fs/CTR/fs_PathNamesForSystem.h>
+#include <nn/fs/fs_Parameters.h>
+#include <nn/fs/fs_Result.h>
+#include <nn/util/util_NonCopyable.h>
+#include <nn/util/util_Result.h>
+
+#include <nn/os.h>
+#include <nn/fnd.h>
+
+#include <nn/fslow/fslow_Path.h>
 
 namespace nn{
 namespace fs{
-namespace{
-    extern u8 buf[0x8];
-    extern CTR::MPCore::detail::IArchive* gSaveDataArchive;
-}
-
 namespace CTR{
 namespace MPCore{
-namespace detail{
-namespace{
-    extern nn::Handle gFileServerArchive;
-    extern fnd::UnitHeapBase sArchiveHeap;
-}
-namespace{
-    static fnd::TimeSpan ConstantWait;
-}
-namespace{
-    extern bool sIsEmulateEndurance;
-}
 
 typedef nn::fslow::LowPath<const char*, const wchar_t*> Path;
 
-Result OpenSpecialArchiveRaw(IArchive** pOut, bit32 archiveKind);
+namespace detail{
 
-class ArchiveName{
-public:
-    ArchiveName(char const* pName);
-
-};
-
-class ArchiveTableEntry{
-protected:
-    bit64 id;
-    IArchive* archive;
-    s32 rev;
-public:
-    ArchiveTableEntry();
-};
+void LatencyEmulation(bool isRead);
 
 class UserFileSystem{
 public:
-    static Result  CloseFile(void*);
+    /* Creating */
+
+    static Result TryCreateFile(const wchar_t *pathName, s64 size);
+    static Result TryCreateDirectory(const wchar_t *pathName);
+
+    /* Open / Close Generaal */
     static Result Initialize(nn::Handle handle);
+    static void CloseFile(void* p);
+    static Result TryOpenFile(void** pout, const wchar_t* pathName,bit32 mode);
+    static Result TryReadFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size);
+    static Result TryWriteFile(s32* pOut, void* p, s64 offset, const void* buffer, size_t size, bool flush);
     static Result TryGetFileSize(s64* pout,void*);
     static Result TrySetFileSize(void* p, s64 size);
-    static Result TryWriteFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size, bool flush);
-    static Result TryReadFile(s32* pOut, void* p, s64 offset, void* buffer, size_t size);
-    static Result TryOpenFile(void** pout, const wchar_t* pathName,bit32 mode);
     static Result TryFlush(void*);
+
+    /* Delete */
+
+    static Result TryDeleteFile(const wchar_t *pathName);
 
 };
 

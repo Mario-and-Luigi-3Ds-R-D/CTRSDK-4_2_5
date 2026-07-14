@@ -1,9 +1,8 @@
 #pragma once
 
-#include "nn/Handle.h"
-#include "nn/Result.h"
-#include "nn/os/os_CriticalSection.h"
-#include "nn/fnd/fnd_Intrusive.h"
+#include <nn/os/os_LightEvent.h>
+#include <nn/os/os_CriticalSection.h>
+#include <nn/fnd/fnd_Intrusive.h>
 
 namespace nn {
 namespace os{
@@ -16,9 +15,25 @@ class NotificationHandler;
 struct NotificationHandler : public fnd::IntrusiveLinkedList<NotificationHandler>::Item{
     bit32 mAttachedMessage;
 
-    NotificationHandler() { }
+    NotificationHandler(): 
+        mAttachedMessage(0)
+    { }
+    virtual ~NotificationHandler(){ }
+    virtual void HandleNotification(u32 message) = 0;
 };
 
+template <typename T>
+class EventNotificationHandlerBase : public NotificationHandler{
+public:
+    T* mpEvent;
+
+    virtual void HandleNotification(bit32 mMessage){
+        NN_POINTER_TASSERT_(this->mpEvent);
+        this->mpEvent->Signal();
+    }
+};
+
+typedef EventNotificationHandlerBase<os::LightEvent> LightEventNotificationHandler;
 
 Result Initialize();
 Result StartNotification();
@@ -27,25 +42,11 @@ Result DispatchNotification();
 Result RegisterNotificationHandler(NotificationHandler* pHandler, bit32 message);
 Result GetServiceHandle(nn::Handle* pOut, const char* pName, s32 nameLen, bit32 flags);
 
+inline Result GetServiceHandle(nn::Handle* pOut, const char* pName){return GetServiceHandle(pOut, pName, strlen(pName), 0);}
+
 namespace detail {
 
 Result Connect(const char* pName);
-
-class HandlerManager{
-public:
-    nn::fnd::IntrusiveLinkedList<NotificationHandler> mHandler;
-
-    ~HandlerManager();
-    Result Register(NotificationHandler* pHandler, u32 message);
-    NotificationHandler* Find(bit32 message){
-        nn::srv::NotificationHandler *i
-        NN_TASSERT_(message != 0);
-        for(i = this->mHandler.GetFront(); i && i->mAttachedMessage != message; i = this->mHandler.GetNext(i)){
-            ;
-        }
-        return i;
-    }
-};
 
 } // namespace detail
 

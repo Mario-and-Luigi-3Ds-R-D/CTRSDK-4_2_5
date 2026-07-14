@@ -4,9 +4,12 @@ namespace nn{
 namespace cfg{
 namespace CTR{
 namespace detail{
-namespace IpcSys{
-    extern nn::Handle sSession;
-}
+
+class IpcSys{
+public:
+    static nn::Handle sSession;
+};
+
 }
 }
 }

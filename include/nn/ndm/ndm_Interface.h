@@ -1,20 +1,22 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/Handle.h"
-#include "nn/Result.h"
+#include <nn/types.h>
+#include <nn/Handle.h>
+#include <nn/Result.h>
 
 namespace nn{
 namespace ndm{
 namespace CTR{
 namespace detail{
-namespace Interface{
 
-extern nn::Handle sSession;
+class Interface{
+public:
+    static nn::Handle sSession;
 
-Result OverrideDefaultDaemons(uint);
-Result SuspendDaemons(bit32 mask);
-}
+    static Result OverrideDefaultDaemons(bit32 mask);
+    static Result SuspendDaemons(bit32 mask);
+};
+
 }
 }
 }

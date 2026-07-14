@@ -43,13 +43,18 @@ public:
     ~AnalogStickClamper(){ }
     void ClampCore(short* pOutX, short* pOutY,  s32 x, s32 y);
     void ClampValueOfClamp();
-    void GetNormalizeStickScaleSettings(f32 scale, short threshold){}
-    f32 NormalizeStick(short x, short y);
+
+    f32 NormalizeStick(short stick);
+    void NormalizeStickWithScale(f32* normalized_x, f32* normalized_y, s16 x, s16 y);
 
     void GetStickClamp(s16* pMin, s16* pMax) const;
     ClampMode GetStickClampMode() const;
+    void GetNormalizeStickScaleSettings(f32* scale, s16* threshold ) const{}
+
+    void SetStickClamp(short min, short max);
     void SetStickClampMode(ClampMode mode);
     void SetStickClampFree(s16 min, s16 max);
+    void SetNormalizeStickScaleSettings(f32 scale, s16 threshold);
 };
 
 inline void AnalogStickClamper::GetStickClamp(s16* pMin, s16* pMax) const{

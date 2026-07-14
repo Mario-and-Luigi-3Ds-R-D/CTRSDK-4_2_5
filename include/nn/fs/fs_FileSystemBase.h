@@ -1,7 +1,7 @@
 #include <nn/Handle.h>
 #include <nn/fs/CTR/MPCore/fs_UserFileSystem.h>
 #include <nn/dbg/dbg_Break.h>
-#include "nn/Assert.h"
+#include <nn/Assert.h>
 
 namespace nn{
 namespace fs{
@@ -15,17 +15,16 @@ class FileSystemBase{
 protected:
     FileSystemBaseImpl* mpImpl;
 public:
-    void Initialize(FileSystemBaseImpl* impl){
+    FileSystemBase() : mpImpl(NULL){}
+    void Initialize(FileSystemBaseImpl& impl){
         NN_TASSERT_(!mpImpl);
-        this->mpImpl = impl;
+        *mpImpl = impl;
     }
 };
 
-}
+void RegisterGlobalFileSystemBase(detail::FileSystemBase& base);
+extern detail::FileSystemBase* spGlobalFileSystemBase;
 
-namespace detail{
-    void RegisterGlobalFileSystemBase(detail::FileSystemBase* base);
-    static detail::FileSystemBase* spGlobalFileSystemBase;
 }
 }
 }

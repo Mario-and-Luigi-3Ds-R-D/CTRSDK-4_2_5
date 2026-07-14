@@ -128,6 +128,7 @@ public:
 
 public:
     VoiceImpl(){ }
+    VoiceImpl(s32 id);
     void AppendWaveBuffer(WaveBuffer* buffer);
     f32 CalcFsRatio(){ return (this->mSampleRate * this->mPitch) / 32728.0; }
     void CalculateDspCycle(); // big inline

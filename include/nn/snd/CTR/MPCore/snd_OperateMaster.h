@@ -99,7 +99,7 @@ public:
     ushort* GetDirectIdAddrOnShared(int page){ this->mpDirectIdOnShare[page]; }
     DspsndDspCycles* GetDspCyclesAddr(){ return this->mpDspCyclesOnShare[this->mReadPage]; }
     s32 GetDspCyclesFrame(){ return this->mDspCycles.ch0.frame; }
-    Dspsnd* GetInstance(){ return &internal::sDspsnd; }
+    static Dspsnd* GetInstance(){ return &internal::sDspsnd; }
     DspsndMasterDirect* GetMasterDirectAddr(){ return this->mpMasterDirectOnShare[this->mWritePage]; }
     DspsndMasterStatus* GetMasterStatusAddr(){ return this->mpMasterStatusOnShare[this->mReadPage]; }
     short* GetMixBusAddr(){ return this->mpMixBusOnShare[this->mReadPage]; }

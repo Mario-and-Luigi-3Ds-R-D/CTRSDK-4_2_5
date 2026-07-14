@@ -1,8 +1,8 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/dbg/dbg_Break.h"
-#include "nn/pxi/pxi_Api.h"
+#include <nn/types.h>
+#include <nn/dbg/dbg_Break.h>
+#include <nn/pxi/CTR/pxi_Names.h>
 
 namespace nn{
 namespace dev{

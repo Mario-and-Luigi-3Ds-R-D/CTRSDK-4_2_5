@@ -1,14 +1,13 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/fnd/fnd_HeapBase.h"
-#include "nn/fnd/fnd_Allocator.h"
-#include "nn/fnd/detail/fnd_DetailList.h"
-#include "nn/fnd/detail/fnd_DetailHeapHead.h"
-#include "nn/os/os_LockPolicy.h"
-#include "nn/os/os_CriticalSection.h"
+#include <nn/fnd/fnd_HeapBase.h>
+#include <nn/fnd/fnd_Allocator.h>
+#include <nn/fnd/detail/fnd_DetailList.h>
+#include <nn/fnd/detail/fnd_DetailHeapHead.h>
+#include <nn/os/os_LockPolicy.h>
+#include <nn/os/os_CriticalSection.h>
 
-#include "nn/dbg/dbg_Break.h"
+#include <nn/dbg/dbg_Break.h>
 
 // 100%
 
@@ -59,13 +58,13 @@ public:
     }
 
     void* Allocate(size_t byteSize, s32 alignment, bit8 groupId, AllocationMode mode, bool reuse);
-    void Free(void* p); // 100%
-    virtual ~ExpHeapBase(); // 100%
-    virtual void FreeV(void* p); // 100%
-    virtual void* GetStartAddress() const; // 100%
-    virtual size_t GetTotalSize() const; // 100%
-    virtual void Dump() const; // 100%
-    virtual bool HasAddress(const void* addr) const; // 100%
+    void Free(void* p);
+    virtual ~ExpHeapBase(){ this->Finalize(); }
+    virtual void FreeV(void* p);
+    virtual void* GetStartAddress() const;
+    virtual size_t GetTotalSize() const;
+    virtual void Dump() const;
+    virtual bool HasAddress(const void* addr) const;
     size_t ResizeBlock(void* p, size_t newSize);
     void VisitAllBlocks(BlockVisitor visitor, uptr param);
     size_t GetTotalFreeSize() const;

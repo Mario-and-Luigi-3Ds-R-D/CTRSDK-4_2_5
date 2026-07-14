@@ -1,7 +1,8 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/Result.h"
+#include <nn/types.h>
+#include <nn/Result.h>
+#include <nn/WithInitialize.h>
 
 typedef struct nnHandle{
     bit32 value;
@@ -21,6 +22,8 @@ public:
     {}
     Handle (nnHandle handle)
         : mHandle (handle.value)
+    {}
+    Handle(const nn::WithoutInitialize&)
     {}
     Handle (bit32 value)
         : mHandle (value)
@@ -57,5 +60,9 @@ public:
     }
 
     bit32 mHandle;
+
+    bit32 GetPrintableBits(){
+        return this->mHandle;
+    }
 };
 }

@@ -9,15 +9,16 @@ namespace nn {
 namespace cfg {
 namespace CTR {
 namespace detail {
-namespace IpcUser{
-        extern nn::Handle sSession;
 
-        Result GetConfig (void* pData, size_t size, bit32 key);
-        Result GetRegion (CfgRegionCode*);
-             
+class IpcUser{
+public:
+        static nn::Handle sSession;
+
+        static Result GetConfig (void* pData, size_t size, bit32 key);
+        static Result GetRegion (CfgRegionCode* regionCode);
 };
 
-} // namespace detail
-} // namespace CTR
-} // namespace cfg
-} // namespace nn
+}
+}
+}
+}

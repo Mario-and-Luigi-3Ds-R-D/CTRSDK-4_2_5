@@ -7,7 +7,7 @@
 #include <nn/hid/CTR/hid_AccelerometerReader.h>
 #include <nn/hid/CTR/hid_IpcClient.h>
 #include <nn/hidlow/CTR/hidlow_AccelerometerLifoRing.h>
-#include <nn/hidlow/hidlow_Api.h>
+#include <nn/hidlow/hidlow_Utils.h>
 #include <nn/Assert.h>
 
 #include <nn/types.h>
@@ -115,6 +115,7 @@ void AccelerometerReader::Transform(AccelerometerStatus* pAcclStatus){
         pAcclStatus->y = pAcclStatus->y - this->mOffsetAccStatus.y;
         pAcclStatus->z = pAcclStatus->z - this->mOffsetAccStatus.z;
     }
+    
     if ((this->mEnableRotate != false && !this->mRotateMtx.nn::math::MTX34::IsIdentity())) {
         nn::math::VEC3 vec(pAcclStatus->x,pAcclStatus->y,pAcclStatus->z);
 
@@ -142,32 +143,21 @@ AccelerometerReader::~AccelerometerReader(){
 }
 
 namespace detail{
-__asm short CalculateAccelerationTightly(short targetValue, short currentValue, short playRadius, short sensitivity){
-    MOV             R12, R0
-    MOV             R0, R1
-    PUSH            {R4}
-    RSB             R4, R2, #0
-    SUB             R1, R12, R0
-    CMP             R1, R4
-    BGE             loc_11979C
-    ADD             R1, R1, R2
-    MUL             R1, R1, R3
-    ADD             R0, R0, R1,ASR#7
-    SXTH            R0, R0
 
-loc_119794
-    POP             {R4}
-    BX              LR
+short CalculateAccelerationTightly(short targetValue, short currentValue, short playRadius, short sensitivity){
+    s32 diff = targetValue - currentValue;
 
-loc_11979C
-    CMP             R1, R2
-    BLE             loc_119794
-    SUB             R1, R1, R2
-    POP             {R4}
-    MUL             R1, R1, R3
-    ADD             R0, R0, R1,ASR#7
-    SXTH            R0, R0
-    BX              LR
+    if (diff < -playRadius) {
+        s32 delta = diff + playRadius;
+        return (short)(currentValue + ((delta * sensitivity) >> 7));
+    }
+
+    if (diff <= playRadius) {
+        return currentValue;
+    }
+
+    s32 delta = diff - playRadius;
+    return (short)(currentValue + ((delta * sensitivity) >> 7));
 }
 
 }

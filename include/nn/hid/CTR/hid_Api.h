@@ -21,7 +21,7 @@ namespace detail{
 }
 namespace{
     const char const PORT_NAME_USER[] = "hid:USER";
-    const char const PORT_NAME_SERVER[] = "hid:SPVR";
+    const char const PORT_NAME_SPVR[] = "hid:SPVR";
 }
 
 class HidDevices{
@@ -39,6 +39,7 @@ public:
 };
 
 Result Initialize();
+Result InitializeSpecialPrivilage(); // Not anywhere so custom name
 void Finalize();
 
 Pad& GetPad();

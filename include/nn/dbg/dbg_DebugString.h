@@ -2,18 +2,6 @@
 #include "nn/types.h"
 #include <cstdarg>
 
-#ifdef NN_DEBUG
-
-#define NN_SLOG_( ... ) (void)nn::dbg::detail::Printf(__VA_ARGS__)
-#define NN_TLOG_( ... ) (void)nn::dbg::detail::TPrintf(__VA_ARGS__)
-
-#else
-
-#define NN_SLOG_(void)
-#define NN_TLOG_(void)
-
-#endif
-
 namespace nn{
 namespace dbg{
 namespace detail{
@@ -33,3 +21,14 @@ extern "C"{
     void nndbgTPrintWarning_(const char* filename, int lineno, const char* fmt, ...);
 }
 
+#ifdef NN_DEBUG
+
+#define NN_SLOG_(exp, ...) (void)nn::dbg::detail::Printf(exp, __VA_ARGS__)
+#define NN_TLOG_(exp, ...) (void)nn::dbg::detail::TPrintf(exp, __VA_ARGS__)
+
+#else
+
+#define NN_SLOG_(exp, ...)
+#define NN_TLOG_(exp, ...)
+
+#endif

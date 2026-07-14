@@ -5,6 +5,6 @@
 
 namespace nn{
 namespace ndm{
-void SetupDaemonsDefault(void);
+void SetupDaemonsDefault();
 }
 }

@@ -1,19 +1,21 @@
 #pragma once
 
-#include "nn/hidlow/hidlow_LifoRing.h"
-#include "nn/hidlow/CTR/hidlow_AccelerometerLifoRing.h"
-#include "nn/hidlow/CTR/hidlow_AnalogStick.h"
-#include "nn/hid/CTR/hid_Pad.h"
+#include <nn/hidlow/hidlow_LifoRing.h>
+#include <nn/hidlow/CTR/hidlow_AnalogStick.h>
+#include <nn/hid/CTR/hid_Pad.h>
+
 
 namespace nn{
 namespace hidlow{
 namespace CTR{
 
+const s32 PAD_LIFORING_BUFFER_NUM = 8;
+
 struct IPadStatus{
     fnd::InterlockedVariable<s32> hold;
     fnd::InterlockedVariable<s32> trigger;
     fnd::InterlockedVariable<s32> release;
-    IAccelerometerStatus stick;
+    IAnalogStickStatus stick;
 };
 
 class PadLifoRing : public hidlow::LifoRing{

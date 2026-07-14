@@ -4,31 +4,20 @@
 namespace nn{
 namespace fnd{
 
-#ifdef NONMATCHING
-#endif
-
-ExpHeapBase::~ExpHeapBase(){
-    this->Finalize();
+size_t ExpHeapBase::GetTotalSize() const{ 
+    return (int)this->mExpHeapImpl.heapEnd - (int)this->mExpHeapImpl.heapStart; 
 }
 
-void ExpHeapBase::FreeV(void* p){
-    nn::fnd::detail::FreeToHeap((detail::Heap)&this->mExpHeapImpl, p);
-    this->mAllocCount = this->mAllocCount - 1;
+void* ExpHeapBase::GetStartAddress() const{ 
+    return mExpHeapImpl.heapStart; 
 }
 
-void* ExpHeapBase::GetStartAddress() const{
-    return this->mExpHeapImpl.heapStart;
-}
-
-size_t ExpHeapBase::GetTotalSize() const{
-    return (int)this->mExpHeapImpl.heapEnd - (int)this->mExpHeapImpl.heapStart;
+bool ExpHeapBase::HasAddress(const void* addr) const{ 
+    return mExpHeapImpl.heapStart <= addr && addr < mExpHeapImpl.heapEnd; 
 }
 
 void ExpHeapBase::Dump() const{
-}
-
-bool ExpHeapBase::HasAddress(const void* addr) const {
-    return mExpHeapImpl.heapStart <= addr && addr < mExpHeapImpl.heapEnd;
+    
 }
 
 void ExpHeapBase::Invalidate() {
@@ -59,6 +48,10 @@ void ExpHeapBase::Initialize(uptr addr, size_t size, bit32 option){
         nndbgPanic();
     }
     this->mAllocCount = 0;
+}
+
+void ExpHeapBase::FreeV(void* p){
+    this->Free(p);
 }
 
 void ExpHeapBase::Free(void* p) {

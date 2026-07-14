@@ -1,7 +1,7 @@
 #pragma once
 
-#include "nn/dsp/CTR/MPCore/dsp_Ipc.h"
-#include "nn/svc/svc_Api.h"
+#include <nn/dsp/CTR/MPCore/dsp_Ipc.h>
+#include <nn/svc.h>
 
 namespace nn {
 namespace dsp {

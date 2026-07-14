@@ -1,10 +1,9 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/os/os_Types.h"
-#include "nn/fnd/fnd_TimeSpan.h"
-#include "nn/fnd/fnd_InterlockedVariable.h"
-#include "nn/svc/svc_Api.h"
+#include <nn/os/os_Types.h>
+#include <nn/fnd/fnd_TimeSpan.h>
+#include <nn/fnd/fnd_InterlockedVariable.h>
+#include <nn/svc.h>
 
 namespace nn{ 
 namespace os{
@@ -16,6 +15,7 @@ namespace os{
         static nnHandle sHandle;
     public:
         static void Initialize();
+        static void Finalize(); // Unused
         ValueType&       operator* () {return mValue; }
         const ValueType& operator* () const { return mValue; }
         ValueType*       operator->() { return &mValue; }

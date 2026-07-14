@@ -1,5 +1,6 @@
 #include <nn/dsp/CTR/MPCore/dsp_Api.h>
 #include <nn/dsp/CTR/dsp_Result.h>
+#include <nn/srv/srv_API.h>
 #include <nn/applet/CTR/applet_Wrapper.h>
 #include <nn/err/CTR/err_Api.h>
 
@@ -11,15 +12,15 @@ namespace nn{
 namespace dsp{
 namespace CTR{
 namespace{
-    static bool sIsSleepAcceptedCallbackCalled; // 0
-    static bool sIsComponentLoaded; // 0x1
-    static bool sIsSleeping; // 0x2
-    static ushort sRegisteredProgMask; // 0x4
-    static ushort sRegisteredDataMask; // 0x6
-    static DSP* spDspSession; // 0x8
-    static int sDspEventUsedFlag; // 0xc
-    static DSP sDspSessionObject; // 0x10
-    static Handle sDspSessionHandle; // 0x14
+    static bool sIsSleepAcceptedCallbackCalled;
+    static bool sIsComponentLoaded;
+    static bool sIsSleeping;
+    static ushort sRegisteredProgMask;
+    static ushort sRegisteredDataMask;
+    static DSP* spDspSession;
+    static int sDspEventUsedFlag;
+    static DSP sDspSessionObject;
+    static Handle sDspSessionHandle;
     static const u8* sRegisteredComponent;
     static size_t sRegisteredComponentSize;
 }
@@ -39,17 +40,16 @@ void (*sFinalizeCallback[8])(void);
     if (spDspSession != NULL)
         return ResultSuccess();
 
-    NN_UTIL_RETURN_IF_FAILED(nn::srv::Initialize());
+    NN_UTIL_RETURN_IF_FAILED(srv::Initialize());
 
     NN_UTIL_RETURN_IF_FAILED(InitializeIpc(&sDspSessionHandle));
 
-    spDspSession = &sDspSessionObject;
-    sDspSessionObject = DSP(sDspSessionHandle);
+        s_pDspSession = reinterpret_cast<DSP*>(sDspSessionObject);
 
-    for (int i = 0; i < 8; i++){
-        sFinalizeCallback[i] = NULL;
-        sWakeUpCallback[i]   = NULL;
-        sSleepCallback[i]    = NULL;
+        * s_pDspSession = DSP(sDspSessionHandle);
+
+    for (int i = 0; i < CALLBACK_NUM; i++){
+        sSleepCallback[i] = sWakeUpCallback[i] = sFinalizeCallback[i] = NULL;
     }
 
     sIsComponentLoaded       = false;
@@ -65,15 +65,27 @@ void (*sFinalizeCallback[8])(void);
 }*/
 
 void Finalize(){
-    if (spDspSession == NULL)
-        return;
+    if (spDspSession){
+        if (sDspEventUsedFlag != 0){
+            NN_TPANIC_("Interrupt events are still registered.");
+        }
 
-    sSleepAcceptedCallbackInfo.Unregister();
+        for (int i = 0; i < 8; i++){
+            if (sSleepCallback[i] != NULL){
+                NN_TPANIC_("Callbacks are still registered.");
+            }
+        }
 
-    svc::CloseHandle(sDspSessionHandle);
+        sSleepAcceptedCallbackInfo.Unregister();
 
-    spDspSession = NULL;
-    sDspSessionHandle = nn::Handle(); // invalid handle value
+        nn::dsp::CTR::FinalizeIpc(&sDspSessionHandle);
+        sDspSessionHandle = INVALID_HANDLE_VALUE;
+        spDspSession = NULL;
+    }
+}
+
+Result LoadDefaultComponent(){
+    return LoadComponent(DSPSND_BEGIN,0xc234, 0xff, 0xff);
 }
 
 inline Result LoadComponent(const u8* pComponent, size_t size, bit16 maskPram, bit16 maskDram){
@@ -86,17 +98,13 @@ inline Result LoadComponent(const u8* pComponent, size_t size, bit16 maskPram, b
 
 inline Result LoadComponentCore(const u8* pComponent, size_t size, bit16 maskPram, bit16 maskDram){
     Result res;
-    if((spDspSession == 0) || (sIsComponentLoaded)){
-        return ResultNotInitialized();
+    if(spDspSession == 0 && (!sIsComponentLoaded)){
+        return spDspSession->LoadComponent(pComponent,size,maskPram,maskDram,&sIsComponentLoaded);
     }
     else{
-        spDspSession->LoadComponent(pComponent,size,maskPram,maskDram,&sIsComponentLoaded);
+        return ResultAlreadyExists();
     }
     return res;
-}
-
-Result LoadDefaultComponent(){
-    return LoadComponent(DSPSND_BEGIN,0xc234);
 }
 
 Result UnloadComponent(){
@@ -113,12 +121,22 @@ inline Result UnloadComponentCore(){
 }
 
 Result RegisterInterruptEvents(nn::Handle handle, s32 type, s32 port){
-    // TODO
+    Result res = ResultNotInitialized();
+    if (spDspSession){
+        if (handle.IsValid() && (sDspEventUsedFlag & (0x1 << (type + port))) == 0){
+            res = spDspSession->RegisterInterruptEvents(handle, type, port);
+            sDspEventUsedFlag |=  (0x1 << (type + port));
+        }
+        if (!handle.IsValid() && (sDspEventUsedFlag & (0x1 << (type + port))) != 0){
+            res = spDspSession->RegisterInterruptEvents(handle, type, port);
+            sDspEventUsedFlag &= ~(0x1 << (type + port));
+        }
+    }
+    return res;
 }
 
 Result RecvData(u16 regNo, u16* pValue){
-    Result res;
-    ResultNotInitialized();
+    Result res = ResultNotInitialized();
     if(spDspSession){
         res = spDspSession->RecvData(regNo,pValue);
     }
@@ -126,8 +144,7 @@ Result RecvData(u16 regNo, u16* pValue){
 }
 
 Result RecvDataIsReady(u16 regNo, bool* pStatus){
-    Result res;
-    ResultNotInitialized();
+    Result res = ResultNotInitialized();
     if(spDspSession){
         res = spDspSession->RecvDataIsReady(regNo,pStatus);
     }
@@ -135,22 +152,29 @@ Result RecvDataIsReady(u16 regNo, bool* pStatus){
 }
 
 Result ConvertProcessAddressFromDspDram(uptr addressOnDsp, uptr* pAddressOnHost){
-    Result res;
-    ResultNotInitialized();
+    Result res = ResultNotInitialized();
     *pAddressOnHost = 0xffffffff;
     if(spDspSession){
-        spDspSession->ConvertProcessAddressFromDspDram(addressOnDsp,pAddressOnHost);
+        res = spDspSession->ConvertProcessAddressFromDspDram(addressOnDsp,pAddressOnHost);
     }
     return res;
 }
 
 Result ReadPipeIfPossible(int port, void* buffer, u16 length, u16* pLengthRead){
-    // TODO
+    NN_NULL_TASSERT_(buffer);
+    NN_NULL_TASSERT_(pLengthRead);
+    Result res = ResultNotInitialized();
+    if (spDspSession){
+        res = spDspSession->ReadPipeIfPossible(port, 0, (u8 *)buffer, length, pLengthRead);
+    }
+    else{
+        *pLengthRead = 0;
+    }
+    return res;
 }
 
 Result WriteProcessPipe(int port, const void* buffer, u32 length){
-    Result res;
-    ResultNotInitialized();
+    Result res = ResultNotInitialized();
     if(spDspSession){
         res = spDspSession->WriteProcessPipe(port,(u8*)buffer,length);
     }
@@ -158,8 +182,7 @@ Result WriteProcessPipe(int port, const void* buffer, u32 length){
 }
 
 Result FlushDataCache(uptr addr, size_t size){
-    Result res;
-    ResultNotInitialized();
+    Result res = ResultNotInitialized();
     if(spDspSession){
         Handle h;
         res = spDspSession->FlushDataCache(h,addr,size);
@@ -172,71 +195,69 @@ bool IsComponentLoaded(){
 }
 
 bool Sleep(){
-    if(!IsComponentLoaded())
+    if (IsComponentLoaded() && sIsSleeping == false){
+        for (int i = 0; i < 8; i++){
+            if (sSleepCallback[i]) sSleepCallback[i]();
+        }
+        UnloadComponentCore();
+        sIsSleeping = true;
+        return true;
+    }
+    else{
         return false;
-    if(sIsSleeping)
-        return false;
-    for(int i = 0; i < 8; i++)
-        if(sSleepCallback[i])
-            ((void (*)(void))sSleepCallback[i])();
-    UnloadComponentCore();
-    bool isSleep = true;
-    sIsSleeping = true;
-    return isSleep;
+    }
 }
 
 void WakeUp(){
     sIsSleepAcceptedCallbackCalled = 0;
     if(sIsSleeping){
-        Result res;
-        res = LoadComponentCore(sRegisteredComponent,sRegisteredComponentSize,sRegisteredProgMask,sRegisteredDataMask);
-        NN_ERR_THROW_FATAL(res);
-        for(int i = 0; i < 8; i++)
-            if(sWakeUpCallback[i])
-                ((void (*)(void))sSleepCallback[i])();
-        sIsSleeping = false;
-    }
-}
-
-void Awake(){
-    if(sIsSleepAcceptedCallbackCalled)
-        WakeUp();
-}
-
-void OrderToWaitForFinalize(){
-    if(sIsSleeping){
-        for(int i = 0; i < 8; i++){
-            if(sFinalizeCallback[i])
-                ((void (*)(void))sFinalizeCallback[i])();
+        NN_TASSERT_(sRegisteredComponent != NULL);
+        NN_ERR_THROW_FATAL(LoadComponentCore(sRegisteredComponent,sRegisteredComponentSize,sRegisteredProgMask,sRegisteredDataMask));
+        for (int i = 0; i < 8; i++){
+            if (sWakeUpCallback[i]) sWakeUpCallback[i]();
         }
         sIsSleeping = false;
     }
 }
 
-bool RegisterSleepWakeUpCallback(void (*sleepCallback)(),void (*wakeUpCallback)(),void (*orderToWaitForFinalizeCallback)()){
-    int i;
-    for(i = 0; ; i++){
-        if(i >= 8)
-            return false;
-        if((void(*)(void))sSleepCallback[i] == sleepCallback) break;
-    }
-    sSleepCallback[i] = sleepCallback;
-    sWakeUpCallback[i] = wakeUpCallback;
-    sFinalizeCallback[i] = orderToWaitForFinalizeCallback;
-    return true;
+void Awake(){
+    if(sIsSleepAcceptedCallbackCalled) WakeUp();
 }
 
-bool ClearSleepWakeUpCallback(void (*sleepCallback)(),void (*wakeUpCallback)(),void (*orderToWaitForFinalizeCallback)()){
-    int i;
-    for(i = 0; ; i++){
-        if(i >= 8)
-            return false;
-        if((void(*)(void))sSleepCallback[i] == sleepCallback) break;
+void OrderToWaitForFinalize(){
+    if(sIsSleeping){
+        for(int i = 0; i < 8; i++){
+            if (sFinalizeCallback[i]) sFinalizeCallback[i]();
+        }
+        sIsSleeping = false;
     }
-    sSleepCallback[i] = 0;
-    sWakeUpCallback[i] = 0;
-    sFinalizeCallback[i] = 0;
-    return true;
+}
+
+bool RegisterSleepWakeUpCallback(void (*sleepCallback)(),void (*wakeUpCallback)(),void (*finalizeCallback)()){
+    for (int i = 0; i < 8; i++){
+        if (sSleepCallback[i] == NULL){
+            NN_TASSERT_(sWakeUpCallback[i] == NULL);
+            NN_TASSERT_(sFinalizeCallback[i] == NULL);
+            sSleepCallback[i] = sleepCallback;
+            sWakeUpCallback[i] = wakeUpCallback;
+            sFinalizeCallback[i] = finalizeCallback;
+            return true;
+        }
+    }
+}
+
+bool ClearSleepWakeUpCallback(void (*sleepCallback)(),void (*wakeUpCallback)(),void (*finalizeCallback)()){
+    for (int i = 0; i < 8; i++){
+        if (sSleepCallback[i] == sleepCallback){
+            NN_TASSERT_(sWakeUpCallback[i] == wakeUpCallback);
+            NN_TASSERT_(sFinalizeCallback[i] == finalizeCallback);
+            sSleepCallback[i] = NULL;
+            sWakeUpCallback[i] = NULL;
+            sFinalizeCallback[i] = NULL;
+            return true;
+        }
+    }
+    return false;
 }
 
 }

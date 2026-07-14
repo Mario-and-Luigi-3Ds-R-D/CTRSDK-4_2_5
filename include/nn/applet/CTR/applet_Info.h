@@ -49,7 +49,7 @@ namespace detail{
     void ClearPowerButtonState(void);
     CTR::OrderToCloseState GetOrderToCloseState();
     void ClearOrderToCloseState(void);
-    void SetShutDownState(CTR::ShutdownState);
+    void SetShutdownState(CTR::ShutdownState);
     s8 IsAppletMode();
     
 }

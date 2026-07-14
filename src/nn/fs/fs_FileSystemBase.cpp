@@ -3,8 +3,11 @@
 namespace nn{
 namespace fs{
 namespace detail{
-void RegisterGlobalFileSystemBase(detail::FileSystemBase* base){
-    spGlobalFileSystemBase = base;
+
+static detail::FileSystemBase* spGlobalFileSystemBase;
+
+void RegisterGlobalFileSystemBase(detail::FileSystemBase& base){
+    spGlobalFileSystemBase = &base;
 }
 }
 }

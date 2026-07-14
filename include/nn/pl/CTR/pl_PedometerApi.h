@@ -8,7 +8,6 @@
 namespace nn {
 namespace pl {
 namespace CTR {
-
 namespace detail{
     typedef enum _IPCPortType{
         PORT_PEDOMETER = 0,
@@ -19,7 +18,7 @@ namespace detail{
 
 } // detail
 
-void GetStepHistory(ushort pStepCounts, s32 numHours, nn::fnd::DateTime start);
+void GetStepHistory(ushort* pStepCounts, s32 numHours, nn::fnd::DateTime start);
 
 }
 }

@@ -19,11 +19,15 @@ public:
     uptr mResourcePtr;
 
     uptr GetResource();
-    void SetResource();
+    void SetResource(uptr);
 };
 
 inline uptr HidBase::GetResource(){
     return mResourcePtr;
+}
+
+inline void HidBase::SetResource(uptr ptr){
+    this->mResourcePtr = ptr;
 }
 
 }

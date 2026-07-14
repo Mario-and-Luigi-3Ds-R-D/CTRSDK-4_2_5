@@ -2,47 +2,23 @@
 
 enum PicaReg{
     PICA_REG_INTERRUPT                 = 0x010, 
-
-    //
     PICA_REG_CULL_FACE                 = 0x040,
-
-    //
     PICA_REG_VIEWPORT_WIDTH1           = 0x041,
-    //
     PICA_REG_VIEWPORT_WIDTH2           = 0x042,
-    //
     PICA_REG_VIEWPORT_HEIGHT1          = 0x043,
-    //
     PICA_REG_VIEWPORT_HEIGHT2          = 0x044,
-
-    //
     PICA_REG_FRAGOP_CLIP               = 0x047,
-    //
     PICA_REG_FRAGOP_CLIP_DATA1         = 0x048,
-    //
     PICA_REG_FRAGOP_CLIP_DATA2         = 0x049,
-    //
     PICA_REG_FRAGOP_CLIP_DATA3         = 0x04a,
-    //
     PICA_REG_FRAGOP_CLIP_DATA4         = 0x04b,
-
-    //
     PICA_REG_FRAGOP_WSCALE_DATA1       = 0x04d,
-    //
     PICA_REG_FRAGOP_WSCALE_DATA2       = 0x04e,
-
-    //
     PICA_REG_VS_OUT_REG_NUM0           = 0x04f,
-    //
     PICA_REG_GS_OUT_REG_NUM0           = 0x04f,
-    
-    //
     PICA_REG_VS_OUT_ATTR0              = 0x050,
-    //
     PICA_REG_GS_OUT_ATTR0              = 0x050,
-    //
     PICA_REG_VS_OUT_ATTR1              = 0x051,
-    //
     PICA_REG_GS_OUT_ATTR1              = 0x051,
     //
     PICA_REG_VS_OUT_ATTR2              = 0x052,

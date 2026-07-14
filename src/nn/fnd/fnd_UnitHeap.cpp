@@ -3,37 +3,33 @@
 namespace nn{
 namespace fnd{
 
-UnitHeapBase::~UnitHeapBase() {     
-    this->Finalize();
-}
-
-void UnitHeapBase::FreeV(void* p){
-    p = this->mFreeNode;
-    this->mFreeNode = (Node*)p;
-    this->mCount--;
-}
-
-void* UnitHeapBase::GetStartAddress() const { 
-    return reinterpret_cast<void*>(this->mAddr); 
-}
-
-size_t UnitHeapBase::GetTotalSize() const {
-    return this->mSize; 
-}
-
 void UnitHeapBase::Dump() const {
+
 }
 
-bool UnitHeapBase::HasAddress(const void* addr) const {
-    bool hasAddr;
-    if(addr < (uint*)*(uptr*) this->mAddr){
-        this->mSize + this->mAddr <= *(u64*)addr;
-        hasAddr = 0;
+void UnitHeapBase::Initialize(size_t unit, uptr addr, size_t size, s32 alignment, bit32 option){
+    NN_TASSERT_(this->mFreeNode == 0);
+    NN_TASSERT_(alignment >= sizeof(void*));
+    NN_TASSERT_(unit >= sizeof(void*));
+    NN_TASSERT_(alignment % sizeof(void*) == 0);
+    HeapBase::Initialize(option);
+    this->mUnit = RoundUp(unit, alignment);
+    this->mAddr = RoundUp(addr, alignment);
+    this->mSize = RoundDown((addr+size)-mAddr, mUnit);
+    this->mAlignment = alignment;
+    this->mCount = 0;
+
+    this->DebugFillMemory(addr, size, HEAP_FILL_TYPE_NOUSE);
+    
+    Node* freeNode = 0;
+    for (uptr addr2 = mAddr + mSize - mUnit; addr2 >= mAddr; addr2 -= mUnit){
+        reinterpret_cast<Node*>(addr2)->next = freeNode;
+        freeNode = reinterpret_cast<Node*>(addr2);
     }
-    else{
-        hasAddr = true;
-    }
-    return hasAddr;
+    NN_TASSERT_(reinterpret_cast<uptr>(freeNode) == m_Addr || freeNode == 0);
+    this->mFreeNode = freeNode;
 }
+
+
 }
 }

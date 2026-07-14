@@ -1,11 +1,9 @@
 // Filename: os_LightEvent.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon Decompilation
 
 #include <nn/os/os_LightEvent.h>
-#include <nn/svc/svc_Api.h>
+#include <nn/svc.h>
 
 namespace nn{
 namespace os{
@@ -27,7 +25,7 @@ void LightEvent::ClearSignal(){
 
 void LightEvent::Wait(){
     for(;;){
-            switch (*this->mCounter){
+        switch (*this->mCounter){
             case NOT_RESETED_MANUAL:
                     this->mCounter.WaitIfLessThan(0);
                     return;
@@ -41,7 +39,7 @@ void LightEvent::Wait(){
                 }
                 break;
             }
-        mCounter.WaitIfLessThan (0);
+        this->mCounter.WaitIfLessThan (0);
     }
 }
 
@@ -65,7 +63,6 @@ bool LightEvent::TryWait(){
         return this->mCounter->CompareAndSwap(RESETED_AUTO, NOT_RESETED_AUTO) == RESETED_AUTO;
     }
 }
-    
-// end non match
+
 } // os
 } // nn

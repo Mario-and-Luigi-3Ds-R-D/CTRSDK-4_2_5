@@ -1,53 +1,56 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/util/util_NonCopyable.h"
-#include "nn/util/detail/util_ScopeLockImpl.h"
-#include "nn/os/os_SimpleLock.h"
-#include "nn/os/os_Types.h"
-
-#define HW_INST_MRC(a,b,c,d,e,v)    __asm { mrc a,b,v,c,d,e }
-#define HW_GET_CP15_THREAD_ID_USER_READ_ONLY(v) HW_INST_MRC(p15,0,c13,c0,3,v)
+#include <nn/WithInitialize.h>
+#include <nn/os/os_SimpleLock.h>
+#include <nn/os/os_Types.h>
+#include <nn/hardware/hardware_RegAccess.h>
 
 namespace nn { 
 namespace os {
-    class CriticalSection : private nn::util::NonCopyable<CriticalSection>{
-    public:
-        SimpleLock mLock;
-        u32 mThreadUniqueValue;
-        s32 mLockCount;
+class CriticalSection : private nn::util::NonCopyable<CriticalSection>{
+public:
+    SimpleLock mLock;
+    u32 mThreadUniqueValue;
+    s32 mLockCount;
 
-        CriticalSection() : mThreadUniqueValue(GetInvalidThreadUniqueValue()), mLockCount(-1) {}
-        void Initialize(void);
-        void Enter(void);
-        void Leave(void);
-        bool TryEnter(void);
-        ~CriticalSection() { }
-        void Finalize(){this->mLockCount = -1;}
-        class ScopedLock;
+    CriticalSection() : mThreadUniqueValue(GetInvalidThreadUniqueValue()), mLockCount(-1) {}
+    CriticalSection(const nn::WithInitialize&) { Initialize(); }
+    void Initialize();
 
-        void OnLocked(){
-            this->mThreadUniqueValue = GetThreadUniqueValue();
-        }
-        bool LockedByCurrentThread() const{
-            return GetThreadUniqueValue() == mThreadUniqueValue;
-        }
-    private:
-        static uptr GetThreadUniqueValue(){
-            uptr v;
-            HW_GET_CP15_THREAD_ID_USER_READ_ONLY(v);
-            return v;
-        }
-        static uptr GetInvalidThreadUniqueValue(){
-            return static_cast<uptr>(-1);
-        }
-        bool IsInitialized() const{
-            return this->mLockCount >= 0;
-        }
-    };
+    Result TryInitialize(){
+        this->Initialize();
+        return ResultSuccess();
+    }
+
+    void Enter();
+    void Leave();
+    bool TryEnter();
+    void Finalize(){this->mLockCount = -1;}
+    ~CriticalSection() { }
+    class ScopedLock;
+
+    void OnLocked(){
+        this->mThreadUniqueValue = GetThreadUniqueValue();
+    }
+    bool LockedByCurrentThread() const{
+        return GetThreadUniqueValue() == mThreadUniqueValue;
+    }
+private:
+    static uptr GetThreadUniqueValue(){
+        uptr v;
+        HW_GET_CP15_THREAD_ID_USER_READ_ONLY(v);
+        return v;
+    }
+    static uptr GetInvalidThreadUniqueValue(){
+        return static_cast<uptr>(-1);
+    }
+    bool IsInitialized() const{
+        return this->mLockCount >= 0;
+    }
+};
     
-    NN_UTIL_DETAIL_DEFINE_SCOPED_LOCK(CriticalSection, Enter(), Leave());
+NN_UTIL_DETAIL_DEFINE_SCOPED_LOCK(CriticalSection, Enter(), Leave());
 
-    typedef CriticalSection InterCoreCriticalSection; // used in snd_Voice.h
+typedef CriticalSection InterCoreCriticalSection;
 }
 };

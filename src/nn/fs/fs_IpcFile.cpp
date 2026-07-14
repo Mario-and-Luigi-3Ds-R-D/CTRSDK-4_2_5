@@ -1,68 +1,149 @@
 #include <nn/fs/fs_IpcFile.h>
-#include <nn/err/CTR/err_Api.h>
-#include <nn/fs/fs_Api.h>
+#include <nn/os/ipc/os_Message.h>
+#include <nn/svc.h>
 
 namespace nn{
 namespace fs{
-namespace detail{
-    ipc::FileSystem GetIpcFileSystem(){
-        Result res;
-        if(fs::sFileServerSession.mHandle != 0){
-            NN_ERR_THROW_FATAL_ALL(res);
-        }
-        fs::sFileServerSession.mHandle;
-    }
-}
 namespace ipc{
-__asm Result FileSystem::GetPriority(int* pOut){
-    PUSH            {R4-R6,LR}
-    MOV             R5, R1
-    MRC             p15, 0, R4,c13,c0, 3
-    LDR             R1, =0x8630000
-    STR             R1, [R4,#0x80]!
-    LDR             R0, [R0]
-    SVC             0x32 ; '2'
-    ANDS            R1, R0, #0x80000000
-    BMI             locret_132734
-    LDR             R0, [R4,#8]
-    STR             R0, [R5]
-    LDR             R0, [R4,#4]
 
-locret_132734
-    POP             {R4-R6,PC}
+Result File::OpenSubFile(Handle* pOut, s64 offset, s64 length){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x801, 4, 0, 0);
+    ipcMsg.SetRaw(1, offset);
+    ipcMsg.SetRaw(3, length);
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    *pOut = ipcMsg.GetHandle(3);
+
+    return ipcMsg.GetRaw<Result>(1);
 }
 
-__asm Result FileSystem::OpenArchive(bit64* pArchiveHandle, bit32 pArchiveType, bit32 pPathType, bit8* pPath, size_t pPathLength){
-    PUSH            {R4-R8,LR}
-    MOV             R5, R1
-    LDR             R1, [SP,#0x1C]
-    LDR             R12, [SP,#0x18]
-    MRC             p15, 0, R4,c13,c0, 3
-    LDR             R7, =0x80C00C2
-    MOV             R6, #0
-    STR             R7, [R4,#0x80]!
-    STR             R1, [R4,#0xC]
-    ORR             R1, R6, R1,LSL#14
-    ADD             R6, R4, #0x10
-    ORR             R1, R1, #2
-    STM             R6, {R1,R12}
-    STRD            R2, R3, [R4,#4]
-    LDR             R0, [R0]
-    SVC             0x32 ; '2'
-    ANDS            R1, R0, #0x80000000
-    BMI             locret_120BCC
-    ADD             R1, R4, #8
-    LDRD            R0, R1, [R1]
-    STRD            R0, R1, [R5]
-    LDR             R0, [R4,#4]
+Result File::Read(s32* pRead, s64 offset, void* pBuffer, size_t size){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x802, 3, 2, 0);
+    ipcMsg.SetRaw(1, offset);
+    ipcMsg.SetRaw(3, size);
+    ipcMsg.SetReceive(4, pBuffer, size);
 
-locret_120BCC
-    POP             {R4-R8,PC}
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    *pRead = ipcMsg.GetRaw<s32>(2);
+
+    return ipcMsg.GetRaw<Result>(1);
 }
 
-__asm Result FileSystem::SetPriority(int pPriority){
+Result File::Write(s32* pWritten, s64 offset, const void* pBuffer, size_t size, fs::WriteOption option){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x803, 4, 2, 0);
+    ipcMsg.SetRaw(1, offset);
+    ipcMsg.SetRaw(3, size);
+    ipcMsg.SetRaw(4, option);
+    ipcMsg.SetSend(5, pBuffer, size);
 
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    *pWritten = ipcMsg.GetRaw<s32>(2);
+
+    return ipcMsg.GetRaw<Result>(1);
 }
+
+Result File::GetSize( s64* pOut ){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x804, 0, 0, 0);
+
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    *pOut = ipcMsg.GetRaw<s64>(2);
+
+    return ipcMsg.GetRaw<nn::Result>(1);
+}
+Result File::SetSize(s64 size){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x805, 2, 0, 0);
+    ipcMsg.SetRaw(1, size);
+
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    return ipcMsg.GetRaw<Result>(1);
+}
+
+Result File::Close(){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x808, 0, 0, 0);
+
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    return ipcMsg.GetRaw<Result>(1);
+}
+
+Result File::SetPriority(s32 priority){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x80A, 1, 0, 0);
+    ipcMsg.SetRaw(1, priority);
+
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    return ipcMsg.GetRaw<Result>(1);
+}
+
+Result File::GetPriority( s32* pOut ){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x80B, 0, 0, 0);
+
+
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    *pOut = ipcMsg.GetRaw<s32>(2);
+
+    return ipcMsg.GetRaw<Result>(1);
+}
+
+Result File::OpenLinkFile(Handle* pOut){
+    MessageBuffer ipcMsg(GetMessageBuffer());
+    ipcMsg.SetHeader(0x80C, 0, 0, 0);
+
+    
+    Result ipcResult = SendSyncRequest(this->mSession);
+    if(ipcResult.IsFailure()){
+        return ipcResult;
+    }
+
+    *pOut = ipcMsg.GetHandle(3);
+
+    return ipcMsg.GetRaw<Result>(1);
+}
+
 
 }
 }

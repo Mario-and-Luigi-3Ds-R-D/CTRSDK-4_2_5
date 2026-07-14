@@ -1,8 +1,8 @@
 #include <nn/dbg/dbg_DebugString.h>
 
 #include <nn/nstd/nstd_Printf.h>
-#include <nn/util/detail/util_Symbol.h>
-#include <nn/svc/svc_Api.h>
+#include <nn/module.h>
+#include <nn/svc.h>
 
 #include <string.h>
 #include <cstdio>
@@ -11,12 +11,12 @@
 
 #define NN_DBG_PRINTF_BUFFER_LENGTH     256
 #define NN_DBG_TPRINTF_BUFFER_LENGTH 128
-
+NN_MAKE_MODULE_SDK(sUsePutDebugString, "DebugPrint");
 namespace nn{
 namespace dbg{
 namespace detail{
     void PutString(const char* text, s32 length){
-        //NN_UTIL_REFER_SYMBOL(nullptr);
+        NN_REFER_MODULE(sUsePutDebugString);
         nn::svc::OutputDebugString(text, length);
     }
 
@@ -52,10 +52,10 @@ namespace detail{
 
     void PrintResult(Result result){
         TPrintf("Result (%08x)\n", result.GetPrintableBits());
-        TPrintf("  Level:       (%4d) %s\n", result.GetLevel());
-        TPrintf("  Summary:     (%4d) %s\n",result.GetSummary()); // GetSummaryString());
-        TPrintf("  Module:      (%4d) %s\n",result.GetModule()); // GetModuleString());
-        TPrintf("  Description: (%4d) %s\n",result.GetDescription()); // GetDescriptionString());
+        TPrintf("Level:       (%4d) %s\n",result.GetLevel());
+        TPrintf("Summary:     (%4d) %s\n",result.GetSummary()); // GetSummaryString());
+        TPrintf("Module:      (%4d) %s\n",result.GetModule()); // GetModuleString());
+        TPrintf("Description: (%4d) %s\n",result.GetDescription()); // GetDescriptionString());
     }
 
 }

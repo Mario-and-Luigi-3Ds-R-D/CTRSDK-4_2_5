@@ -5,6 +5,7 @@
 // Remade by user Luigifan27
 
 #include <nn/os/os_MemoryBlock.h>
+#include <nn/os/os_AddressSpaceManager.h>
 #include <nn/dbg/dbg_Break.h>
 
 namespace nn{

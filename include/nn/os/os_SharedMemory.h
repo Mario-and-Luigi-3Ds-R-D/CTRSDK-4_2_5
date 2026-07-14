@@ -1,29 +1,31 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/Result.h"
-#include "nn/os/os_Synchronization.h"
-#include "nn/os/os_MemoryBlock.h"
+#include <nn/types.h>
+#include <nn/Result.h>
+#include <nn/os/os_Synchronization.h>
+#include <nn/os/os_MemoryBlock.h>
 
 namespace nn{
 namespace os{
-    class SharedMemoryBlock : public nn::os::MemoryBlockBase, public nn::os::HandleObj{
-    public:
-        bool mSpaceAllocated;
-        s8 reversed[3]; // lazy 2 spellLMAOLKMAO
-        int reversed2;
-
-        Result AttachAndMap(nn::Handle handle, size_t size, bool readOnly);
-        Result Map(size_t size, bool readOnly);
-        void Finalize();
-    };
-
 namespace detail{
-    uptr AllocateFromSharedMemorySpace(os::MemoryBlockBase* p, size_t s);
-    void InitializeSharedMemory();
-    void FreeToSharedMemorySpace(os::MemoryBlockBase* p);
+    
+uptr AllocateFromSharedMemorySpace(os::MemoryBlockBase* p, size_t s);
+void InitializeSharedMemory();
+void FreeToSharedMemorySpace(os::MemoryBlockBase* p);
     
 }
+
+class SharedMemoryBlock : public MemoryBlockBase, public HandleObject{
+public:
+    bool mSpaceAllocated;
+    s8 reversed[3];
+    int reversed2;
+
+    Result AttachAndMap(nn::Handle handle, size_t size, bool readOnly);
+    Result Map(size_t size, bool readOnly);
+    void Unmap();
+    void Finalize();
+};
 
 }
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "nn/Result.h"
-#include "nn/Handle.h"
-#include "nn/fs/fs_Paramaters.h"
+#include <nn/Result.h>
+#include <nn/Handle.h>
+#include <nn/fs/fs_Parameters.h>
 
 namespace nn{
 namespace fs{
@@ -15,9 +15,12 @@ namespace fs{
     Result MountRom(size_t pMaxFile, size_t pMaxDirectory, void* pWorkingMemory, size_t pWorkingMemorySize, bool pUseCache);
     Result Unmount(char* pArchiveName = "data:");
 
+    Result MountSdmc(const char* archiveName = "sdmc:");
+
     // Memory Size 
     int GetRomRequiredMemorySize(size_t pMaxFile, size_t pMaxDirectory, bool pUseCache);
     int GetRomRequiredMemorySizeImpl(size_t pMaxFile, size_t pMaxDirectory, bool pUseCache, ProgramDataPath* pContentPath);
 
+    void InitializeLatencyEmulation();
 }
 }

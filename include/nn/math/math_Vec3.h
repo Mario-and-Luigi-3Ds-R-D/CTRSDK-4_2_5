@@ -1,7 +1,7 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/Assert.h"
+#include <nn/types.h>
+#include <nn/Assert.h>
 #include <cmath>
 
 namespace nn {

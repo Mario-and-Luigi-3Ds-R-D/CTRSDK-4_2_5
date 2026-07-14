@@ -16,7 +16,7 @@ namespace CTR {
                 u16 n0;
                 u16 n1;
                 u16 d1;
-        } IirFilterParamHalf; // 185
+        } IirFilterParamHalf;
 
         typedef struct{
                 u16 n0;
@@ -24,7 +24,7 @@ namespace CTR {
                 u16 n2;
                 u16 d1;
                 u16 d2;
-        } IirFilterParamBiquad; // 194
+        } IirFilterParamBiquad;
 
         typedef struct{
                 IirFilterParamHalf   half;
@@ -33,14 +33,14 @@ namespace CTR {
                 IirFilterParamBiquad biquadC;
                 IirFilterParamBiquad biquadD;
                 IirFilterParamBiquad biquadE;
-        } IirFilterParam; // 204
+        } IirFilterParam;
 
         typedef struct{
                 IirFilterParamBiquad biquadA;
                 IirFilterParamBiquad biquadB;
                 IirFilterParamBiquad biquadC;
-        } IirFilterParamEQ; // 220
+        } IirFilterParamEQ;
 
-} // namespace CTR
-} // namespace codec
-} // namespace nn
+}
+}
+}

@@ -1,14 +1,12 @@
 // Filename: init_Default.cpp
 //
-// Project: Horizon 4_2_5 Decompilation
-//
-// Remade by user Luigifan27
+// Project: Horizon CTRSDK
 
-#include <nn/svc/svc_Api.h>
+#include <nn/svc.h>
 #include <nn/init/init_Alloc.h>
 #include <nn/os/os_Memory.h>
 #include <nn/util/util_Result.h>
-#include <nn/srv/srv_EventNotication.h>
+#include <nn/srv/srv_API.h>
 
 namespace{
     class ExitHandler : public nn::srv::NotificationHandler{

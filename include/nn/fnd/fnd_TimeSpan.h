@@ -1,13 +1,18 @@
 #pragma once
 
-#include "nn/types.h"
+#include <nn/types.h>
+#include <nn/Assert.h>
 
 namespace nn{
 namespace fnd{
 
 class TimeSpan{
+    typedef const class ZeroOnlyTag {} * ZeroOnly;
 public:
-    TimeSpan(){};
+    TimeSpan(ZeroOnly zeroOnly = 0): 
+        mNanoSeconds(0) { 
+        NN_UNUSED_VAR(zeroOnly); 
+    }
     s64 mNanoSeconds;
     
     static s64 MultiplyRightShift(const s64 x, const s64 y){
@@ -48,9 +53,8 @@ public:
     static TimeSpan FromMilliSeconds(s64 milliSeconds) { return FromNanoSeconds(milliSeconds * 1000 * 1000); }
     friend bool operator==(const TimeSpan& lhs, const TimeSpan& rhs) { return lhs.mNanoSeconds == rhs.mNanoSeconds; }
     friend bool operator< (const TimeSpan& lhs, const TimeSpan& rhs) { return lhs.mNanoSeconds <  rhs.mNanoSeconds; }
-    struct ZeroOnlyTag{
-
-};
+    TimeSpan& operator-=(const TimeSpan& rhs) { this->mNanoSeconds -= rhs.mNanoSeconds; return *this; }
+    friend TimeSpan operator-(const TimeSpan& lhs, const TimeSpan& rhs) { TimeSpan ret(lhs); return ret -= rhs; }
 };
 
 }

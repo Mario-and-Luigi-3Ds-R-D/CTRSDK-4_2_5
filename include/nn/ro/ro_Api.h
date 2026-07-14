@@ -1,20 +1,19 @@
 #pragma once
 
-#include "nn/Handle.h"
-#include "nn/ro/ro_RegistrationList.h"
-#include "nn/ro/ro_Module.h"
-#include "nn/ro/ro_Types.h"
+#include <nn/Handle.h>
+#include <nn/ro/ro_RegistrationList.h>
+#include <nn/ro/ro_Module.h>
+#include <nn/ro/ro_Types.h>
 
 namespace nn{
 namespace ro{
-
     void Initialize(uint,uint);
-    void Finalize();
+    Result Finalize();
     void* RegisterList(void* pRr, size_t pSize);
-    nn::ro::Module* FindModule(const char* pModule);
+    void* FindModule(const char* pModule);
     uint GetAddress(const char* pAddress);
     void GetSizeInfo(nn::ro::SizeInfo* pSizeInfo,void* pBuffer);
-    nn::ro::Module* LoadModule(nn::ro::Module* pOffset, int, void*, uint, bool, nn::ro::FixLevel pLevel, const nn::ro::RegistrationList* pRegistList);
+    void* LoadModule(nn::ro::Module* pOffset, int, void*, uint, bool, nn::ro::FixLevel pLevel, const nn::ro::RegistrationList* pRegistList);
 
 namespace detail{
     const char PORT_NAME_RELOCATEABLE_OBJECT[] = "ldr:ro";
@@ -29,13 +28,4 @@ namespace detail{
 }
 }
 
-namespace{
-    void* sStatic;
-}
-
-}
-
-extern "C" {
-    void nnRoDetailInitializeLinkException(uint,uint);
-    void nnRoInitializeImpl();
 }

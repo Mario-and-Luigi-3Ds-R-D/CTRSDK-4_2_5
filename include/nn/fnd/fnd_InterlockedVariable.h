@@ -100,7 +100,6 @@ private:
 
     };
 
-public:
     volatile T m_v;
 
 public:

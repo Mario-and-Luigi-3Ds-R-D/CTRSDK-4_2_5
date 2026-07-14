@@ -1,7 +1,6 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/math/math_Vec3.h"
+#include <nn/math/math_Vec3.h>
 
 namespace nn{
 namespace math{

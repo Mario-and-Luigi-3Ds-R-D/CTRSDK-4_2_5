@@ -15,7 +15,7 @@ public:
         bool mIsEnableSurround;
         Param(): mDelayTime(250), mFeedbackGain(0.4f), mDamping(0.5f),mIsEnableSurround(false){}
     };
-    void UpdateBuffer( uptr data );
+    void UpdateBuffer( AuxBusData* data );
     const Param& GetParam() const{
         return mParam;
     }

@@ -1,5 +1,8 @@
 #pragma once
 
+#define VER_STR_(version) #version
+#define VER_STR(version) VER_STR_(version)
+
 #define NN_VERSION_MAJOR 4
 #define NN_VERSION_MINOR 2
 #define NN_VERSION_MICRO 5

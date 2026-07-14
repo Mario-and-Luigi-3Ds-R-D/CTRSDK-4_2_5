@@ -21,8 +21,6 @@ namespace{
     Result Disconnect();
     void DisconnectAndUnlock();
 
-    void GetDisplayInfo(AppletDisplayInfo* pInfo);
-
 }
 }
 }

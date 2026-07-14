@@ -29,8 +29,8 @@ public:
         mTickOfRead(-1)
     {};
     ~DebugPadReader( ) {};
-    void Read(DebugPadStatus* pBufs, s32* pReadLen, s32 bufLen);
     bool ReadLatest(DebugPadStatus* pBuf);
+    void Read(DebugPadStatus* pBufs, s32* pReadLen, s32 bufLen);
 
     StickClampMode GetStickClampMode() const;
     void SetStickClampMode(StickClampMode mode);

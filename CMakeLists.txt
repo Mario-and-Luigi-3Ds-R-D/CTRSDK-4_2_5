@@ -1,8 +1,11 @@
+# PROJECT HORIZON
+#
+# HorizonOS CTR
+
 cmake_minimum_required(VERSION 3.24)
 
 project(CTRSDK C CXX ASM)
 
-# libnn_<LIBRARY>
 
 function(nn_library TARGET_NAME MODULE_DIR)
     file(GLOB_RECURSE MODULE_SOURCES
@@ -26,7 +29,7 @@ function(nn_library TARGET_NAME MODULE_DIR)
 
     target_compile_options(${TARGET_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:
         --apcs=//interwork --cpu=MPCore --fpmode=fast --cpp --arm
-        --signed_chars --multibyte-chars -DNN_PROCESSOR_ARM11MPCORE
+        --signed_chars --multibyte-chars -DNN_PROCESSOR_ARM11MPCORE -DNN_BUILD_RELEASE
         -O3 -Otime --data-reorder --split_sections --force_new_nothrow
         --no_debug_macros --remove_unneeded_entities
         --diag_suppress=3017,940,997,177,541,1,1134,550,83,427,2525,117,284,174,111,1441,161
@@ -37,7 +40,7 @@ function(nn_library TARGET_NAME MODULE_DIR)
 
     target_compile_options(${TARGET_NAME} PRIVATE $<$<COMPILE_LANGUAGE:C>:
         --apcs=//interwork --cpu=MPCore --fpmode=fast --c99 --arm
-        --signed_chars --multibyte-chars --locale=japanese -O3
+        --signed_chars --multibyte-chars -O3
         -Otime --data-reorder --split_sections --no_allow_fpreg_for_nonfpdata
         >
     )
@@ -51,15 +54,13 @@ function(nn_library TARGET_NAME MODULE_DIR)
     )
 endfunction()
 
-# nn libraries
-
 nn_library(nn_applet  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/applet)
 nn_library(nn_camera  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/camera)
 nn_library(nn_cfg     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/cfg)
 nn_library(nn_crt0    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/crt0)
 nn_library(nn_crypto  ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/crypto)
 nn_library(nn_dbg     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dbg)
-#nn_library(nn_dbm     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dbm)
+nn_library(nn_dbm     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dbm)
 nn_library(nn_dev     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dev)
 nn_library(nn_dsp     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/dsp)
 nn_library(nn_err     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/err)
@@ -87,8 +88,7 @@ nn_library(nn_snd     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/snd)
 nn_library(nn_srv     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/srv)
 nn_library(nn_svc     ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/svc)
 nn_library(nn_ulcd    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/ulcd)
-
-# Aggregate target for convenience
+nn_library(nn_util    ${CMAKE_CURRENT_SOURCE_DIR}/src/nn/util)
 
 add_library(CTRSDK INTERFACE)
 add_library(gles2 STATIC IMPORTED GLOBAL)
@@ -110,7 +110,7 @@ target_link_libraries(CTRSDK INTERFACE
     nn_crt0
     nn_crypto
     nn_dbg
-#    nn_dbm
+    nn_dbm
     nn_dev
     nn_dsp
     nn_err
@@ -138,6 +138,7 @@ target_link_libraries(CTRSDK INTERFACE
     nn_srv
     nn_svc
     nn_ulcd
+    nn_util
 
     gxlow
     gles2

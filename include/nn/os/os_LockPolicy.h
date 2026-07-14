@@ -1,7 +1,7 @@
 #pragma once
 
-#include "nn/types.h"
-#include "nn/Result.h"
+#include <nn/types.h>
+#include <nn/Result.h>
 
 namespace nn {
 namespace os {

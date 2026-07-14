@@ -5,15 +5,14 @@
 // Remade by user Luigifan27
 
 #include <nn/hid/CTR/hid_ExtraPad.h>
-#include <nn/ir/CTR/cepd_Api.h>
+#include <nn/ir/CTR/ir_CepdApi.h>
 
 namespace nn{
 namespace hid{
 namespace CTR{
 
 bool ExtraPad::IsSampling(){
-    ir::CTR::CepdStatus cStatus = ir::CTR::CepdGetStatus();
-    return cStatus == ir::CTR::CEPD_STATUS_SAMPLING;
+    return nn::ir::CTR::CepdGetStatus() == nn::ir::CTR::CEPD_STATUS_SAMPLING;
 }
 
 }

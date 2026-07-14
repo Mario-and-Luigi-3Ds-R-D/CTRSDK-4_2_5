@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nn/Handle.h"
+#include <nn/Handle.h>
 
 namespace nn {
 namespace dsp {
@@ -8,7 +8,9 @@ namespace CTR {
 class DSP{
 public:
     Handle mSession;
-
+ 
+    DSP(){ }
+    DSP(Handle h){ this->mSession = h; }
     Result ConvertProcessAddressFromDspDram(uptr _address,uptr *address);
     Result FlushDataCache(Handle clientProcess,uptr addr,size_t size);
     Result GetSemaphoreEventHandle(Handle *handle);

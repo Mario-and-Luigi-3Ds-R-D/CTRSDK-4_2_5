@@ -1,5 +1,9 @@
-#include <nn/camera/camera_Api.h>
-#include <nn/camera/camera_Ipc.h>
+// Filename: camera_Api.cpp
+//
+// Project: Horizon CTRSDK
+
+#include <nn/camera/CTR/camera_Api.h>
+#include <nn/camera/CTR/camera_Camera.h>
 
 namespace nn{
 namespace camera{
